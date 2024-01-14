@@ -9,24 +9,24 @@ const useFetch = (url) => {
     const router = useRouter()
     const handleGoogle = async (response) => {
         setLoading(true);
-        axios.post(url, {credential: response.credential })
+        axios.post(url, { credential: response.credential })
             .then((response) => {
                 const data = response.data;
                 if (data?.user) {
                     localStorage.setItem("user", JSON.stringify(data?.user));
                     console.log('====================================');
-                    console.log("user::",data?.user);
+                    console.log("user::", data?.user);
                     console.log('====================================');
-                    router.push('/home')
+                    router.push('/')
                 }
 
-                throw new Error(data?.message || data);
+                // throw new Error(data?.message || data);
             })
             .catch((error) => {
                 setError(error?.message);
             })
     };
-    return { loading, error, handleGoogle };
+    return { loading, error, handleGoogle, setError };
 };
 
 export default useFetch;
