@@ -8,9 +8,14 @@ import { InputText } from "primereact/inputtext";
 import CarouselTopComponent from "../../components/CarouselTopComponent";
 
 export default function Home() {
+  const colorNavbarOne : string= "bg-gray-300";
+  const colorNavbarTwo : string= "bg-transparent";
   return (
     <div>
-      <NavbarComponent />
+      <NavbarComponent
+        colorNavbarOne={colorNavbarOne}
+        colorNavbarTwo={colorNavbarTwo}
+      />
 
       {/* search bar */}
       <div className="relative">
@@ -26,6 +31,7 @@ export default function Home() {
             placeholder="Điền tên thông tin bạn muốn tìm kiếm..."
             tooltip="Hello world"
             tooltipOptions={{ position: "top" }}
+            style={{boxShadow:'none'}}
           />
           <button className="bg-blue-500 hover:bg-blue-300 p-3 rounded-r-lg">
             <span className="pi pi-search text-white h-full"></span>
