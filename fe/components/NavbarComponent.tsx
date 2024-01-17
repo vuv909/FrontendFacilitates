@@ -1,7 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
+interface NavbarComponentProps {
+  colorNavbarOne: string;
+  colorNavbarTwo: string;
+}
 
-export default function NavbarComponent() {
+const NavbarComponent: React.FC<NavbarComponentProps> = ({
+  colorNavbarOne,
+  colorNavbarTwo,
+}) => {
   const [scrolling, setScrolling] = useState(false);
 
   useEffect(() => {
@@ -32,7 +39,7 @@ export default function NavbarComponent() {
         paddingBottom: "3vh",
         transition: "0.5s ease-in-out", // Optional: Add a transition effect
       }}
-      className={scrolling ? "bg-gray-300" : "bg-transparent"}
+      className={scrolling ? colorNavbarOne : colorNavbarTwo}
     >
       <div style={{ marginLeft: "3vw", zIndex: 100 }}>logo</div>
       <div
@@ -49,4 +56,5 @@ export default function NavbarComponent() {
       </div>
     </div>
   );
-}
+};
+export default NavbarComponent;
