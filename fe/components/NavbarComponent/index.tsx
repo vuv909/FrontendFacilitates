@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Logo from "../../public/icons8-logo.svg";
+import Image from "next/image";
 interface NavbarComponentProps {
   colorNavbarOne: string;
   colorNavbarTwo: string;
@@ -41,7 +43,9 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
       }}
       className={`${scrolling ? colorNavbarOne : colorNavbarTwo}`}
     >
-      <div style={{ marginLeft: "3vw", zIndex: 100 }}>logo</div>
+      <div style={{ marginLeft: "3vw", zIndex: 100 }}>
+        <Image src={Logo} width={50} height={50} alt="logo" />
+      </div>
       <div
         style={{
           display: "flex",
