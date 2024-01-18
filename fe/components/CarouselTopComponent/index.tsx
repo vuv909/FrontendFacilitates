@@ -7,7 +7,6 @@ import { Carousel, CarouselResponsiveOption } from "primereact/carousel";
 import { Tag } from "primereact/tag";
 import { ProductService } from "../../services/ProductService";
 import "primeflex/primeflex.css";
-import Link from "next/link";
 interface Product {
   id: string;
   code: string;
@@ -32,21 +31,19 @@ export default function CarouselTopComponent() {
 
   const productTemplate = (product: Product) => {
     return (
-      <Link href={'/detail/2'}>
-        <div className="relative text-center h-72  cursor-pointer m-5 z-50">
-          <img
-            src="https://picsum.photos/200/300"
-            alt={product.name}
-            className="w-screen h-full rounded-lg"
-          />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 pb-2 rounded-b-lg">
-            <p className="font-bold">AL202</p>
-          </div>
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black hover:bg-opacity-80 p-2 rounded-full">
-            <button className="text-white px-3">Đặt chỗ</button>
-          </div>
+      <div className="relative text-center h-72  cursor-pointer m-5 z-50">
+        <img
+          src="https://picsum.photos/200/300"
+          alt={product.name}
+          className="w-screen h-full rounded-lg"
+        />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 pb-2 rounded-b-lg">
+          <p className="font-bold">AL202</p>
         </div>
-      </Link>
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black hover:bg-opacity-80 p-2 rounded-full">
+          <button className="text-white px-3">Đặt chỗ</button>
+        </div>
+      </div>
     );
   };
 
@@ -54,8 +51,8 @@ export default function CarouselTopComponent() {
     <div className="px-16">
       <Carousel
         value={products}
-        numVisible={4}
-        numScroll={4}
+        numVisible={5}
+        numScroll={5}
         circular
         prevIcon={
           <div className="bg-gray-300 p-3">
