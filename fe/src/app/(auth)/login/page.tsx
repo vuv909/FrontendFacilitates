@@ -9,12 +9,12 @@ export const metadata = {
 export default function Login() {
   return (
     <div className="h-screen">
-      <div className="relative bg-orange-500 h-full">
+      <div className=" bg-orange-500 h-full">
         <Image
           src="/fpt.jpg"
           alt="fptu"
           layout="fill"
-          style={{ opacity: 0.8}}
+          className="opacity-80"
         />
 
         <div className="rounded-full overflow-hidden">
@@ -30,12 +30,9 @@ export default function Login() {
           </Link>
         </div>
 
-        <div
-          className="absolute top-1/2 transform -translate-y-1/2"
-          style={{ width: "67%" }}
-        >
+        <div className="w-screen h-screen flex flex-col items-center justify-center">
           <div className="text-center mb-10" style={{ width: "100%" }}>
-            <h1 className="text-5xl font-bold text-white">
+            <h1 className="text-6xl font-bold text-white filter brightness-200">
               Chúng tôi có các dịch vụ như{" "}
             </h1>
           </div>
@@ -46,7 +43,7 @@ export default function Login() {
                 width={200}
                 height={200}
                 alt="bong da"
-                className="mx-auto w-60 h-72 rounded-3xl filter brightness-75"
+                className="mx-auto w-60 h-72 rounded-3xl filter brightness-75 object-cover"
               />
               <p
                 className="absolute text-center font-bold text-white left-1/2 transform -translate-x-1/2"
@@ -87,13 +84,9 @@ export default function Login() {
               </p>
             </div>
           </div>
-        </div>
-
-        <div
-          className="absolute h-screen bg-white rounded-l-3xl z-50 flex items-center justify-center"
-          style={{ top: 0, right: 0 }}
-        >
-          <LoginComponent />
+          <div>
+            <LoginComponent />
+          </div>
         </div>
       </div>
     </div>

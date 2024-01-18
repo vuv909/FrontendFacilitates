@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-const useFetch = (url) => {
+const login = (url) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter()
@@ -29,4 +29,4 @@ const useFetch = (url) => {
     return { loading, error, handleGoogle, setError };
 };
 
-export default useFetch;
+export default login;
