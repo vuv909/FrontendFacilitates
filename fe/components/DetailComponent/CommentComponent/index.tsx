@@ -64,7 +64,7 @@ export default function CommentComponent() {
                 className="w-14 h-14 rounded-full"
               />
             </div>
-            <div className="border border-solid border-gray-300 p-4 rounded-xl w-full">
+            <div className="border border-solid border-gray-300 p-4 rounded-xl">
               <div className="flex gap-5">
                 <div>
                   <p className="font-bold">Minh</p>

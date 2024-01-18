@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Tooltip } from "primereact/tooltip";
 import { InputText } from "primereact/inputtext";
 import CarouselTopComponent from "../../components/CarouselTopComponent";
-import Link from "next/link";
 
 export default function Home() {
   const colorNavbarOne: string = "bg-gray-300";
@@ -32,11 +31,9 @@ export default function Home() {
             tooltip="Hello world"
             tooltipOptions={{ position: "top" }}
           />
-          <Link href={'/search'}>
-            <button className="bg-blue-500 hover:bg-blue-300 p-3 rounded-r-lg">
-              <span className="pi pi-search text-white h-full"></span>
-            </button>
-          </Link>
+          <button className="bg-blue-500 hover:bg-blue-300 p-3 rounded-r-lg">
+            <span className="pi pi-search text-white h-full"></span>
+          </button>
         </div>
       </div>
 
