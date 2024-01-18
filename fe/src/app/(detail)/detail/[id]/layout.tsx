@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import NavbarComponent from "../../../../../components/NavbarComponent";
 import FooterComponent from "../../../../../components/FooterComponent";
 
-export const metadata: Metadata = {
-  title: "Search",
-};
-
-export default function SearchtLayout({
+export default function DetailLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -18,12 +14,9 @@ export default function SearchtLayout({
       <NavbarComponent
         colorNavbarOne={colorNavbarOne}
         colorNavbarTwo={colorNavbarTwo}
-
       />
-      <div className="mt-32">{children}</div>
-      <div className="bg-gray-400">
-        <FooterComponent />
-      </div>
+      <div>{children}</div>
+
     </>
   );
 }

@@ -1,12 +1,8 @@
 "use client";
 import { InputText } from "primereact/inputtext";
 import { useState } from "react";
-
 import { Dropdown } from "primereact/dropdown";
-import { Pagination } from "antd";
-import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
-import { Nullable } from "primereact/ts-helpers";
+import { Pagination, PaginationProps } from "antd";
 
 export default function SearchAll({ params }: { params: object }) {
   console.log("====================================");
@@ -23,9 +19,13 @@ export default function SearchAll({ params }: { params: object }) {
 
   const [text, setText] = useState<string>("");
   const [category, setCategory] = useState<string>("");
-  const [fromDate, setFromDate] = useState<Nullable<Date>>(null);
-  const [toDate, setToDate] = useState<Nullable<Date>>(null);
   const [status, setStatus] = useState(null);
+
+  const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
+    console.log("Page: ", pageNumber);
+  };
+
+
 
   return (
     <div className="mx-20">
@@ -43,42 +43,10 @@ export default function SearchAll({ params }: { params: object }) {
                 placeholder="Điền kí tự tìm kiếm ..."
                 tooltip="Điền kí tự tìm kiếm"
                 tooltipOptions={{ position: "top" }}
-                style={{ boxShadow: "none" }}
+                className="shadow-none py-2"
               />
             </div>
 
-            <div className="border border-solid border-gray-300 py-2 rounded-lg">
-              <i className="pi pi-calendar p-1" />
-              <Calendar
-                value={fromDate}
-                onChange={(e) => setFromDate(e.value)}
-                placeholder="Chọn thời gian bắt đầu ..."
-                tooltip="Chọn thời gian bắt đầu"
-                showTime
-                hourFormat="24"
-                tooltipOptions={{ position: "top" }}
-                style={{ boxShadow: "none" }}
-              />
-              <i className="pi pi-times pr-1 cursor-pointer" onClick={()=>setFromDate(null)}></i>
-            </div>
-
-            <div className="border border-solid border-gray-300 py-2 rounded-lg">
-              <i className="pi pi-calendar p-1" />
-              <Calendar
-                value={toDate}
-                onChange={(e) => setToDate(e.value)}
-                showTime
-                hourFormat="24"
-                placeholder="Chọn thời gian kết thúc ..."
-                tooltip="Chọn thời gian kết thúc"
-                tooltipOptions={{ position: "top" }}
-                style={{ boxShadow: "none" }}
-              />
-              <i className="pi pi-times pr-1 cursor-pointer" onClick={()=>setToDate(null)}></i>
-            </div>
-          </div>
-
-          <div className="flex gap-3 mt-5 items-center justify-center flex-wrap">
             <div className="border border-solid border-gray-300 py-2 rounded-lg">
               <Dropdown
                 value={category}
@@ -106,13 +74,10 @@ export default function SearchAll({ params }: { params: object }) {
                 style={{ boxShadow: "none" }}
               />
             </div>
+            <button className="px-10 py-4 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600">
+              Tìm kiếm
+            </button>
           </div>
-        </div>
-
-        <div>
-          <button className="px-10 py-4 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600">
-            Tìm kiếm
-          </button>
         </div>
       </div>
       <div>
@@ -290,7 +255,7 @@ export default function SearchAll({ params }: { params: object }) {
 
         {/* pagination */}
         <div className="flex items-center justify-center my-16">
-          <Pagination defaultCurrent={6} total={500} />
+          <Pagination defaultCurrent={6} total={500} onChange={onChangePage} showSizeChanger={false}/>
         </div>
       </div>
     </div>
