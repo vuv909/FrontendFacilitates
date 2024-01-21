@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import CarouselComponent from "../../components/CarouselComponent";
 import NavbarComponent from "../../components/NavbarComponent";
@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
   const colorNavbarOne: string = "bg-gray-300";
   const colorNavbarTwo: string = "bg-transparent";
   return (
@@ -35,9 +35,12 @@ export default function Home() {
             tooltip="Hello world"
             tooltipOptions={{ position: "top" }}
           />
-            <button onClick={()=>router.push('/search')} className="bg-blue-500 hover:bg-blue-300 p-3 rounded-r-lg">
-              <span className="pi pi-search text-white h-full"></span>
-            </button>
+          <button
+            onClick={() => router.push("/search")}
+            className="bg-blue-500 hover:bg-blue-300 p-3 rounded-r-lg"
+          >
+            <span className="pi pi-search text-white h-full"></span>
+          </button>
         </div>
       </div>
 
@@ -49,7 +52,9 @@ export default function Home() {
       </div>
 
       <div className="mt-10 text-center">
-        <h1 className="ml-7 font-bold text-lg">Top các phòng , sân thể dục được sử dụng nhiều</h1>
+        <h1 className="ml-7 font-bold text-lg">
+          Top các phòng , sân thể dục được sử dụng nhiều
+        </h1>
         <CarouselTopComponent />
       </div>
 

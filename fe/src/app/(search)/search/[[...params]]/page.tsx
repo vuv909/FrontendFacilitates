@@ -25,8 +25,6 @@ export default function SearchAll({ params }: { params: object }) {
     console.log("Page: ", pageNumber);
   };
 
-
-
   return (
     <div className="mx-20">
       <div className="text-center">
@@ -74,9 +72,11 @@ export default function SearchAll({ params }: { params: object }) {
                 style={{ boxShadow: "none" }}
               />
             </div>
-            <button className="px-10 py-4 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600">
-              Tìm kiếm
-            </button>
+            <div>
+              <button className="px-10 py-4 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600">
+                Tìm kiếm
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -255,7 +255,12 @@ export default function SearchAll({ params }: { params: object }) {
 
         {/* pagination */}
         <div className="flex items-center justify-center my-16">
-          <Pagination defaultCurrent={6} total={500} onChange={onChangePage} showSizeChanger={false}/>
+          <Pagination
+            defaultCurrent={6}
+            total={500}
+            onChange={onChangePage}
+            showSizeChanger={false}
+          />
         </div>
       </div>
     </div>

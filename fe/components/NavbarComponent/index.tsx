@@ -41,7 +41,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
         paddingBottom: "3vh",
         transition: "0.5s ease-in-out", // Optional: Add a transition effect
       }}
-      className={`${scrolling ? colorNavbarOne : colorNavbarTwo}`}
+      className={`${scrolling ? colorNavbarOne : colorNavbarTwo} h-20`}
     >
       <div style={{ marginLeft: "3vw", zIndex: 100 }} className="cursor-pointer" onClick={() => router.push("/")}>
         <Image src={Logo} width={50} height={50} alt="logo" />
