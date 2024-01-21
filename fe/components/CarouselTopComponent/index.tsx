@@ -32,9 +32,11 @@ export default function CarouselTopComponent() {
 
   const productTemplate = (product: Product) => {
     return (
-      <Link href={'/detail/2'}>
+      <Link href={"/detail/2"}>
         <div className="relative text-center h-72  cursor-pointer m-5 z-50">
-          <img
+          <Image
+            width={500}
+            height={500}
             src="https://picsum.photos/200/300"
             alt={product.name}
             className="w-screen h-full rounded-lg"

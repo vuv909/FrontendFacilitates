@@ -157,48 +157,48 @@ export default function AccountAnalysist() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="flex-1">
-            <Tooltip title="Chọn thời gian tuần bạn muốn lọc">
-              <select
-                onChange={(e) => setWeekTime(Number(e.target.value))}
-                className="border border-gray-300 p-1 outline-none rounded-md"
-              >
-                {weekOptions.map((option, index) => {
-                  return (
-                    <option
-                      key={index}
-                      value={option}
-                      selected={weekTime === index}
-                    >
-                      {option}
-                    </option>
-                  );
-                })}
-              </select>
-            </Tooltip>
-          </div>
           {searchByYear === false && (
             <div className="flex-1">
-              <Tooltip title="Chọn năm mà bạn muốn lọc">
-              <select
-                onChange={(e) => setYear(e.target.value)}
-                className="w-full border border-gray-300 p-1 outline-none rounded-md"
-              >
-                {years().map((option, index) => {
-                  return (
-                    <option
-                      key={index}
-                      value={index}
-                      selected={year === option}
-                    >
-                      {option}
-                    </option>
-                  );
-                })}
-              </select>
+              <Tooltip title="Chọn thời gian tuần bạn muốn lọc">
+                <select
+                  onChange={(e) => setWeekTime(Number(e.target.value))}
+                  className="border border-gray-300 p-1 outline-none rounded-md"
+                >
+                  {weekOptions.map((option, index) => {
+                    return (
+                      <option
+                        key={index}
+                        value={option}
+                        selected={weekTime === index}
+                      >
+                        {option}
+                      </option>
+                    );
+                  })}
+                </select>
               </Tooltip>
             </div>
           )}
+            <div className="flex-1">
+              <Tooltip title="Chọn năm mà bạn muốn lọc">
+                <select
+                  onChange={(e) => setYear(e.target.value)}
+                  className="w-full border border-gray-300 p-1 outline-none rounded-md"
+                >
+                  {years().map((option, index) => {
+                    return (
+                      <option
+                        key={index}
+                        value={index}
+                        selected={year === option}
+                      >
+                        {option}
+                      </option>
+                    );
+                  })}
+                </select>
+              </Tooltip>
+            </div>
         </div>
       </div>
 
