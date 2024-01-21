@@ -34,7 +34,7 @@ export default function CarouselTopComponent() {
     return (
       <Link href={'/detail/2'}>
         <div className="relative text-center h-72  cursor-pointer m-5 z-50">
-          <img
+          <Image
             src="https://picsum.photos/200/300"
             alt={product.name}
             className="w-screen h-full rounded-lg"
