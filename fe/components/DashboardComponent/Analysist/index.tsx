@@ -2,6 +2,7 @@ import AccountAnalysist from "./AccountAnalysist";
 import AmountFacilitateAnalysist from "./AmountFacilitateAnalysist";
 import AmountRoleAnalysist from "./AmountRoleAnalysist";
 import BookingAnalysist from "./BookingAnalysist";
+import TableVoted from "./TableVoted";
 
 export default function Analysist() {
   return (
@@ -13,6 +14,9 @@ export default function Analysist() {
       <div className="flex gap-2">
         <BookingAnalysist />
         <AccountAnalysist />
+      </div>
+      <div className="mt-16 flex flex-col gap-16">
+        <TableVoted />
       </div>
     </div>
   );
