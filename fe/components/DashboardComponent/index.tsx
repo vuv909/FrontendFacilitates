@@ -51,14 +51,31 @@ const DashboardComponent: React.FC = () => {
 
   return (
     <div className="flex">
-      <div className="relative border-r-2 border-b-2 w-fit min-h-screen bg-gray-100">
-        <Button
+      <div className="flex flex-col border-r-2 border-b-2 w-fit min-h-screen bg-gray-100">
+        {/* <Button
           onClick={toggleCollapsed}
           className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-center  ${
             !collapsed ? "absolute -right-11" : "absolute -right-11"
           }`}
         >
           {collapsed ? <RightOutlined /> : <LeftOutlined />}
+        </Button> */}
+
+        <Button
+          onClick={toggleCollapsed}
+          className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-end  ${
+            collapsed === true ? "block" : "hidden"
+          } `}
+        >
+         <RightOutlined />
+        </Button>
+        <Button
+          onClick={toggleCollapsed}
+          className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-end  ${
+            collapsed === false ? "block" : "hidden"
+          }`}
+        >
+          <LeftOutlined />
         </Button>
         <Menu
           style={{ width: collapsed ? 50 : 256 }}
