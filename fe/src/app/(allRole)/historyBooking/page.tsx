@@ -53,7 +53,7 @@ export default function HistoryBookingPage() {
         <Empty description="Chưa có phòng nào được đặt trước" />
       </div> */}
 
-        <div className="flex justify-center mt-14 gap-3">
+        <div className="flex items-center justify-center flex-wrap mt-14 gap-3">
           <div>
             <InputText
               value={valueInput}
