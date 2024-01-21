@@ -58,8 +58,6 @@ export default function InfomationDetailComponent() {
   const [weekValue, setWeekValue] = useState<string>("");
 
   useEffect(() => {
-    console.log("====================================");
-    console.log("weekValue::", weekValue);
     if (!weekValue) {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
@@ -75,11 +73,6 @@ export default function InfomationDetailComponent() {
     console.log("====================================");
   }, [weekValue]);
 
-  useEffect(() => {
-    console.log("====================================");
-    console.log("bookslot::", bookslot);
-    console.log("====================================");
-  }, [bookslot]);
 
   useEffect(() => {
     const currentDate = new Date();
