@@ -14,7 +14,7 @@ import { classNames } from "primereact/utils";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFileCsv, faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const info = () => {
   Modal.info({
@@ -61,7 +61,14 @@ export default function TableVoted() {
   return (
     <>
       <div className="">
-        <div>
+        <div className="relative">
+        <div className="absolute left-2">
+            <Tooltip title="Xuất dữ liệu bảng ra excel">
+              <p className="my-2 cursor-pointer bg-green-300 rounded-md text-green-800 text-3xl hover:text-green-500">
+                <FontAwesomeIcon icon={faFileCsv} />
+              </p>
+            </Tooltip>
+          </div>
           <div className="border flex flex-col justify-center">
             <div className="border text-center">
               <p className="text-2xl p-2 bg-blue-500 text-white font-semibold">

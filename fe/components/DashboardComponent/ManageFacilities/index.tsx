@@ -14,7 +14,11 @@ import { classNames } from "primereact/utils";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFileCsv,
+  faMagnifyingGlass,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 interface City {
   name: string;
   code: string;
@@ -91,15 +95,21 @@ export default function ManageFacilities() {
                 Quản lý phòng , sân thể dục
               </p>
             </div>
-            <div
-              onClick={showModal}
-              className="flex justify-between bg-blue-100"
-            >
-              <div className="py-2 flex justify-end bg-blue-100">
+            <div className="flex justify-between bg-blue-100">
+              <div className="py-2 flex items-center justify-end bg-blue-100">
                 <Tooltip title="Tạo một phòng hoặc sân bóng mới">
-                  <button className="ml-5 outline-none border border-gray-300 h-7 p-1 text-white  bg-blue-500 hover:bg-blue-300  ">
+                  <button
+                    onClick={showModal}
+                    className="ml-5 outline-none border border-gray-300 h-7 p-1 text-white  bg-blue-500 hover:bg-blue-300  "
+                  >
                     <FontAwesomeIcon className="text-xl" icon={faPlus} />
                   </button>
+                </Tooltip>
+
+                <Tooltip title="Xuất dữ liệu bảng ra excel">
+                  <p className="ml-5 cursor-pointer text-green-800 text-3xl hover:text-green-500">
+                    <FontAwesomeIcon icon={faFileCsv} />
+                  </p>
                 </Tooltip>
               </div>
               <div className="py-2 flex justify-end bg-blue-100">
@@ -178,7 +188,10 @@ export default function ManageFacilities() {
                   </td>
                   <td className="">
                     <div className="flex flex-col gap-2 w-full py-1">
-                      <button onClick={showModal} className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24">
+                      <button
+                        onClick={showModal}
+                        className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
+                      >
                         Cập nhật
                       </button>
                       <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
@@ -234,7 +247,10 @@ export default function ManageFacilities() {
                   </td>
                   <td className="">
                     <div className="flex flex-col gap-2 w-full py-1">
-                      <button onClick={showModal} className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24">
+                      <button
+                        onClick={showModal}
+                        className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
+                      >
                         Cập nhật
                       </button>
                       <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
@@ -290,7 +306,10 @@ export default function ManageFacilities() {
                   </td>
                   <td className="">
                     <div className="flex flex-col gap-2 w-full py-1">
-                      <button onClick={showModal} className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24">
+                      <button
+                        onClick={showModal}
+                        className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
+                      >
                         Cập nhật
                       </button>
                       <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
@@ -328,7 +347,9 @@ export default function ManageFacilities() {
         ]}
       >
         <div>
-          <h1 className="text-center font-bold mb-5 text-xl">Tạo 1 phòng , sân thể dục mới</h1>
+          <h1 className="text-center font-bold mb-5 text-xl">
+            Tạo 1 phòng , sân thể dục mới
+          </h1>
         </div>
         <div className="border mb-10 flex justify-content-center">
           <span className="p-float-label w-full">
