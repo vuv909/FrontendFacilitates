@@ -5,9 +5,9 @@ import React from "react";
 
 const ProfileUserComponent = () => {
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
+    <div className="flex items-center justify-center h-screen w-screen mt-10">
       <div className="bg-white rounded-md -md p-20 ">
-      <h1 className="font-extralight text-2xl">Thông tin cá nhân</h1>
+      <h1 className="font-extralight text-2xl bg-emerald-50">Thông tin cá nhân</h1>
         <div className="flex justify-between ml-24">
           <div className="w-32 h-32 overflow-hidden">
             <img
@@ -47,6 +47,7 @@ const ProfileUserComponent = () => {
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
               value={"Bùi Anh Quân"}
+              name="name"
             />
           </div>
 
@@ -56,8 +57,9 @@ const ProfileUserComponent = () => {
             </label>
 
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
+              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
               value={"quandeptrai.@gmail.com"}
+              name = "email"
             />
           </div>
 
@@ -69,6 +71,7 @@ const ProfileUserComponent = () => {
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
               value={"Hà Nội"}
+              name="address"
             />
           </div>
 
@@ -80,6 +83,7 @@ const ProfileUserComponent = () => {
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
               value={"0987654321"}
+              name="phoneNumber"
             />
           </div>
 
