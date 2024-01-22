@@ -28,16 +28,16 @@ export default function Home() {
           alt="loading..."
           className="w-full filter brightness-100 h-screen object-cover"
         />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2">
+        <div className="md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 flex items-center justify-center">
           <InputText
-            className="outline-none p-3 shadow-none w-96 rounded-l-lg"
+            className="outline-none p-3 shadow-none w-96 md:rounded-l-lg"
             placeholder="Điền tên thông tin bạn muốn tìm kiếm..."
             tooltip="Hello world"
             tooltipOptions={{ position: "top" }}
           />
           <button
             onClick={() => router.push("/search")}
-            className="bg-blue-500 hover:bg-blue-300 p-3 rounded-r-lg"
+            className="bg-blue-500 hover:bg-blue-300 p-3 md:rounded-r-lg"
           >
             <span className="pi pi-search text-white h-full"></span>
           </button>

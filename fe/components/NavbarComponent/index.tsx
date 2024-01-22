@@ -32,7 +32,6 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
       style={{
         position: "fixed",
         top: "0",
-        width: "100vw",
         zIndex: 1000,
         display: "flex",
         alignItems: "center",
@@ -41,7 +40,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
         paddingBottom: "3vh",
         transition: "0.5s ease-in-out", // Optional: Add a transition effect
       }}
-      className={`${scrolling ? colorNavbarOne : colorNavbarTwo} h-20`}
+      className={`${scrolling ? colorNavbarOne : colorNavbarTwo} h-20 w-full`}
     >
       <div style={{ marginLeft: "3vw", zIndex: 100 }} className="cursor-pointer" onClick={() => router.push("/")}>
         <Image src={Logo} width={50} height={50} alt="logo" />
