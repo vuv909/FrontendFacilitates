@@ -1,7 +1,7 @@
 import Image from "next/image";
 import LoginComponent from "../../../../components/LoginComponent";
 import Link from "next/link";
-
+import Logo from '../../../../public/icons8-logo.svg'
 export const metadata = {
   title: "Login",
 };
@@ -20,11 +20,11 @@ export default function Login() {
         <div className="rounded-full overflow-hidden">
           <Link href={"/"}>
             <Image
-              src={"/ball.jpg"}
+              src={Logo}
               width={60}
               height={60}
               alt="logo"
-              className="mt-5 ml-5 rounded-full cursor-pointer"
+              className="mt-5 ml-5 rounded-full cursor-pointer text-red-500"
               style={{ zIndex: 100, position: "absolute", top: 0, left: 0 }}
             />
           </Link>
@@ -32,7 +32,7 @@ export default function Login() {
 
         <div className="w-screen h-screen flex flex-col items-center justify-center">
           <div className="text-center mb-10" style={{ width: "100%" }}>
-            <h1 className="text-6xl font-bold text-white filter brightness-200">
+            <h1 className="mt-24 text-6xl font-bold text-white filter brightness-200">
               Chúng tôi có các dịch vụ như{" "}
             </h1>
           </div>

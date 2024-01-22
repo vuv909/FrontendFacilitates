@@ -33,7 +33,9 @@ export default function CarouselComponent() {
   const productTemplate = (product: Product) => {
     return (
       <div className="relative text-center h-96  cursor-pointer m-5 z-50">
-        <img
+        <Image
+          width={500}
+          height={500}
           src="https://picsum.photos/200/300"
           alt={product.name}
           className="w-screen h-full rounded-lg"

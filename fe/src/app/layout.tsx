@@ -5,6 +5,7 @@ import Script from "next/script";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+  
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -26,6 +30,7 @@ export default function RootLayout({
           src="https://accounts.google.com/gsi/client"
           strategy="beforeInteractive"
         />
+        
       </body>
     </html>
   );

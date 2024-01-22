@@ -1,13 +1,12 @@
-export default function FooterComponent() {
+import React from "react";
+
+export default function NewFooter() {
   return (
-    <div className="mt-5 relative">
-      <div
-        className="w-full bg-gray-400"
-        style={{ height: "250px", objectFit: "cover" }}
-      ></div>
-      <h1 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-black font-bold text-3xl z-10">
-        Cảm ơn bạn vì đã trải nghiệm web của chúng tôi !!!
-      </h1>
-    </div>
+    <footer className="bg-gray-800 text-white py-6">
+      <div className="container mx-auto text-center">
+        <p className="text-lg font-bold">Cảm ơn bạn đã trải nghiệm web của chúng tôi !!!</p>
+        <p className="text-sm mt-2">© 2024 Your Company. All rights reserved.</p>
+      </div>
+    </footer>
   );
 }

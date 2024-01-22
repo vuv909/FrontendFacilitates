@@ -10,13 +10,12 @@ export default function DetailLayout({
   const colorNavbarOne: string = "bg-gray-300";
   const colorNavbarTwo: string = "bg-gray-300";
   return (
-    <>
+    <div>
       <NavbarComponent
         colorNavbarOne={colorNavbarOne}
         colorNavbarTwo={colorNavbarTwo}
       />
       <div>{children}</div>
-
-    </>
+    </div>
   );
 }

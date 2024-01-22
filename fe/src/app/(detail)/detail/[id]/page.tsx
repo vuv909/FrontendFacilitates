@@ -28,7 +28,7 @@ export default function DetailPage() {
         <div className="relative h-screen">
           <img
             src="https://picsum.photos/200/300"
-            className="w-full h-screen rounded-md object-fill"
+            className="w-screen h-screen rounded-md object-center"
           />
           <div>
             <div className="absolute right-20 top-1/2 transfrom -translate-y-1/2 z-50 bg-gray-200 p-5 shadow-xl rounded-lg">
