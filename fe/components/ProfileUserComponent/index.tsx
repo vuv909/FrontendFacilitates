@@ -2,12 +2,15 @@ import { Button } from "antd";
 import { url } from "inspector";
 import Image from "next/image";
 import React from "react";
+import data  from "../../services/profile.service";
+import { useState } from "react";
 
 const ProfileUserComponent = () => {
+ 
   return (
-    <div className="flex items-center justify-center h-screen w-screen mt-10">
+    <div className="flex items-center justify-center h-screen w-screen mt-10 bg-gray-100">
       <div className="bg-white rounded-md -md p-20 ">
-      <h1 className="font-extralight text-2xl bg-emerald-50">Thông tin cá nhân</h1>
+      <h1 className="font-extralight text-2xl">Thông tin cá nhân</h1>
         <div className="flex justify-between ml-24">
           <div className="w-32 h-32 overflow-hidden">
             <img
@@ -18,8 +21,8 @@ const ProfileUserComponent = () => {
               className="object-cover w-full h-full rounded-full"
             />
           </div>
-          <button
-            type="button"
+          <Button
+            
             className="bg-blue-600 text-white w-23  h-10 rounded-md mr-10  pr-3 mt-11 border flex items-center justify-center"
           >
             <svg
@@ -37,7 +40,7 @@ const ProfileUserComponent = () => {
               />
             </svg>
             Tải ảnh 
-          </button>
+          </Button>
         </div>
         <div>
           <div className="mb-4">
@@ -45,9 +48,9 @@ const ProfileUserComponent = () => {
               Tên
             </label>
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
-              value={"Bùi Anh Quân"}
-              name="name"
+              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
+             value={data[0].name}
+              
             />
           </div>
 
@@ -59,7 +62,7 @@ const ProfileUserComponent = () => {
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
               value={"quandeptrai.@gmail.com"}
-              name = "email"
+            
             />
           </div>
 
@@ -69,9 +72,9 @@ const ProfileUserComponent = () => {
             </label>
 
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
+              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
               value={"Hà Nội"}
-              name="address"
+           
             />
           </div>
 
@@ -81,19 +84,19 @@ const ProfileUserComponent = () => {
             </label>
 
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2"
+              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
               value={"0987654321"}
-              name="phoneNumber"
+         
             />
           </div>
 
           <div className="flex">
-            <button className="bg-white text-blue-600 px-6 py-2 rounded-md mr-10 border border-solid border-gray-700">
+            <Button className= "flex items-center justify-center bg-white text-blue-600  px-6 py-2 rounded-md mr-10 border border-solid border-gray-700">
               Hủy
-            </button>
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-md mr-10 border border-solid border-transparent">
+            </Button>
+            <Button   className="flex items-center justify-center bg-blue-600 text-white px-6 py-2 rounded-md mr-10 border border-solid border-transparent">
               Lưu
-            </button>
+            </Button>
           </div>
         </div>
       </div>
