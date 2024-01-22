@@ -6,6 +6,8 @@ import { string } from "prop-types";
 import { years } from "../../../../data";
 import { getCurrentWeekTime } from "../../../../data";
 import { Tooltip } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCsv } from "@fortawesome/free-solid-svg-icons";
 
 const dataByWeek = [
   {
@@ -153,6 +155,13 @@ export default function BookingAnalysist() {
               checked={searchByYear === false}
             />
             <p>Lọc theo tuần</p>
+          </div>
+          <div className="flex justify-start">
+            <Tooltip title="Xuất dữ liệu bảng ra excel">
+              <p className="my-2 cursor-pointer text-green-800 text-3xl hover:text-green-500">
+                <FontAwesomeIcon icon={faFileCsv} />
+              </p>
+            </Tooltip>
           </div>
         </div>
 

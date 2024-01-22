@@ -6,6 +6,8 @@ import { string } from "prop-types";
 import { years } from "../../../../data";
 import { getCurrentWeekTime } from "../../../../data";
 import { Tooltip } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCsv } from "@fortawesome/free-solid-svg-icons";
 
 const dataByWeek = [
   {
@@ -154,6 +156,13 @@ export default function AccountAnalysist() {
             />
             <p>Lọc theo tuần</p>
           </div>
+          <div className="flex justify-start">
+            <Tooltip title="Xuất dữ liệu bảng ra excel">
+              <p className="my-2 cursor-pointer text-green-800 text-3xl hover:text-green-500">
+                <FontAwesomeIcon icon={faFileCsv} />
+              </p>
+            </Tooltip>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -179,26 +188,26 @@ export default function AccountAnalysist() {
               </Tooltip>
             </div>
           )}
-            <div className="flex-1">
-              <Tooltip title="Chọn năm mà bạn muốn lọc">
-                <select
-                  onChange={(e) => setYear(e.target.value)}
-                  className="w-full border border-gray-300 p-1 outline-none rounded-md"
-                >
-                  {years().map((option, index) => {
-                    return (
-                      <option
-                        key={index}
-                        value={index}
-                        selected={year === option}
-                      >
-                        {option}
-                      </option>
-                    );
-                  })}
-                </select>
-              </Tooltip>
-            </div>
+          <div className="flex-1">
+            <Tooltip title="Chọn năm mà bạn muốn lọc">
+              <select
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full border border-gray-300 p-1 outline-none rounded-md"
+              >
+                {years().map((option, index) => {
+                  return (
+                    <option
+                      key={index}
+                      value={index}
+                      selected={year === option}
+                    >
+                      {option}
+                    </option>
+                  );
+                })}
+              </select>
+            </Tooltip>
+          </div>
         </div>
       </div>
 

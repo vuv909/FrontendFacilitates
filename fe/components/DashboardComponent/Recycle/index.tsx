@@ -14,7 +14,12 @@ import { classNames } from "primereact/utils";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFileCsv,
+  faFileExcel,
+  faMagnifyingGlass,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 interface City {
   name: string;
   code: string;
@@ -92,18 +97,26 @@ export default function RecycleFacilities() {
               </p>
             </div>
 
-            <div className="py-2 flex justify-end bg-blue-100">
-              <input
-                type="text"
-                className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
-                placeholder="Điền kí tự để tìm kiếm ..."
-              />
-              <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  className="text-white"
+            <div className="py-2 flex justify-between bg-blue-100">
+              <Tooltip title="Xuất dữ liệu bảng ra excel">
+                <p className="ml-5 cursor-pointer text-green-800 text-3xl hover:text-green-500">
+                  <FontAwesomeIcon icon={faFileCsv} />
+                </p>
+              </Tooltip>
+
+              <div>
+                <input
+                  type="text"
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
+                  placeholder="Điền kí tự để tìm kiếm ..."
                 />
-              </button>
+                <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
+                  <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
+                    className="text-white"
+                  />
+                </button>
+              </div>
             </div>
 
             <table>
