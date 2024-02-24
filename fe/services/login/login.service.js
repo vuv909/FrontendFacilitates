@@ -13,17 +13,16 @@ const login = (url) => {
             .then((response) => {
                 const data = response.data;
                 if (data?.user) {
+                    localStorage.setItem("accessToken", JSON.stringify(data?.token?.token));
                     localStorage.setItem("user", JSON.stringify(data?.user));
-                    console.log('====================================');
-                    console.log("user::", data?.user);
-                    console.log('====================================');
                     router.push('/')
                 }
 
                 // throw new Error(data?.message || data);
             })
             .catch((error) => {
-                setError(error?.message);
+                // setError(error?.message);
+                setError(error);
             })
     };
     return { loading, error, handleGoogle, setError };

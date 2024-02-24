@@ -245,7 +245,7 @@ export default function ManageFacilities() {
                   <td className="p-5 border text-center">
                     <p>18h-20-11-2022</p>
                   </td>
-                  <td className="">
+                  <td className="border">
                     <div className="flex flex-col gap-2 w-full py-1">
                       <button
                         onClick={showModal}
@@ -259,7 +259,7 @@ export default function ManageFacilities() {
                     </div>
                   </td>
                 </tr>
-                <tr className="">
+                <tr className="border">
                   <td className="p-5 border text-center">
                     <p>1</p>
                   </td>

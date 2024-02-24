@@ -2,7 +2,7 @@ import { Button } from "antd";
 import { url } from "inspector";
 import Image from "next/image";
 import React from "react";
-import data  from "../../services/profile.service";
+// import data  from "../../services/profile.service";
 import { useState } from "react";
 
 const ProfileUserComponent = () => {
@@ -49,7 +49,7 @@ const ProfileUserComponent = () => {
             </label>
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
-             value={data[0].name}
+            //  value={data[0].name}
               
             />
           </div>

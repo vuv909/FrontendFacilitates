@@ -1,5 +1,5 @@
 "use client";
-import login from "../../services/login.service";
+import login from "../../services/login/login.service";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
@@ -16,7 +16,7 @@ const LoginComponent = () => {
     toast.current.show({
       severity: "error",
       summary: "Error",
-      detail: "Login failed",
+      detail: (error as any).response.data.error,
       life: 3000,
     });
   };
@@ -40,9 +40,6 @@ const LoginComponent = () => {
   useEffect(() => {
     if (error !== "") {
       showError();
-      console.log("====================================");
-      console.log("errorLogin: " + error);
-      console.log("====================================");
       setError("");
     }
   }, [error]);
