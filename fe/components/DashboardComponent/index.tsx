@@ -17,12 +17,18 @@ import ManageFacilites from "./ManageFacilities";
 import ManageBookingRequest from "./ManageBookingRequest";
 import ManageAccount from "./ManageAccount";
 import RecycleFacilities from "./Recycle";
+import CategoryComponent from "../CategoryComponent";
 
 const { SubMenu } = Menu;
 
 const items = [
   { key: "1", label: "Thống kê", icon: <LineChartOutlined /> },
   { key: "2", label: "Quản lý phòng , sân bóng", icon: <AppstoreOutlined /> },
+  {
+    key: "6",
+    label: "Quản lý các thể loại dịch vụ",
+    icon: <AppstoreOutlined />,
+  },
   {
     key: "3",
     label: "Duyệt yêu cầu đặt sân , phòng",
@@ -67,7 +73,7 @@ const DashboardComponent: React.FC = () => {
             collapsed === true ? "block" : "hidden"
           } `}
         >
-         <RightOutlined />
+          <RightOutlined />
         </Button>
         <Button
           onClick={toggleCollapsed}
@@ -94,6 +100,7 @@ const DashboardComponent: React.FC = () => {
         {key === "3" && <ManageBookingRequest />}
         {key === "4" && <ManageAccount />}
         {key === "5" && <RecycleFacilities />}
+        {key === "6" && <CategoryComponent />}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { Carousel, CarouselResponsiveOption } from "primereact/carousel";
 import { Tag } from "primereact/tag";
-import { ProductService } from "../../services/ProductService";
+import { ProductService } from "../../services/product/ProductService";
 import "primeflex/primeflex.css";
 interface Product {
   id: string;

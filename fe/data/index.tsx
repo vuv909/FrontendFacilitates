@@ -93,6 +93,8 @@ export const getCurrentWeekTime = () => {
   return index;
 };
 
+export const statusFilter = ['Pending','Completed','Refused','Expired']
+
 export const years = () => {
   const date = new Date();
   const currentYear = date.getFullYear();

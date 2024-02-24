@@ -5,7 +5,7 @@ import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { Carousel, CarouselResponsiveOption } from "primereact/carousel";
 import { Tag } from "primereact/tag";
-import { ProductService } from "../../services/ProductService";
+import { ProductService } from "../../services/product/ProductService";
 import "primeflex/primeflex.css";
 
 interface Product {
@@ -32,7 +32,7 @@ export default function CarouselComponent() {
 
   const productTemplate = (product: Product) => {
     return (
-      <div className="relative text-center h-96  cursor-pointer m-5 z-50">
+      <div className="relative text-center h-96 cursor-pointer m-5 z-50">
         <Image
           width={500}
           height={500}
@@ -40,13 +40,16 @@ export default function CarouselComponent() {
           alt={product.name}
           className="w-screen h-full rounded-lg"
         />
-
+  
         <div className="absolute top-72 left-1/2 -translate-x-1/2 bg-white rounded-lg p-3">
-          <h4 className="mb-1 font-bold text-xl">Sân bóng đá</h4>
+          <h4 className="w-28 mb-1 font-bold text-lg overflow-hidden whitespace-nowrap text-ellipsis">{product.name} {product.name} {product.name} {product.name}</h4>
         </div>
       </div>
     );
   };
+  
+  
+
 
   return (
     <div className="px-32">

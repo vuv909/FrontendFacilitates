@@ -24,18 +24,13 @@ export default function Login() {
               width={60}
               height={60}
               alt="logo"
-              className="mt-5 ml-5 rounded-full cursor-pointer text-red-500"
+              className="mt-2 ml-5 rounded-full cursor-pointer text-red-500"
               style={{ zIndex: 100, position: "absolute", top: 0, left: 0 }}
             />
           </Link>
         </div>
 
         <div className="w-screen h-screen flex flex-col items-center justify-center">
-          <div className="text-center mb-10" style={{ width: "100%" }}>
-            <h1 className="mt-24 text-6xl font-bold text-white filter brightness-200">
-              Chúng tôi có các dịch vụ như{" "}
-            </h1>
-          </div>
           <div className="flex items-center justify-center gap-20">
             <div className="relative h-60 cursor-pointer">
               <Image
