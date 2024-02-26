@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "antd";
 import { url } from "inspector";
 import Image from "next/image";
@@ -6,11 +7,16 @@ import React from "react";
 import { useState } from "react";
 
 const ProfileUserComponent = () => {
- 
+  const [image, setImage] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
+
   return (
     <div className="flex items-center justify-center h-screen w-screen mt-10 bg-gray-100">
       <div className="bg-white rounded-md -md p-20 ">
-      <h1 className="font-extralight text-2xl">Thông tin cá nhân</h1>
+        <h1 className=" text-2xl font-bold">Thông tin cá nhân</h1>
         <div className="flex justify-between ml-24">
           <div className="w-32 h-32 overflow-hidden">
             <img
@@ -21,10 +27,7 @@ const ProfileUserComponent = () => {
               className="object-cover w-full h-full rounded-full"
             />
           </div>
-          <Button
-            
-            className="bg-blue-600 text-white w-23  h-10 rounded-md mr-10  pr-3 mt-11 border flex items-center justify-center"
-          >
+          <Button className="bg-blue-600 text-white w-23  h-10 rounded-md mr-10  pr-3 mt-11 border flex items-center justify-center">
             <svg
               className="w-4 h-4 mr-2"
               fill="none"
@@ -39,7 +42,7 @@ const ProfileUserComponent = () => {
                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 16V7m-3 3h6"
               />
             </svg>
-            Tải ảnh 
+            Tải ảnh
           </Button>
         </div>
         <div>
@@ -48,9 +51,11 @@ const ProfileUserComponent = () => {
               Tên
             </label>
             <input
+              type="text"
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
-            //  value={data[0].name}
-              
+              value={name}
+             onChange={(e)=> setName(e.target.value)}
+             placeholder="Nhập tên...."
             />
           </div>
 
@@ -61,8 +66,9 @@ const ProfileUserComponent = () => {
 
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
-              value={"quandeptrai.@gmail.com"}
-            
+              value={email}
+             onChange={(e)=> setEmail(e.target.value)}
+             placeholder="Nhập email..."
             />
           </div>
 
@@ -73,8 +79,9 @@ const ProfileUserComponent = () => {
 
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
-              value={"Hà Nội"}
-           
+              value={address}
+             onChange={(e)=> setAddress(e.target.value)}
+             placeholder="Nhập địa chỉ"
             />
           </div>
 
@@ -85,16 +92,16 @@ const ProfileUserComponent = () => {
 
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
-              value={"0987654321"}
-         
+              value={phonenumber}
+             onChange={(e)=> setPhonenumber(e.target.value)}
             />
           </div>
 
           <div className="flex">
-            <Button className= "flex items-center justify-center bg-white text-blue-600  px-6 py-2 rounded-md mr-10 border border-solid border-gray-700">
+            <Button className="flex items-center justify-center bg-white text-blue-600  px-6 py-2 rounded-md mr-10 border border-solid border-gray-700">
               Hủy
             </Button>
-            <Button   className="flex items-center justify-center bg-blue-600 text-white px-6 py-2 rounded-md mr-10 border border-solid border-transparent">
+            <Button className="flex items-center justify-center bg-blue-600 text-white px-6 py-2 rounded-md mr-10 border border-solid border-transparent">
               Lưu
             </Button>
           </div>
