@@ -13,7 +13,14 @@ import {
 } from "primereact/fileupload";
 import { classNames } from "primereact/utils";
 import { icon } from "@fortawesome/fontawesome-svg-core";
-import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
+import {
+  Button,
+  Modal,
+  Pagination,
+  PaginationProps,
+  Spin,
+  Tooltip,
+} from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileCsv,
@@ -21,7 +28,7 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { Toast } from "primereact/toast";
-import { getCategory } from "../../services/category.api";
+import { addCategory, getCategory } from "../../services/category.api";
 interface City {
   name: string;
   code: string;
@@ -51,14 +58,15 @@ type addCategorySchemaType = z.infer<typeof addCategorySchema>;
 
 export default function CategoryComponent() {
   const [open, setOpen] = useState(false);
-
+  const [isLoadingAddFormCategory, setIsLoadingAddFormCategory] =
+    useState(false);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [textValue, setTextValue] = useState<string>("");
   const [img, setImg] = useState<File | null>(null);
   const [location, setLocation] = useState<string>("");
   const [shortTitle, setShortTitle] = useState<string>("");
   const [description, setDescription] = useState<string | null>("");
-  const [categoryData , setCategoryData] = useState()
+  const [categoryData, setCategoryData] = useState<any[]>([]);
 
   const {
     register,
@@ -79,10 +87,19 @@ export default function CategoryComponent() {
 
   const toastAddCategory = useRef<any>(null);
 
-  const showErrorAddCategory = (msg: string) => {
+  const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
       severity: "error",
       summary: "Error",
+      detail: msg,
+      life: 3000,
+    });
+  };
+
+  const showSuccessCategory = (msg: string) => {
+    toastAddCategory.current.show({
+      severity: "success",
+      summary: "Success",
       detail: msg,
       life: 3000,
     });
@@ -145,16 +162,50 @@ export default function CategoryComponent() {
     console.log("====================================");
     console.log("image::", img);
     console.log("====================================");
+    const formData = new FormData();
+    formData.append("categoryName", data.categoryName);
+    if (img) {
+      formData.append("img", img);
+    }
+    addCategory(formData)
+      .then((res) => {
+        showSuccessCategory("Add Category successfully !!!");
+        getCategory()
+          .then((res) => {
+            setIsLoadingAddFormCategory(false);
+            setCategoryData(res.data.data);
+            console.log("====================================");
+            console.log(res.data.data);
+            console.log("====================================");
+            handleCancel();
+            reset();
+          })
+          .catch((err) => {
+            setIsLoadingAddFormCategory(false);
+            showErrorCategory("Error occurred !!!");
+            handleCancel();
+            reset();
+          });
+      })
+      .catch((err) => {
+        setIsLoadingAddFormCategory(false);
+        showErrorCategory("Error adding category !!! ");
+      });
   };
 
-  //call api 
-  useEffect(()=>{
-    getCategory().then((res)=>{
-      setCategoryData(res.data)
-    }).catch((err)=>{
-      
-    })
-  },[])
+  //call api
+  useEffect(() => {
+    getCategory()
+      .then((res) => {
+        setCategoryData(res.data.data);
+        console.log("====================================");
+        console.log(res.data.data);
+        console.log("====================================");
+      })
+      .catch((err) => {
+        showErrorCategory("Error occurred !!!");
+      });
+  }, []);
 
   return (
     <>
@@ -209,47 +260,48 @@ export default function CategoryComponent() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>DE222</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Slot1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>14h30-24/11/2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>18h-24/11/2022</p>
-                  </td>
-
-                  <td className="border">
-                    <div className="flex flex-col items-center gap-2 w-full py-1">
-                      <button
-                        onClick={showModal}
-                        className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
-                      >
-                        Cập nhật
-                      </button>
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {Array.isArray(categoryData) && categoryData.length > 0 ? (
+                  categoryData.map((c, index) => (
+                    <tr key={index} className="">
+                      <td className="p-5 border text-center">
+                        <p>{index + 1}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
+                          <span>{c?.categoryName}</span>
+                        </p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p>{c.slot}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p>{c && new Date(c.createdAt).toLocaleString()}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p>{c && new Date(c.updatedAt).toLocaleString()}</p>
+                      </td>
+                      <td className="border">
+                        <div className="flex flex-col items-center gap-2 w-full py-1">
+                          <button
+                            onClick={showModal}
+                            className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
+                          >
+                            Cập nhật
+                          </button>
+                          <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
+                            Xóa
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="text-center">
+                      <h1>No data</h1>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
             <div className="flex items-center justify-center ">
@@ -272,54 +324,58 @@ export default function CategoryComponent() {
         closeIcon={<></>}
         footer={[]}
       >
-        <div>
-          <h1 className="text-center font-bold mb-5 text-xl">
-            Tạo một dịch vụ mới
-          </h1>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-2">
-            <label htmlFor="name">Tên phòng,sân bóng</label>
-            <input
-              id="name"
-              className={`w-full shadow-none p-3 border ${
-                errors.categoryName ? "outline-red-300" : "outline-blue-300"
-              }`}
-              {...register("categoryName")}
-            />
-            {errors.categoryName && (
-              <span className="text-red-500">
-                {errors.categoryName.message}
-              </span>
-            )}
+        <Spin tip="Loading" size="large" spinning={isLoadingAddFormCategory}>
+          <div>
+            <h1 className="text-center font-bold mb-5 text-xl">
+              Tạo một dịch vụ mới
+            </h1>
           </div>
-          <div className="border mb-10 flex justify-content-center">
-            <Tooltip title="Tải ảnh cho phòng, sân thể dục vào đây">
-              <FileUpload
-                id="img"
-                onSelect={(e: FileUploadSelectEvent) => handleSelectedFile(e)}
-                accept="image/*"
-                maxFileSize={MAX_FILE_SIZE}
-                disabled={false}
-                uploadOptions={{
-                  className: "hidden",
-                }}
-                emptyTemplate={
-                  <p className="m-0">Tải ảnh cho phòng, sân thể dục vào đây</p>
-                }
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-2">
+              <label htmlFor="name">Tên phòng,sân bóng</label>
+              <input
+                id="name"
+                className={`w-full shadow-none p-3 border ${
+                  errors.categoryName ? "outline-red-300" : "outline-blue-300"
+                }`}
+                {...register("categoryName")}
               />
-            </Tooltip>
-          </div>
+              {errors.categoryName && (
+                <span className="text-red-500">
+                  {errors.categoryName.message}
+                </span>
+              )}
+            </div>
+            <div className="border mb-10 flex justify-content-center">
+              <Tooltip title="Tải ảnh cho phòng, sân thể dục vào đây">
+                <FileUpload
+                  id="img"
+                  onSelect={(e: FileUploadSelectEvent) => handleSelectedFile(e)}
+                  accept="image/*"
+                  maxFileSize={MAX_FILE_SIZE}
+                  disabled={false}
+                  uploadOptions={{
+                    className: "hidden",
+                  }}
+                  emptyTemplate={
+                    <p className="m-0">
+                      Tải ảnh cho phòng, sân thể dục vào đây
+                    </p>
+                  }
+                />
+              </Tooltip>
+            </div>
 
-          <div className="flex justify-end">
-            <Button key="back" onClick={handleCancel}>
-              Hủy
-            </Button>
-            <Button className="bg-blue-500 text-white" htmlType="submit">
-              Thêm
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end">
+              <Button key="back" onClick={handleCancel}>
+                Hủy
+              </Button>
+              <Button className="bg-blue-500 text-white" htmlType="submit" onClick={()=>setIsLoadingAddFormCategory(true)}>
+                Thêm
+              </Button>
+            </div>
+          </form>
+        </Spin>
       </Modal>
     </>
   );

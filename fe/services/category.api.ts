@@ -2,13 +2,14 @@ import restClient from "./restClient";
 
 export function getCategory() {
   return restClient({
-    url: "category/list",
+    url: "category//list",
   });
 }
 
 export function addCategory(data: any) {
   return restClient({
     url: "category/create",
+    method: "POST",
     data: data,
   });
 }
