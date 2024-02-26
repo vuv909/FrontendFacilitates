@@ -1,25 +1,11 @@
-import { Metadata } from "next";
+"use client"
 import InfomationDetailComponent from "../../../../../components/InformationDetailComponent";
 import CommentComponent from "../../../../../components/DetailComponent/CommentComponent";
 import CarouselTopComponent from "../../../../../components/CarouselTopComponent";
 import FooterComponent from "../../../../../components/FooterComponent";
 import CarouselDetailComponent from "../../../../../components/CarouselDetailComponent";
 
-export const generateMetadata = async ({
-  params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> => {
-  const title = await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Detail ${params.id}`);
-    }, 100);
-  });
 
-  return {
-    title: `${title}`,
-  };
-};
 
 export default function DetailPage() {
   return (

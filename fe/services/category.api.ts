@@ -23,6 +23,6 @@ export function editCategory(data: any) {
 
 export function deleteCategory(id: number) {
   return restClient({
-    url: `category/dekete?id=${id}`,
+    url: `category/delete?id=${id}`,
   });
 }
