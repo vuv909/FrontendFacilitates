@@ -21,8 +21,11 @@ interface Product {
   rating: number;
 }
 
-export default function CarouselComponent() {
+export default function CarouselComponent(props : any) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [cate, setCate] = useState(props.data)
+  console.log(cate);
+  
 
   useEffect(() => {
     ProductService.getProductsSmall().then((data) =>

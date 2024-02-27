@@ -28,10 +28,19 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { Toast } from "primereact/toast";
-import { addCategory, getCategory } from "../../services/category.api";
+import {
+  addCategory,
+  deleteCategory,
+  editCategory,
+  getCategory,
+} from "../../services/category.api";
 interface City {
   name: string;
   code: string;
+}
+interface DataUpdateType {
+  _id: string;
+  categoryName: string;
 }
 
 const MAX_FILE_SIZE = 2000000;
@@ -54,19 +63,40 @@ const addCategorySchema = z.object({
     }),
 });
 
+const updateCategorySchema = z.object({
+  categoryName: z
+    .string()
+    .trim()
+    .nonempty()
+    .max(100, "Maximum character is 100 characters !!!")
+    .refine((categoryName) => categoryName.trim().length > 0, {
+      message: "Category name is required.",
+    }),
+});
+
 type addCategorySchemaType = z.infer<typeof addCategorySchema>;
+type updateCategorySchemaType = z.infer<typeof updateCategorySchema>;
 
 export default function CategoryComponent() {
+  const refAdd = useRef<FileUpload | null>(null);
+  const refUpdate = useRef<FileUpload | null>(null);
   const [open, setOpen] = useState(false);
+  const [openUpdate, setOnOpenUpdate] = useState(false);
   const [isLoadingAddFormCategory, setIsLoadingAddFormCategory] =
+    useState(false);
+  const [isLoadingUpdateFormCategory, setisLoadingUpdateFormCategory] =
     useState(false);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [textValue, setTextValue] = useState<string>("");
   const [img, setImg] = useState<File | null>(null);
+  const [imgUpdate, setImgUpdate] = useState<File | null>(null);
   const [location, setLocation] = useState<string>("");
   const [shortTitle, setShortTitle] = useState<string>("");
   const [description, setDescription] = useState<string | null>("");
   const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [totalPage, setTotalPage] = useState<number | null>(null);
+  const [activePage, setActivePage] = useState<null | number>(1);
+  const [dataUpdate, setDataUpdate] = useState<DataUpdateType | null>(null);
 
   const {
     register,
@@ -77,13 +107,14 @@ export default function CategoryComponent() {
     resolver: zodResolver(addCategorySchema),
   });
 
-  const cities: City[] = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" },
-  ];
+  const {
+    register: update,
+    handleSubmit: submitUpdate,
+    formState: { errors: errorUpdate },
+    reset: resetUpdate,
+  } = useForm<updateCategorySchemaType>({
+    resolver: zodResolver(updateCategorySchema),
+  });
 
   const toastAddCategory = useRef<any>(null);
 
@@ -114,32 +145,19 @@ export default function CategoryComponent() {
     }
   };
 
-  const data = new FormData();
-  const handleAdd = () => {
-    if (selectedCity?.name) {
-      data.append("category", selectedCity.name);
-    }
-    data.append("name", textValue);
-    if (img != null) {
-      data.append("img", img);
-    }
-    data.append("location", location);
-    data.append("shortTitle", shortTitle);
-    if (description != null) {
-      data.append("description", description);
-    }
-
-    const formDataEntries: [string, FormDataEntryValue][] = Array.from(
-      data.entries()
-    );
-
-    for (const [key, value] of formDataEntries) {
-      console.log(`${key}: ${value}`);
+  const handleSelectedFileUpdate = (e: FileUploadSelectEvent) => {
+    const selectedFile = e.files;
+    if (selectedFile.length > 0) {
+      setImgUpdate(selectedFile[0]);
+    } else {
+      alert("Selected file size exceeds the limit of 2MB.");
     }
   };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
+    if (pageNumber !== activePage) {
+      setActivePage(pageNumber);
+    }
   };
 
   //form
@@ -147,7 +165,23 @@ export default function CategoryComponent() {
     setOpen(false);
   };
 
+  const handleOkUpdate = () => {
+    setOnOpenUpdate(false);
+  };
+
+  const handleCancelUpdate = () => {
+    setImgUpdate(null);
+    if (refUpdate.current && refUpdate.current.setFiles) {
+      refUpdate.current.setFiles([]);
+    }
+    setOnOpenUpdate(false);
+  };
+
   const handleCancel = () => {
+    setImg(null);
+    if (refAdd.current && refAdd.current.setFiles) {
+      refAdd.current.setFiles([]);
+    }
     reset();
     setOpen(false);
   };
@@ -155,57 +189,172 @@ export default function CategoryComponent() {
     setOpen(true);
   };
 
-  const onSubmit: SubmitHandler<addCategorySchemaType> = (data) => {
-    console.log("====================================");
-    console.log("data::", data);
-    console.log("====================================");
-    console.log("====================================");
-    console.log("image::", img);
-    console.log("====================================");
-    const formData = new FormData();
-    formData.append("categoryName", data.categoryName);
-    if (img) {
-      formData.append("img", img);
-    }
-    addCategory(formData)
+  const handleDelete = (id: string) => {
+    deleteCategory(id)
       .then((res) => {
-        showSuccessCategory("Add Category successfully !!!");
+        showSuccessCategory("Delete Category successfully !!!");
         getCategory()
           .then((res) => {
-            setIsLoadingAddFormCategory(false);
-            setCategoryData(res.data.data);
-            console.log("====================================");
-            console.log(res.data.data);
-            console.log("====================================");
-            handleCancel();
-            reset();
+            setCategoryData(res.data.item);
+            setTotalPage(res.data.totalPage);
+            setActivePage(res.data.activePage);
           })
           .catch((err) => {
-            setIsLoadingAddFormCategory(false);
             showErrorCategory("Error occurred !!!");
-            handleCancel();
-            reset();
           });
       })
       .catch((err) => {
-        setIsLoadingAddFormCategory(false);
-        showErrorCategory("Error adding category !!! ");
+        showErrorCategory("Error occurred when delete category !!!");
       });
+  };
+
+  const showModalUpdate = (data: any) => {
+    console.log("====================================");
+    console.log(data);
+    console.log("====================================");
+    setOnOpenUpdate(true);
+    setDataUpdate(data);
+  };
+
+  const onSubmitUpdate: SubmitHandler<updateCategorySchemaType> = (data) => {
+    setisLoadingUpdateFormCategory(true);
+    if (Object.keys(errorUpdate).length === 0 && imgUpdate) {
+      const formData = new FormData();
+      formData.append("id", dataUpdate?._id || "");
+      formData.append("categoryName", data.categoryName);
+      formData.append("img", imgUpdate);
+      editCategory(formData)
+        .then((res) => {
+          showSuccessCategory("Update Category successfully !!!");
+          resetUpdate();
+          handleCancelUpdate();
+          if (typeof activePage === "number" && activePage > 0) {
+            getCategory(activePage)
+              .then((res) => {
+                setCategoryData(res.data.item);
+                setTotalPage(res.data.totalPage);
+                reset();
+                handleCancel();
+                setisLoadingUpdateFormCategory(false);
+              })
+              .catch((err) => {
+                setisLoadingUpdateFormCategory(false);
+                showErrorCategory("Error occurred !!!");
+                handleCancel();
+                reset();
+              });
+          } else {
+            getCategory()
+              .then((res) => {
+                setCategoryData(res.data.item);
+                setTotalPage(res.data.totalPage);
+                setActivePage(res.data.activePage);
+                reset();
+                handleCancel();
+                setisLoadingUpdateFormCategory(false);
+              })
+              .catch((err) => {
+                setisLoadingUpdateFormCategory(false);
+                showErrorCategory("Error occurred !!!");
+                handleCancel();
+                reset();
+              });
+          }
+        })
+        .catch((err) => {
+          setisLoadingUpdateFormCategory(false);
+          showErrorCategory(
+            err.response.data[0]?.msg || "Error updating category !!!"
+          );
+        });
+    } else {
+      showErrorCategory("Image must be less than 2MB and not empty !!");
+      setisLoadingUpdateFormCategory(false);
+    }
+  };
+
+  const onSubmit: SubmitHandler<addCategorySchemaType> = (data) => {
+    setIsLoadingAddFormCategory(true);
+    if (Object.keys(errorUpdate).length === 0 && img) {
+      const formData = new FormData();
+      formData.append("categoryName", data.categoryName);
+      formData.append("img", img);
+      addCategory(formData)
+        .then((res) => {
+          showSuccessCategory("Add Category successfully !!!");
+          if (typeof activePage === "number" && activePage > 0) {
+            getCategory(activePage)
+              .then((res) => {
+                setCategoryData(res.data.item);
+                setTotalPage(res.data.totalPage);
+                reset();
+                handleCancel();
+                setIsLoadingAddFormCategory(false);
+              })
+              .catch((err) => {
+                setIsLoadingAddFormCategory(false);
+                showErrorCategory("Error occurred !!!");
+                handleCancel();
+                reset();
+              });
+          } else {
+            getCategory()
+              .then((res) => {
+                setCategoryData(res.data.item);
+                setTotalPage(res.data.totalPage);
+                setActivePage(res.data.activePage);
+                reset();
+                handleCancel();
+                setIsLoadingAddFormCategory(false);
+              })
+              .catch((err) => {
+                setIsLoadingAddFormCategory(false);
+                showErrorCategory("Error occurred !!!");
+                handleCancel();
+                reset();
+              });
+          }
+        })
+        .catch((err) => {
+          setIsLoadingAddFormCategory(false);
+          showErrorCategory("Error adding category !!! ");
+        });
+    } else {
+      showErrorCategory("Image must be less than 2MB and not empty !!");
+      setIsLoadingAddFormCategory(false);
+    }
   };
 
   //call api
   useEffect(() => {
-    getCategory()
-      .then((res) => {
-        setCategoryData(res.data.data);
-        console.log("====================================");
-        console.log(res.data.data);
-        console.log("====================================");
-      })
-      .catch((err) => {
-        showErrorCategory("Error occurred !!!");
-      });
-  }, []);
+    if (activePage !== null && activePage > 0) {
+      getCategory(activePage)
+        .then((res) => {
+          setCategoryData(res.data.item);
+          setTotalPage(res.data.totalPage);
+          setActivePage(res.data.activePage);
+        })
+        .catch((err) => {
+          setCategoryData([]);
+          setTotalPage(null);
+          setActivePage(null);
+          showErrorCategory("Error occurred !!!");
+        });
+    } else {
+      getCategory()
+        .then((res) => {
+          setCategoryData(res.data.item);
+          setTotalPage(res.data.totalPage);
+          setActivePage(res.data.activePage);
+        })
+        .catch((err) => {
+          setCategoryData([]);
+          setTotalPage(null);
+          setActivePage(null);
+          showErrorCategory("Error occurred !!!");
+        });
+    }
+  }, [activePage]);
 
   return (
     <>
@@ -260,7 +409,8 @@ export default function CategoryComponent() {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(categoryData) && categoryData.length > 0 ? (
+                {Array.isArray(categoryData) &&
+                  categoryData.length > 0 &&
                   categoryData.map((c, index) => (
                     <tr key={index} className="">
                       <td className="p-5 border text-center">
@@ -271,8 +421,8 @@ export default function CategoryComponent() {
                           <span>{c?.categoryName}</span>
                         </p>
                       </td>
-                      <td className="p-5 border text-center">
-                        <p>{c.slot}</p>
+                      <td className="p-5 border text-center flex justify-center">
+                        <img className="h-32 w-32" src={c.image} alt="" />
                       </td>
                       <td className="p-5 border text-center">
                         <p>{c && new Date(c.createdAt).toLocaleString()}</p>
@@ -283,35 +433,40 @@ export default function CategoryComponent() {
                       <td className="border">
                         <div className="flex flex-col items-center gap-2 w-full py-1">
                           <button
-                            onClick={showModal}
+                            onClick={() => showModalUpdate(c)}
                             className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
                           >
                             Cập nhật
                           </button>
-                          <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
+                          <button
+                            className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24"
+                            onClick={() => handleDelete(c._id)}
+                          >
                             Xóa
                           </button>
                         </div>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td className="text-center">
-                      <h1>No data</h1>
-                    </td>
-                  </tr>
-                )}
+                  ))}
               </tbody>
             </table>
-            <div className="flex items-center justify-center ">
-              <Pagination
-                defaultCurrent={6}
-                total={500}
-                onChange={onChangePage}
-                showSizeChanger={false}
-              />
-            </div>
+
+            {!(Array.isArray(categoryData) && categoryData.length > 0) && (
+              <div className="text-center">
+                <h1 className="font-bold text-3xl my-10">No data</h1>
+              </div>
+            )}
+
+            {totalPage != null && totalPage > 0 && activePage != null && (
+              <div className="flex items-center justify-center ">
+                <Pagination
+                  defaultCurrent={activePage}
+                  total={Number(totalPage + "0")}
+                  onChange={onChangePage}
+                  showSizeChanger={false}
+                />
+              </div>
+            )}
           </div>
         </div>
         <Toast ref={toastAddCategory} />
@@ -352,6 +507,8 @@ export default function CategoryComponent() {
                   id="img"
                   onSelect={(e: FileUploadSelectEvent) => handleSelectedFile(e)}
                   accept="image/*"
+                  ref={refAdd}
+                  onClear={() => setImg(null)}
                   maxFileSize={MAX_FILE_SIZE}
                   disabled={false}
                   uploadOptions={{
@@ -370,8 +527,76 @@ export default function CategoryComponent() {
               <Button key="back" onClick={handleCancel}>
                 Hủy
               </Button>
-              <Button className="bg-blue-500 text-white" htmlType="submit" onClick={()=>setIsLoadingAddFormCategory(true)}>
+              <Button className="bg-blue-500 text-white" htmlType="submit">
                 Thêm
+              </Button>
+            </div>
+          </form>
+        </Spin>
+      </Modal>
+
+      <Modal
+        className="w-96"
+        open={openUpdate}
+        confirmLoading={false}
+        onOk={handleOkUpdate}
+        closeIcon={<></>}
+        footer={[]}
+      >
+        <Spin tip="Loading" size="large" spinning={isLoadingUpdateFormCategory}>
+          <div>
+            <h1 className="text-center font-bold mb-5 text-xl">Cập nhập</h1>
+          </div>
+          <form onSubmit={submitUpdate(onSubmitUpdate)}>
+            <div className="mb-2">
+              <label htmlFor="name">Tên phòng,sân bóng</label>
+              <input
+                id="name"
+                defaultValue={dataUpdate?.categoryName || ""}
+                className={`w-full shadow-none p-3 border ${
+                  errorUpdate.categoryName
+                    ? "outline-red-300"
+                    : "outline-blue-300"
+                }`}
+                {...update("categoryName")}
+              />
+
+              {errorUpdate.categoryName && (
+                <span className="text-red-500">
+                  {errorUpdate.categoryName.message}
+                </span>
+              )}
+            </div>
+            <div className="border mb-10 flex justify-content-center">
+              <Tooltip title="Tải ảnh cho phòng, sân thể dục vào đây">
+                <FileUpload
+                  id="img"
+                  onSelect={(e: FileUploadSelectEvent) =>
+                    handleSelectedFileUpdate(e)
+                  }
+                  ref={refUpdate}
+                  onClear={() => setImgUpdate(null)}
+                  accept="image/*"
+                  maxFileSize={MAX_FILE_SIZE}
+                  disabled={false}
+                  uploadOptions={{
+                    className: "hidden",
+                  }}
+                  emptyTemplate={
+                    <p className="m-0">
+                      Tải ảnh cho phòng, sân thể dục vào đây
+                    </p>
+                  }
+                />
+              </Tooltip>
+            </div>
+
+            <div className="flex justify-end">
+              <Button key="back" onClick={handleCancelUpdate}>
+                Hủy
+              </Button>
+              <Button className="bg-blue-500 text-white" htmlType="submit">
+                Cập nhập
               </Button>
             </div>
           </form>

@@ -1,4 +1,6 @@
 import restClient from "./restClient";
+
+
 export function getFacilities() {
     return restClient({
         url: "facility/list",
@@ -19,10 +21,17 @@ export function addFacility(data: any){
     });
 }
 
+export function updateFacility(data: any){
+    return restClient({
+        url:"facility/update",
+        method: "PUT",
+        data: data,
+    });
+}
+
 export function deleteFacility(id: number){
     return restClient({
-        url: "facility/delete",
+        url: "facility/delete/"+id,
         method: "DELETE",
-        data: id,
     })
 }
