@@ -12,12 +12,12 @@ export default function Profile({
   const colorNavbarOne: string = "bg-gray-300";
   const colorNavbarTwo: string = "bg-gray-300";
   return (
-    <>
+    <div className="overflow-x-hidden">
       <NavbarComponent
         colorNavbarOne={colorNavbarOne}
         colorNavbarTwo={colorNavbarTwo}
       />
      <ProfileUserComponent/>
-</>
+</div>
   );
 }
