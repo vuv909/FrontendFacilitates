@@ -1,84 +1,96 @@
 "use client";
 import { Button } from "antd";
 import { url } from "inspector";
-import Image from "next/image";
-// import { Toast } from "primereact/toast";
-import { string } from "prop-types";
-import React from "react";
+import React, { use, useEffect } from "react";
 import data  from "../../services/profile.service";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { getProfile, updateProfile } from "../../services/profile.api";
 import { log } from "console";
+import { set } from "react-hook-form";
 
 const ProfileUserComponent = () => {
-  const [image, setImage] = useState("");
-  const [name, setName] = useState(data[0].name);
-  const [email, setEmail] = useState(data[0].email);;
-  const [address, setAddress] = useState(data[0].address);
-  const [phonenumber, setPhonenumber] = useState(data[0].phone);
+  const [image,setImage] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");;
+  const [address, setAddress] = useState("");
+  const [role, setRole] = useState("");
+  const [phone, setPhone] = useState("");
+  const userJson: string | null = localStorage.getItem('user');
+  let userId: string = ''; // Khai báo biến userId ở ngoài phạm vi của block
 
-  const validation = () => {
-    const regex = "^0d{9}$";
-    if (
-      name === "" ||
-      name === null ||
-      email === "" ||
-      email === null ||
-      address === "" ||
-      address === null ||
-      phonenumber === "" ||
-      phonenumber === null
-    ) {
-      toast.error("Vui lòng nhập đầy đủ thông tin");
-      return false;
-    } else if (phonenumber.match(regex)) {
-      toast.error("Vui lòng nhập đúng số điện thoại");
-      return false;
-    }else{
-      return true;
-    }
-  };
-  const handleSave = () => {
+if (userJson !== null) {
+    const user: { _id: string } = JSON.parse(userJson);
+    userId = user._id; // Gán giá trị user._id vào biến userId
+}
+
+const validation = () =>{
+  if(!name || ! address){
+    alert('Vui lòng không để trống;');
+    return false;
+  }
+  if (phone.length !== 10 || !phone.startsWith('0') ) {
+    alert("Số điện thoại không hợp lệ.");
+    return false;
+}
+return true;
+}  
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await getProfile(userId);
+            setImage(response.data.avatar);
+            setName(response.data.name);
+            setEmail(response.data.email);
+            setAddress(response.data.address);
+           setRole(response.data.roleId.roleName);
+           setPhone(response.data.phoneNumber);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    fetchData();
+}, [userId]);
+
+
+  const handleSave = async() => {
     const isValid = validation();
-   
-    
-    if(isValid){
-      //connect API
-    }
+    if(isValid) {
+    try {
+    updateProfile(userId, name);
+      console.log("success");
+      alert("Change profile successfully")
+      
+    } catch (error) {
+      console.log("error", error);
+      
+    }   
   };
-  const handleReject = () => {};
+}
+  const handleReject = () => {
+    setName(name);
+    setAddress(address);  
+
+  };
   return (
-    <div className="flex items-center justify-center h-screen w-screen mt-10 bg-gray-100">
-      <div className="bg-white rounded-md p-20 border border-gray-200">
+    <div className="flex items-center justify-center h-screen w-screen mt-10 bg-gray-100 overflow-x-hidden">
+      <div className="bg-white rounded-md p-10 pl-20 pr-20 border border-gray-200 overflow-hidden">
         <h1 className=" text-2xl font-bold">Thông tin cá nhân</h1>
-        <div className="flex justify-between ml-24">
-          <div className="w-32 h-32 overflow-hidden">
+        <div className="flex justify-center m-2">
+          <div className="w-32 h-32 overflow-hidden ">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg"
-              width={90}
-              height={90}
+              src={image}
+              width={100}
+              height={100}
               alt="Anonymous"
               className="object-cover w-full h-full rounded-full"
             />
           </div>
-
-          <Button className="bg-blue-600 text-white w-23  h-10 rounded-md mr-10  pr-3 mt-11 border flex items-center justify-center">
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 16V7m-3 3h6"
-              />
-            </svg>
-            Tải ảnh
-          </Button>
+        </div>
+        <div className="items-center justify-center ">
+            <h3 className="text-center font-bold">{role}</h3>
         </div>
         <div>
           <div className="mb-4">
@@ -87,7 +99,7 @@ const ProfileUserComponent = () => {
             </label>
             <input
               type="text"
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
+              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 pl-1 rounded-md"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nhập tên...."
@@ -100,19 +112,18 @@ const ProfileUserComponent = () => {
             </label>
 
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
+              className="text-black-800 w-96 border border-solid border-gray-600 pr-40 pb-2 pl-1  rounded-md disabled"
               value={email}
-              placeholder="Nhập email..."
             />
           </div>
 
           <div className="mb-4">
             <label className="block text-black-600 text-sm font-semibold mb-2">
-              Địa chỉ
+              Địa chỉ 
             </label>
 
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
+              className="text-black-800 w-96 border border-solid border-gray-600 pr-40 pb-2 pl-1  rounded-md "
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Nhập địa chỉ..."
@@ -125,28 +136,24 @@ const ProfileUserComponent = () => {
             </label>
 
             <input
-              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 rounded-md"
-              value={phonenumber}
-              onChange={(e) => setPhonenumber(e.target.value)}
+              className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 pl-1  rounded-md"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               placeholder="Nhập số điện thoại..."
             />
           </div>
 
           <div className="flex">
-            <Button className="flex items-center justify-center bg-white text-blue-600  px-6 py-2 rounded-md mr-10 border border-solid border-gray-700" onClick={handleReject}>
+            <Button className="flex items-center justify-center bg-white text-blue-600  px-6 py-4 rounded-md mr-10 border border-solid border-gray-700" onClick={handleReject}>
               Hủy
             </Button>
-            <Button className="flex items-center justify-center bg-blue-600 text-white px-6 py-2 rounded-md mr-10 border border-solid border-transparent" onClick={handleSave}>
+            <Button className="flex items-center justify-center bg-blue-600 text-white px-6 py-4 rounded-md mr-10 border border-solid border-transparent" onClick={handleSave}>
               Lưu
             </Button>
           </div>
         </div>
       </div>
-      <ToastContainer
-  position="top-right"
-  autoClose={1000}
-  style={{ fontSize: '14px', width: 'fit-content', minWidth: '100px' }}
-/>
+     
     </div>
   );
 };
