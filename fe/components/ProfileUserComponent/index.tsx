@@ -14,7 +14,7 @@ const ProfileUserComponent = () => {
   const [email, setEmail] = useState("");;
   const [address, setAddress] = useState("");
   const [role, setRole] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const userJson: string | null = localStorage.getItem('user');
   let userId: string = ''; // Khai báo biến userId ở ngoài phạm vi của block
 
@@ -28,28 +28,29 @@ const validation = () =>{
     alert('Vui lòng không để trống;');
     return false;
   }
-  if (phone.length !== 10 || !phone.startsWith('0') ) {
+  if (!/^\d{10}$/.test(phoneNumber) || !phoneNumber.startsWith('0')) {
     alert("Số điện thoại không hợp lệ.");
     return false;
 }
+
 return true;
 }  
-
+const fetchData = async () => {
+  try {
+      const response = await getProfile(userId);
+      setImage(response.data.avatar);
+      setName(response.data.name);
+      setEmail(response.data.email);
+      setAddress(response.data.address);
+     setRole(response.data.roleId.roleName);
+      setPhoneNumber(response.data.phoneNumber);
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const response = await getProfile(userId);
-            setImage(response.data.avatar);
-            setName(response.data.name);
-            setEmail(response.data.email);
-            setAddress(response.data.address);
-           setRole(response.data.roleId.roleName);
-           setPhone(response.data.phoneNumber);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+    
 
     fetchData();
 }, [userId]);
@@ -59,19 +60,19 @@ return true;
     const isValid = validation();
     if(isValid) {
     try {
-    updateProfile(userId, name);
+    updateProfile(userId, {name, address,phoneNumber});
       console.log("success");
-      alert("Change profile successfully")
+      alert("Thay đổi thông tin thành công");
       
     } catch (error) {
       console.log("error", error);
+      alert( error);
       
     }   
   };
 }
   const handleReject = () => {
-    setName(name);
-    setAddress(address);  
+   fetchData();
 
   };
   return (
@@ -137,8 +138,8 @@ return true;
 
             <input
               className="text-black-800 border border-solid border-gray-600 pr-40 pb-2 pl-1  rounded-md"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="Nhập số điện thoại..."
             />
           </div>
