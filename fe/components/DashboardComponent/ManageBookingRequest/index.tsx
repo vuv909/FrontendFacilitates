@@ -84,8 +84,8 @@ export default function ManageBookingRequest() {
                 <th className="p-5 border">#</th>
                 <th className="p-5 border">Tên phòng (sân)</th>
                 <th className="p-5 border">Slot</th>
-                <th className="p-5 border">Thời gian bắt đầu</th>
-                <th className="p-5 border">Thời gian kết thúc</th>
+                {/* <th className="p-5 border">Thời gian bắt đầu</th>
+                <th className="p-5 border">Thời gian kết thúc</th> */}
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
                 <th></th>
@@ -117,12 +117,12 @@ export default function ManageBookingRequest() {
                       <td className="p-5 border text-center">
                         <p>{b?.slot}</p>
                       </td>
-                      <td className="p-5 border text-center">
+                      {/* <td className="p-5 border text-center">
                         <p>{b && new Date(b?.startDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
-                      </td>
+                      </td> */}
                       <td className="p-5 border text-center">
                         <p>Đang chờ xử lí</p>
                       </td>

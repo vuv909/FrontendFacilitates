@@ -132,6 +132,7 @@ export default function InfomationDetailComponent({
       weeks : arrayBooking[2],
       facilityId : detailData?._id,
       booker : userId,
+      status : 1
     }
     addBooking(bookingBody).then((res)=>{
       showSuccessCategory("Booking successfully !!!");

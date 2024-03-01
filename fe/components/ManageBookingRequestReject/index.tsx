@@ -58,8 +58,8 @@ export default function ManageBookingRequestReject() {
                 <th className="p-5 border">#</th>
                 <th className="p-5 border">Tên phòng (sân)</th>
                 <th className="p-5 border">Slot</th>
-                <th className="p-5 border">Thời gian bắt đầu</th>
-                <th className="p-5 border">Thời gian kết thúc</th>
+                {/* <th className="p-5 border">Thời gian bắt đầu</th>
+                <th className="p-5 border">Thời gian kết thúc</th> */}
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
                 <th></th>
@@ -91,18 +91,18 @@ export default function ManageBookingRequestReject() {
                       <td className="p-5 border text-center">
                         <p>{b?.slot}</p>
                       </td>
-                      <td className="p-5 border text-center">
+                      {/* <td className="p-5 border text-center">
                         <p>{b && new Date(b?.startDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
-                      </td>
+                      </td> */}
                       <td className="p-5 border text-center">
                         <p>Bị từ chối </p>
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                        <span>{b?.booker?.name}</span>
+                         <span>{b?.booker?.name}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height={10}
