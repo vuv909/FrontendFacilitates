@@ -5,7 +5,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination, PaginationProps, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { getAllBooking } from "../../../services/booking.api";
+import { editBooking, getAllBooking } from "../../../services/booking.api";
 
 export default function ManageBookingRequest() {
   const [bookingData, setBookingData] = useState<any[]>([]);
@@ -22,11 +22,31 @@ export default function ManageBookingRequest() {
     console.log("Page: ", pageNumber);
   };
 
-  const handleAccept = (data : any)=>{
-    console.log('====================================');
-    console.log("dataAccept::",data);
-    console.log('====================================');
-  }
+  const handleAccept = (data: any) => {
+    const status = 2;
+    editBooking({  status },data?._id)
+      .then((res) => {
+        getAllBooking()
+          .then((res) => {
+            setBookingData(res?.data);
+          })
+          .catch((err) => {});
+      })
+      .catch((err) => {});
+  };
+
+  const handleReject = (data: any) => {
+    const status = 3;
+    editBooking({  status },data?._id)
+      .then((res) => {
+        getAllBooking()
+          .then((res) => {
+            setBookingData(res?.data);
+          })
+          .catch((err) => {});
+      })
+      .catch((err) => {});
+  };
 
   return (
     <div>
@@ -73,13 +93,13 @@ export default function ManageBookingRequest() {
             </thead>
             <tbody>
               {bookingData?.map((b, index) => {
-                const status = b?.facilityId?.status;
-                
+                const status = b?.status;
+
                 if (status === 1) {
                   return (
                     <tr className="border">
                       <td className="p-5 border text-center">
-                      <p>{index+1}</p>
+                        <p>{index + 1}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
@@ -101,14 +121,14 @@ export default function ManageBookingRequest() {
                         <p>{b && new Date(b?.startDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
-                      <p>{b && new Date(b?.endDate).toLocaleString()}</p>
+                        <p>{b && new Date(b?.endDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p>Đang chờ xử lí</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                          <span>{b?.createdBy}</span>
+                        <span>{b?.booker?.name}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height={10}
@@ -121,10 +141,16 @@ export default function ManageBookingRequest() {
                       </td>
                       <td className="">
                         <div className="flex flex-col gap-2 w-full py-1">
-                          <button className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full" onClick={()=>handleAccept(b)}>
+                          <button
+                            className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full"
+                            onClick={() => handleAccept(b)}
+                          >
                             Chấp nhận
                           </button>
-                          <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full" onClick={()=>handleReject(b)}>
+                          <button
+                            className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full"
+                            onClick={() => handleReject(b)}
+                          >
                             Hủy
                           </button>
                         </div>

@@ -67,7 +67,7 @@ export default function ManageBookingRequestAccept() {
             </thead>
             <tbody>
               {bookingData?.map((b, index) => {
-                const status = b?.facilityId?.status;
+                const status = b?.status;
 
                 if (status === 2) {
                   return (
@@ -102,7 +102,7 @@ export default function ManageBookingRequestAccept() {
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                          <span>{b?.createdBy}</span>
+                        <span>{b?.booker?.name}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height={10}

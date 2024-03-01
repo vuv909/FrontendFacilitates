@@ -17,15 +17,16 @@ export function getBookingByUserId(id:number) {
 
 export function getAllBooking() {
   return restClient({
-    url: "booking",
+    url: "booking?page=1&size=100",
     method: "GET",
   });
 }
 
-export function editBooking(data:any){
+export function editBooking(data:any,id :string){
+  
   return restClient({
-    url: "booking",
-    method: "POST",
+    url: "booking/"+id,
+    method: "PUT",
     data
   });
 }
