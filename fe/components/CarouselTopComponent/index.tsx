@@ -34,7 +34,7 @@ interface Facility{
 export default function CarouselTopComponent(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [faci, setFaci] = useState<Facility[]>([]);
-  console.log(props.data);
+  // console.log(props.data);
   
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function CarouselTopComponent(props: any) {
       setProducts(data.slice(0, 9))
     );
     setFaci(props.data)
-  });
+  },[faci]);
 
   if(!faci){
     return(

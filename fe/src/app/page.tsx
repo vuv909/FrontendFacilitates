@@ -27,7 +27,7 @@ export default function Home() {
       .catch((error) => console.error("Error fectching Category"))
     // console.log(faci);
     // console.log(cate);
-  }, [cate, faci])
+  }, [])
 
   // if(!faci || !cate){
   //   return(

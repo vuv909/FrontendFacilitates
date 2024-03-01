@@ -1,12 +1,24 @@
+"use client"
 import Image from "next/image";
 import LoginComponent from "../../../../components/LoginComponent";
 import Link from "next/link";
 import Logo from '../../../../public/icons8-logo.svg'
-export const metadata = {
-  title: "Login",
-};
+import { useState, useEffect } from "react";
+import { getCategory } from "../../../../services/category.api";
+
+// export const metadata = {
+//   title: "Login",
+// };
+
+
 
 export default function Login() {
+  const [cate, setCate] = useState([])
+
+useEffect(() =>{
+  getCategory(). then(async (response) => await setCate(response.data.item))
+  .catch((error) => console.error("Error fetching category"))
+}, [setCate])
   return (
     <div className="h-screen">
       <div className=" bg-orange-500 h-full">

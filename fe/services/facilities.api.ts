@@ -1,9 +1,10 @@
 import restClient from "./restClient";
 
 
-export function getFacilities() {
+export function getFacilities(activePage?: number) {
     return restClient({
         url: "facility/list",
+        params: {page : activePage}
     });
 }
 
@@ -29,9 +30,26 @@ export function updateFacility(data: any){
     });
 }
 
-export function deleteFacility(id: number){
+export function deleteFacility(id: string){
     return restClient({
-        url: "facility/delete/"+id,
+        url: "facility/delete?id="+id,
         method: "DELETE",
+    })
+}
+
+export function facilityById(id : string){
+    return restClient({
+        url: "facility/detail/"+id,
+        method: "GET",
+    })
+}
+
+export function searchFacility(name?:string , categoryId?:string, page?: number , size ?: number){
+    return restClient({
+        url: "facility/list",
+        method: "GET",
+        params: {
+            page  , size , name , categoryId 
+        }
     })
 }

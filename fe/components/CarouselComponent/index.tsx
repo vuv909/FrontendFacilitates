@@ -40,7 +40,7 @@ export default function CarouselComponent(props : any) {
       setProducts(data.slice(0, 9))
     );
     setCate(props.data)
-  });
+  },[cate]);
 
   if(!cate){
     return(
