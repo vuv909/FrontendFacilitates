@@ -22,3 +22,10 @@ export function getAllBooking() {
   });
 }
 
+export function editBooking(data:any){
+  return restClient({
+    url: "booking",
+    method: "POST",
+    data
+  });
+}
