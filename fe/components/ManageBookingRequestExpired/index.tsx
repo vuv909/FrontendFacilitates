@@ -5,9 +5,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination, PaginationProps, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { editBooking, getAllBooking } from "../../../services/booking.api";
+import { getAllBooking } from "../../services/booking.api";
 
-export default function ManageBookingRequest() {
+export default function ManageBookingRequestExpired() {
   const [bookingData, setBookingData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -20,32 +20,6 @@ export default function ManageBookingRequest() {
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     console.log("Page: ", pageNumber);
-  };
-
-  const handleAccept = (data: any) => {
-    const status = 2;
-    editBooking({  status },data?._id)
-      .then((res) => {
-        getAllBooking()
-          .then((res) => {
-            setBookingData(res?.data);
-          })
-          .catch((err) => {});
-      })
-      .catch((err) => {});
-  };
-
-  const handleReject = (data: any) => {
-    const status = 3;
-    editBooking({  status },data?._id)
-      .then((res) => {
-        getAllBooking()
-          .then((res) => {
-            setBookingData(res?.data);
-          })
-          .catch((err) => {});
-      })
-      .catch((err) => {});
   };
 
   return (
@@ -95,7 +69,7 @@ export default function ManageBookingRequest() {
               {bookingData?.map((b, index) => {
                 const status = b?.status;
 
-                if (status === 1) {
+                if (status === 4) {
                   return (
                     <tr className="border">
                       <td className="p-5 border text-center">
@@ -124,11 +98,11 @@ export default function ManageBookingRequest() {
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
-                        <p>Đang chờ xử lí</p>
+                        <p>Hết hạn</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                        <span>{b?.booker?.name}</span>
+                          <span>{b?.booker?.name}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height={10}
@@ -138,22 +112,6 @@ export default function ManageBookingRequest() {
                             <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
                           </svg>
                         </p>
-                      </td>
-                      <td className="">
-                        <div className="flex flex-col gap-2 w-full py-1">
-                          <button
-                            className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full"
-                            onClick={() => handleAccept(b)}
-                          >
-                            Chấp nhận
-                          </button>
-                          <button
-                            className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full"
-                            onClick={() => handleReject(b)}
-                          >
-                            Hủy
-                          </button>
-                        </div>
                       </td>
                     </tr>
                   );
