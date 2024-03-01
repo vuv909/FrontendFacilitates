@@ -9,11 +9,32 @@ import { InputText } from "primereact/inputtext";
 import CarouselTopComponent from "../../components/CarouselTopComponent";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getFacilities, getFacilityDetail } from "../../services/facilities.api";
+import { getCategory } from "../../services/category.api";
 
 export default function Home() {
   const router = useRouter();
   const colorNavbarOne: string = "bg-gray-300";
   const colorNavbarTwo: string = "bg-transparent";
+  const [faci, setFaci] = useState([]);
+  const [cate, setCate] = useState([]);
+
+  useEffect(() => {
+    getFacilities().then(async (response) => await setFaci(response.data.items))
+      .catch((error) => console.error("Error fetching Facilities"))
+
+    getCategory().then(async (response) =>  await setCate(response.data.item))
+      .catch((error) => console.error("Error fectching Category"))
+    // console.log(faci);
+    // console.log(cate);
+  }, [])
+
+  // if(!faci || !cate){
+  //   return(
+  //     <div>loading...</div>
+  //   )
+  // }
+
   return (
     <div>
       <NavbarComponent
@@ -48,14 +69,14 @@ export default function Home() {
         <div className="text-center mt-12 font-bold text-2xl">
           <h1>Phân loại dịch vụ đặt trước</h1>
         </div>
-        <CarouselComponent />
+        <CarouselComponent data={cate}/>
       </div>
 
       <div className="mt-10 text-center">
         <h1 className="ml-7 font-bold text-lg">
           Top các phòng , sân thể dục được sử dụng nhiều
         </h1>
-        <CarouselTopComponent />
+        <CarouselTopComponent data={faci}/>
       </div>
 
       <FooterComponent />

@@ -21,16 +21,38 @@ interface Product {
   rating: number;
 }
 
-export default function CarouselTopComponent() {
+interface Facility{
+  _id: string;
+  name: string;
+  status: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+export default function CarouselTopComponent(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [faci, setFaci] = useState<Facility[]>([]);
+  // console.log(props.data);
+  
 
   useEffect(() => {
     ProductService.getProductsSmall().then((data) =>
       setProducts(data.slice(0, 9))
     );
-  }, []);
+    setFaci(props.data)
+  },[faci]);
 
-  const productTemplate = (product: Product) => {
+  if(!faci){
+    return(
+      <div>
+        loading...
+      </div>
+    )
+  }
+
+  const productTemplate = (facility: Facility) => {
     return (
       <Link href={"/detail/2"}>
         <div className="relative text-center h-72  cursor-pointer m-5 z-50">
@@ -38,11 +60,11 @@ export default function CarouselTopComponent() {
             width={500}
             height={500}
             src="https://picsum.photos/200/300"
-            alt={product.name}
+            alt={facility.name}
             className="w-screen h-full rounded-lg"
           />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 pb-2 rounded-b-lg">
-            <p className="font-bold">AL202</p>
+            <p className="font-bold">{facility.name}</p>
           </div>
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black hover:bg-opacity-80 p-2 rounded-full">
             <button className="text-white px-3 w-fit">100 lần</button>
@@ -55,7 +77,7 @@ export default function CarouselTopComponent() {
   return (
     <div className="px-16">
       <Carousel
-        value={products}
+        value={faci}
         numVisible={4}
         numScroll={4}
         circular

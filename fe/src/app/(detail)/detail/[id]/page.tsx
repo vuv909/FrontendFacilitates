@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+"use client"
+=======
 "use client";
+>>>>>>> 7a08291b40cf57172ea608409b212aa662ea3c06
 import InfomationDetailComponent from "../../../../../components/InformationDetailComponent";
 import CommentComponent from "../../../../../components/DetailComponent/CommentComponent";
 import CarouselTopComponent from "../../../../../components/CarouselTopComponent";
@@ -11,6 +15,9 @@ import { facilityById } from "../../../../../services/facilities.api";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
 
+<<<<<<< HEAD
+
+=======
 export default function DetailPage({ params }: { params: { id: string } }) {
   const [isGettingData, setIsGettingData] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
@@ -24,6 +31,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       life: 3000,
     });
   };
+>>>>>>> 7a08291b40cf57172ea608409b212aa662ea3c06
 
   const showSuccessCategory = (msg: string) => {
     toastAddCategory.current.show({
