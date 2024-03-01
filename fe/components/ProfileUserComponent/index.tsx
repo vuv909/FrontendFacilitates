@@ -28,10 +28,11 @@ const validation = () =>{
     alert('Vui lòng không để trống;');
     return false;
   }
-  if ( phoneNumber.length !== 10 || !phoneNumber.startsWith('0') ) {
+  if (!/^\d{10}$/.test(phoneNumber) || !phoneNumber.startsWith('0')) {
     alert("Số điện thoại không hợp lệ.");
     return false;
 }
+
 return true;
 }  
 const fetchData = async () => {
@@ -65,6 +66,7 @@ const fetchData = async () => {
       
     } catch (error) {
       console.log("error", error);
+      alert( error);
       
     }   
   };
