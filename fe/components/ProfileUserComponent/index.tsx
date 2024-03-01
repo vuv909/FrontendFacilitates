@@ -15,13 +15,10 @@ const ProfileUserComponent = () => {
   const [address, setAddress] = useState("");
   const [role, setRole] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const userJson: string | null = localStorage.getItem('user');
+  let item = null;
   let userId: string = ''; // Khai báo biến userId ở ngoài phạm vi của block
 
-if (userJson !== null) {
-    const user: { _id: string } = JSON.parse(userJson);
-    userId = user._id; // Gán giá trị user._id vào biến userId
-}
+
 
 const validation = () =>{
   if(!name || ! address){
@@ -42,17 +39,24 @@ const fetchData = async () => {
       setName(response.data.name);
       setEmail(response.data.email);
       setAddress(response.data.address);
-     setRole(response.data.roleId.roleName);
+      setRole(response.data.roleId.roleName);
       setPhoneNumber(response.data.phoneNumber);
+      console.log(response.data);
+      
   } catch (error) {
       console.error('Error:', error);
   }
 };
 
   useEffect(() => {
+    item = localStorage.getItem('user');
     
-
-    fetchData();
+    if (item !== null) {
+      const user: { _id: string } = JSON.parse(item);
+      userId = user._id; // Gán giá trị user._id vào biến userId
+      console.log(userId);
+  }
+  fetchData();
 }, [userId]);
 
 
@@ -60,6 +64,13 @@ const fetchData = async () => {
     const isValid = validation();
     if(isValid) {
     try {
+      item = localStorage.getItem('user');
+    
+      if (item !== null) {
+        const user: { _id: string } = JSON.parse(item);
+        userId = user._id; // Gán giá trị user._id vào biến userId
+        console.log(userId);
+    }
     updateProfile(userId, {name, address,phoneNumber});
       console.log("success");
       alert("Thay đổi thông tin thành công");
@@ -67,7 +78,6 @@ const fetchData = async () => {
     } catch (error) {
       console.log("error", error);
       alert( error);
-      
     }   
   };
 }
