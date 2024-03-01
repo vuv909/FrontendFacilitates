@@ -20,14 +20,14 @@ export default function Home() {
   const [cate, setCate] = useState([]);
 
   useEffect(() => {
-    getFacilities().then(async (response) => setFaci(response.data.items))
+    getFacilities().then(async (response) => await setFaci(response.data.items))
       .catch((error) => console.error("Error fetching Facilities"))
 
-    getCategory().then(async (response) =>  setCate(response.data.item))
+    getCategory().then(async (response) =>  await setCate(response.data.item))
       .catch((error) => console.error("Error fectching Category"))
     // console.log(faci);
     // console.log(cate);
-  }, [faci, cate])
+  }, [cate, faci])
 
   // if(!faci || !cate){
   //   return(
@@ -76,7 +76,7 @@ export default function Home() {
         <h1 className="ml-7 font-bold text-lg">
           Top các phòng , sân thể dục được sử dụng nhiều
         </h1>
-        <CarouselTopComponent/>
+        <CarouselTopComponent data={faci}/>
       </div>
 
       <FooterComponent />

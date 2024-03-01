@@ -21,31 +21,48 @@ interface Product {
   rating: number;
 }
 
+interface Category{
+  _id: string;
+  categoryName: string;
+  createdAt: string;
+  updatedAt: string;
+  image: string;
+}
+
 export default function CarouselComponent(props : any) {
   const [products, setProducts] = useState<Product[]>([]);
-  const [cate, setCate] = useState(props.data)
-  console.log(cate);
+  const [cate, setCate] = useState<Category[]>([])
+  // console.log(cate);
   
 
   useEffect(() => {
     ProductService.getProductsSmall().then((data) =>
       setProducts(data.slice(0, 9))
     );
-  }, []);
+    setCate(props.data)
+  });
 
-  const productTemplate = (product: Product) => {
+  if(!cate){
+    return(
+      <div>
+        loading...
+      </div>
+    )
+  }
+
+  const productTemplate = (cate: Category) => {
     return (
       <div className="relative text-center h-96 cursor-pointer m-5 z-50">
         <Image
           width={500}
           height={500}
           src="https://picsum.photos/200/300"
-          alt={product.name}
+          alt={cate.categoryName}
           className="w-screen h-full rounded-lg"
         />
   
         <div className="absolute top-72 left-1/2 -translate-x-1/2 bg-white rounded-lg p-3">
-          <h4 className="w-28 mb-1 font-bold text-lg overflow-hidden whitespace-nowrap text-ellipsis">{product.name} {product.name} {product.name} {product.name}</h4>
+          <h4 className="w-28 mb-1 font-bold text-lg overflow-hidden whitespace-nowrap text-ellipsis">{cate.categoryName}</h4>
         </div>
       </div>
     );
@@ -57,7 +74,7 @@ export default function CarouselComponent(props : any) {
   return (
     <div className="px-32">
       <Carousel
-      value={products}
+      value={cate}
       numVisible={3}
       numScroll={3}
       circular
