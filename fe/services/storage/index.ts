@@ -5,7 +5,7 @@ const TOKEN = "accessToken";
 export class StorageService {
   constructor() {}
 
-  static getUser(): string {
+  static getUser(): any | string {
     const token = this.getToken(); // Invoke the getToken method
     if (token) {
       const decodedToken: any = null;

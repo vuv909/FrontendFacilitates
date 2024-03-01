@@ -1,29 +1,107 @@
 "use client";
 import { InputText } from "primereact/inputtext";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
-import { Pagination, PaginationProps } from "antd";
+import { Empty, Pagination, PaginationProps, Tooltip } from "antd";
+import { getCategory } from "../../../../../services/category.api";
+import {
+  getFacilities,
+  searchFacility,
+} from "../../../../../services/facilities.api";
 
 export default function SearchAll({ params }: { params: object }) {
   console.log("====================================");
   console.log(params);
   console.log("====================================");
-
-  const cities = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" },
-  ];
-
+  const toastAddCategory = useRef<any>(null);
   const [text, setText] = useState<string>("");
   const [category, setCategory] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [status, setStatus] = useState(null);
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [activePage, setActivePage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<0>(0);
+  const [facilityData, setFacilityData] = useState<any[]>([]);
+
+  const showErrorCategory = (msg: string) => {
+    toastAddCategory.current.show({
+      severity: "error",
+      summary: "Error",
+      detail: msg,
+      life: 3000,
+    });
+  };
+
+  const handleSearch = () => {
+    console.log(category);
+    console.log(text);
+    searchFacility(text.trim(), category)
+      .then((res) => {
+        setFacilityData(res.data.items);
+        setActivePage(res.data.activePage);
+        setTotalPage(res.data.totalPage);
+      })
+      .catch((err) => {
+        setFacilityData([]);
+        setActivePage(1);
+        setTotalPage(0);
+        showErrorCategory("Error occurred !!!");
+      });
+  };
+
+  const showSuccessCategory = (msg: string) => {
+    toastAddCategory.current.show({
+      severity: "success",
+      summary: "Success",
+      detail: msg,
+      life: 3000,
+    });
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setCategoryFilter(category);
+  };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
+    if(pageNumber !== activePage){
+      getFacilities(pageNumber)
+      .then((res) => {
+        setFacilityData(res.data.items);
+        setActivePage(res.data.activePage);
+        setTotalPage(res.data.totalPage);
+      })
+      .catch((err) => {
+        setFacilityData([]);
+        setActivePage(1);
+        setTotalPage(0);
+        showErrorCategory("Error occurred !!!");
+      });
+    }
   };
+
+  useEffect(() => {
+    getCategory()
+      .then((res) => {
+        console.log(res.data.item);
+        setCategoryData(res.data.item);
+      })
+      .catch((err) => {
+        setCategoryData([]);
+        showErrorCategory("Error occurred !!!");
+      });
+    getFacilities()
+      .then((res) => {
+        setFacilityData(res.data.items);
+        setActivePage(res.data.activePage);
+        setTotalPage(res.data.totalPage);
+      })
+      .catch((err) => {
+        setFacilityData([]);
+        setActivePage(1);
+        setTotalPage(0);
+        showErrorCategory("Error occurred !!!");
+      });
+  }, []);
 
   return (
     <div className="mx-20">
@@ -49,8 +127,14 @@ export default function SearchAll({ params }: { params: object }) {
               <Dropdown
                 value={category}
                 onChange={(e) => setCategory(e.value)}
-                options={cities}
-                optionLabel="name"
+                options={[
+                  { label: "Select an option", value: "" }, 
+                  ...categoryData.map((item) => ({
+                    label: item.categoryName,
+                    value: item._id,
+                  })),
+                ]}
+                optionLabel="label"
                 placeholder="Phân loại"
                 tooltip="Phân loại"
                 tooltipOptions={{ position: "top" }}
@@ -58,22 +142,11 @@ export default function SearchAll({ params }: { params: object }) {
                 style={{ boxShadow: "none" }}
               />
             </div>
-
-            <div className="border border-solid border-gray-300 py-2 rounded-lg">
-              <Dropdown
-                value={status}
-                onChange={(e) => setStatus(e.value)}
-                options={cities}
-                optionLabel="name"
-                tooltip="Trạng thái"
-                placeholder="Trạng thái"
-                tooltipOptions={{ position: "top" }}
-                className="w-full px-5"
-                style={{ boxShadow: "none" }}
-              />
-            </div>
             <div>
-              <button className="px-10 py-4 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600">
+              <button
+                className="px-10 py-4 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600"
+                onClick={handleSearch}
+              >
                 Tìm kiếm
               </button>
             </div>
@@ -83,185 +156,36 @@ export default function SearchAll({ params }: { params: object }) {
       <div>
         {/* products */}
         <div className="flex flex-wrap items-center justify-center mt-20 gap-10">
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
-          <div className="basis-1/5  relative mb-5">
-            <div className="flex items-center justify-center">
-              <img
-                src="https://picsum.photos/200/300"
-                className="w-full h-72 rounded-md"
-              />
-              <p className="font-bold text-2xl bg-black text-white shadow-md rounded-b-md absolute top-0 left-1/2 transform -translate-x-1/2">
-                DE221
-              </p>
-              <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
-                Đặt phòng
-              </button>
-            </div>
-          </div>
+          {facilityData &&
+            facilityData.map((f, index) => (
+              <div className="basis-1/5  relative mb-5">
+                <div className="flex items-center justify-center">
+                  <img src={f?.image} className="w-full h-72 rounded-md" />
+                  <Tooltip title={f?.name}>
+                  <p className="font-bold text-2xl bg-black text-white w-1/2 shadow-md rounded-b-md text-ellipsis overflow-hidden text-center absolute top-0 left-1/2 transform -translate-x-1/2">
+                    {f?.name}
+                  </p>
+                  </Tooltip>
+                  <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
+                    Đặt phòng
+                  </button>
+                </div>
+              </div>
+            ))}
+          {facilityData.length === 0 && <Empty />}
         </div>
 
         {/* pagination */}
-        <div className="flex items-center justify-center my-16">
-          <Pagination
-            defaultCurrent={6}
-            total={500}
-            onChange={onChangePage}
-            showSizeChanger={false}
-          />
-        </div>
+        {totalPage > 0 && (
+          <div className="flex items-center justify-center my-16">
+            <Pagination
+              defaultCurrent={activePage}
+              total={Number(totalPage + "0")}
+              onChange={onChangePage}
+              showSizeChanger={false}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

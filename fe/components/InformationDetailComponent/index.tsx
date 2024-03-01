@@ -4,6 +4,9 @@ import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
 import { useEffect, useRef, useState } from "react";
 import TableComponentBooked from "../TableComponentBooked";
+import { StorageService } from "../../services/storage";
+import { Toast } from "primereact/toast";
+import { addBooking } from "../../services/booking.api";
 
 const weeks = [
   "Monday",
@@ -25,15 +28,10 @@ const slots = [
   "Slot8",
 ];
 
-const info = () => {
+const info = (data: any) => {
   Modal.info({
     title: "Thông tin chi tiết",
-    content: (
-      <div>
-        <p>some messages...some messages...</p>
-        <p>some messages...some messages...</p>
-      </div>
-    ),
+    content: <div dangerouslySetInnerHTML={{ __html: data }}></div>,
     footer: (
       <div className="relative pb-8">
         <Button
@@ -47,7 +45,13 @@ const info = () => {
   });
 };
 
-export default function InfomationDetailComponent() {
+export default function InfomationDetailComponent({
+  detailData,showSuccessCategory,showErrorCategory
+}: {
+  detailData: any;
+  showSuccessCategory: any;
+  showErrorCategory: any;
+}) {
   //booking
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -56,6 +60,8 @@ export default function InfomationDetailComponent() {
   const [bookslot, setBookSlot] = useState<string | null>(null);
 
   const [weekValue, setWeekValue] = useState<string>("");
+
+  
 
   useEffect(() => {
     if (!weekValue) {
@@ -72,7 +78,6 @@ export default function InfomationDetailComponent() {
     }
     console.log("====================================");
   }, [weekValue]);
-
 
   useEffect(() => {
     const currentDate = new Date();
@@ -118,20 +123,35 @@ export default function InfomationDetailComponent() {
     setOpen(false);
   };
 
+  const handleBooking = (data: string) => {
+    const arrayBooking = data.split("#")
+    const userId = StorageService.getUser()?.id ?? null;
+    const bookingBody = {
+      slot : arrayBooking[0],
+      weekdays : arrayBooking[1],
+      weeks : arrayBooking[2],
+      facilityId : detailData?._id,
+      booker : userId,
+    }
+    addBooking(bookingBody).then((res)=>{
+      showSuccessCategory("Booking successfully !!!");
+    }).catch((err) =>{
+      showErrorCategory("Booking failed !!!");
+    })
+    setOpen(false)
+  };
+
   return (
     <>
       <div className="flex flex-col gap-10 items-center">
-        <div className="font-bold text-5xl">DE122</div>
+        <div className="font-bold text-5xl">{detailData?.name}</div>
         <div>
-          <span className="font-bold">Phân loại :</span> Phòng học
-        </div>
-        <div>
-          <span className="font-bold">Trạng thái :</span> Còn giờ trống
+          <span className="font-bold">Phân loại :</span> {detailData?.category?.categoryName}
         </div>
         <div>
           <Button
             className="bg-blue-400 text-white font-semibold"
-            onClick={info}
+            onClick={() => info(detailData?.description)}
           >
             Xem thông tin chi tiết
           </Button>
@@ -156,13 +176,6 @@ export default function InfomationDetailComponent() {
         footer={[
           <Button key="back" onClick={handleCancel}>
             Hủy
-          </Button>,
-          <Button
-            className="bg-blue-500 text-white"
-            loading={loading}
-            onClick={handleOk}
-          >
-            Đặt
           </Button>,
         ]}
       >
@@ -191,541 +204,102 @@ export default function InfomationDetailComponent() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
+                {Array.from({ length: 9 }, (_, i) => (
+                  <tr key={`slot_${i}_Slot1`}>
+                    <td className="p-2 border">
+                      <Tooltip title="hello">
+                        <div className="flex items-center gap-1">
+                          {" "}
+                          <p className="text-xl">Slot{i + 1}</p>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 512 512"
+                          >
+                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                          </svg>
+                        </div>
+                      </Tooltip>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                        }
+                        className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4"
+                      >
+                        Đặt
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Tuesday# ${weekValue}`)
+                        }
+                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4`}
+                        disabled={bookslot !== null && bookslot !== ""}
+                      >
+                        Đặt
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Wednesday# ${weekValue}`)
+                        }
+                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4`}
+                      >
                         {" "}
-                        <p className="text-xl">Slot1</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      onClick={() => setBookSlot("Slot1#Monday#2024-W03")}
-                      className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4"
-                    >
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      onClick={() => {
-                        console.log("====================================");
-                        console.log("hello");
-                        console.log("====================================");
-                      }}
-                      className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 ${
-                        bookslot !== null && bookslot !== "" ? "bg-red-300" : ""
-                      }`}
-                      disabled={bookslot !== null && bookslot !== ""}
-                    >
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 ${
-                        bookslot !== null && bookslot !== ""
-                          ? "disabled:cursor-not-allowed"
-                          : ""
-                      } ${
-                        bookslot !== null && bookslot !== "" ? "disabled" : ""
-                      }`}
-                    >
-                      {" "}
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 ${
-                        bookslot !== null && bookslot !== ""
-                          ? "disabled:cursor-not-allowed"
-                          : ""
-                      } ${
-                        bookslot !== null && bookslot !== "" ? "disabled" : ""
-                      }`}
-                    >
-                      {" "}
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 ${
-                        bookslot !== null && bookslot !== ""
-                          ? "disabled:cursor-not-allowed"
-                          : ""
-                      } ${
-                        bookslot !== null && bookslot !== "" ? "disabled" : ""
-                      }`}
-                    >
-                      {" "}
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 ${
-                        bookslot !== null && bookslot !== ""
-                          ? "disabled:cursor-not-allowed"
-                          : ""
-                      } ${
-                        bookslot !== null && bookslot !== "" ? "disabled" : ""
-                      }`}
-                    >
-                      {" "}
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button
-                      className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 ${
-                        bookslot !== null && bookslot !== ""
-                          ? "disabled:cursor-not-allowed"
-                          : ""
-                      } ${
-                        bookslot !== null && bookslot !== "" ? "disabled" : ""
-                      }`}
-                    >
-                      {" "}
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
+                        Đặt
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Thursday#${weekValue}`)
+                        }
+                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                      >
                         {" "}
-                        <p className="text-xl">Slot2</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
+                        Đặt
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Friday#${weekValue}`)
+                        }
+                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                      >
                         {" "}
-                        <p className="text-xl">Slot3</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
+                        Đặt
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Saturday#${weekValue}`)
+                        }
+                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                      >
                         {" "}
-                        <p className="text-xl">Slot4</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
+                        Đặt
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Sunday#${weekValue}`)
+                        }
+                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                      >
                         {" "}
-                        <p className="text-xl">Slot5</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
-                        {" "}
-                        <p className="text-xl">Slot6</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
-                        {" "}
-                        <p className="text-xl">Slot7</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
-                        {" "}
-                        <p className="text-xl">Slot8</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">
-                    <Tooltip title="hello">
-                      <div className="flex items-center gap-1">
-                        {" "}
-                        <p className="text-xl">Slot9</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 512 512"
-                        >
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                        </svg>
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                  <td className="p-2 border">
-                    <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4">
-                      Đặt
-                    </button>
-                  </td>
-                </tr>
+                        Đặt
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             <div>
@@ -735,6 +309,7 @@ export default function InfomationDetailComponent() {
           </div>
         </div>
       </Modal>
+   
     </>
   );
 }
