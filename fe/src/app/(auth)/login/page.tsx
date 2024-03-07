@@ -15,10 +15,13 @@ import { getCategory } from "../../../../services/category.api";
 export default function Login() {
   const [cate, setCate] = useState([])
 
-useEffect(() =>{
-  getCategory(). then(async (response) => await setCate(response.data.item))
-  .catch((error) => console.error("Error fetching category"))
-}, [setCate])
+  useEffect(() => {
+    getCategory()
+      .then((response) => {
+        setCate(response.data.item)
+      })
+      .catch((error) => console.error("Error fectching Category"))
+  }, [cate])
   return (
     <div className="h-screen">
       <div className=" bg-orange-500 h-full">
@@ -44,7 +47,27 @@ useEffect(() =>{
 
         <div className="w-screen h-screen flex flex-col items-center justify-center">
           <div className="flex items-center justify-center gap-20">
-            <div className="relative h-60 cursor-pointer">
+            {cate.map((e) => {
+              return (
+                <div className="relative h-60 cursor-pointer" key={e._id}>
+                  <Image
+                    src={e.image}
+                    width={200}
+                    height={200}
+                    alt="bong da"
+                    className="mx-auto w-60 h-72 rounded-3xl filter brightness-75 object-cover"
+                  />
+                  <p
+                    className="absolute text-center font-bold text-white left-1/2 transform -translate-x-1/2"
+                    style={{ top: "100%", width: "100%" }}
+                  >
+                    {e.categoryName}
+                  </p>
+                </div>
+
+              )
+            })}
+            {/* <div className="relative h-60 cursor-pointer">
               <Image
                 src={"/ball.jpg"}
                 width={200}
@@ -89,7 +112,7 @@ useEffect(() =>{
               >
                 Đặt lịch phòng
               </p>
-            </div>
+            </div> */}
           </div>
           <div>
             <LoginComponent />

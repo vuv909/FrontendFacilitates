@@ -7,6 +7,7 @@ import { Carousel, CarouselResponsiveOption } from "primereact/carousel";
 import { Tag } from "primereact/tag";
 import { ProductService } from "../../services/product/ProductService";
 import "primeflex/primeflex.css";
+import { getCategory } from "../../services/category.api";
 
 interface Product {
   id: string;
@@ -32,15 +33,21 @@ interface Category{
 export default function CarouselComponent(props : any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [cate, setCate] = useState<Category[]>([])
-  // console.log(cate);
   
 
   useEffect(() => {
-    ProductService.getProductsSmall().then((data) =>
-      setProducts(data.slice(0, 9))
-    );
-    setCate(props.data)
-  },[cate]);
+    // ProductService.getProductsSmall().then((data) =>
+    //   setProducts(data.slice(0, 9))
+    // );
+    // setCate(props.data)
+    getCategory()
+    .then((response) =>  {
+      setCate(response.data.item)
+    })
+    .catch((error) => console.error("Error fectching Category"))
+    
+    
+  },[]);
 
   if(!cate){
     return(
@@ -56,7 +63,7 @@ export default function CarouselComponent(props : any) {
         <Image
           width={500}
           height={500}
-          src="https://picsum.photos/200/300"
+          src={cate.image}
           alt={cate.categoryName}
           className="w-screen h-full rounded-lg"
         />

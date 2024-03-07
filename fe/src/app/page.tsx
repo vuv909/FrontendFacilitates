@@ -20,20 +20,29 @@ export default function Home() {
   const [cate, setCate] = useState([]);
 
   useEffect(() => {
-    getFacilities().then(async (response) => await setFaci(response.data.items))
+    getCategory()
+    .then((response) =>  {
+      setCate(response.data.item)
+    })
+    .catch((error) => console.error("Error fectching Category"))
+    
+
+    getFacilities()
+      .then((response) =>{
+        setFaci(response.data.items)
+      })
       .catch((error) => console.error("Error fetching Facilities"))
 
-    getCategory().then(async (response) =>  await setCate(response.data.item))
-      .catch((error) => console.error("Error fectching Category"))
-    // console.log(faci);
-    // console.log(cate);
+      // console.log(cate);
+      // console.log(faci);
+      
   }, [])
 
-  // if(!faci || !cate){
-  //   return(
-  //     <div>loading...</div>
-  //   )
-  // }
+  if(!faci || !cate){
+    return(
+      <div>loading...</div>
+    )
+  }
 
   return (
     <div>

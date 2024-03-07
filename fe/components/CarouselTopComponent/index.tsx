@@ -8,6 +8,9 @@ import { Tag } from "primereact/tag";
 import { ProductService } from "../../services/product/ProductService";
 import "primeflex/primeflex.css";
 import Link from "next/link";
+import { getFacilities, getFacilityDetail } from "../../services/facilities.api";
+
+
 interface Product {
   id: string;
   code: string;
@@ -26,6 +29,7 @@ interface Facility{
   name: string;
   status: string;
   description: string;
+  image: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -38,11 +42,17 @@ export default function CarouselTopComponent(props: any) {
   
 
   useEffect(() => {
-    ProductService.getProductsSmall().then((data) =>
-      setProducts(data.slice(0, 9))
-    );
-    setFaci(props.data)
-  },[faci]);
+    // ProductService.getProductsSmall().then((data) =>
+    //   setProducts(data.slice(0, 9))
+    // );
+    // setFaci(props.data)
+
+    getFacilities()
+      .then((response) =>{
+        setFaci(response.data.items)
+      })
+      .catch((error) => console.error("Error fetching Facilities"))
+  },[]);
 
   if(!faci){
     return(
@@ -59,7 +69,7 @@ export default function CarouselTopComponent(props: any) {
           <Image
             width={500}
             height={500}
-            src="https://picsum.photos/200/300"
+            src={facility.image ? facility.image : "https://picsum.photos/200/300"}
             alt={facility.name}
             className="w-screen h-full rounded-lg"
           />
