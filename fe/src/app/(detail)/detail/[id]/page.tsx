@@ -10,6 +10,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { facilityById } from "../../../../../services/facilities.api";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
+import { getCurrentWeek } from "../../../../../utils";
 
 
 export default function DetailPage({ params }: { params: { id: string } }) {
@@ -45,6 +46,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       .catch((err) => {
         setIsGettingData(false);
       });
+
   }, []);
 
   return (
@@ -59,7 +61,11 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
             <div>
               <div className="absolute right-20 top-1/2 transfrom -translate-y-1/2 z-50 bg-gray-200 p-5 shadow-xl rounded-lg">
-                <InfomationDetailComponent detailData={detailData} showSuccessCategory={showSuccessCategory} showErrorCategory={showErrorCategory} />
+                <InfomationDetailComponent
+                  detailData={detailData}
+                  showSuccessCategory={showSuccessCategory}
+                  showErrorCategory={showErrorCategory}
+                />
               </div>
 
               {/* comment */}
