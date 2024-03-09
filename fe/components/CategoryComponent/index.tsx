@@ -218,11 +218,13 @@ export default function CategoryComponent() {
 
   const onSubmitUpdate: SubmitHandler<updateCategorySchemaType> = (data) => {
     setisLoadingUpdateFormCategory(true);
-    if (Object.keys(errorUpdate).length === 0 && imgUpdate) {
+    if (Object.keys(errorUpdate).length === 0 ) {
       const formData = new FormData();
       formData.append("id", dataUpdate?._id || "");
       formData.append("categoryName", data.categoryName);
+      if(imgUpdate){
       formData.append("img", imgUpdate);
+      }
       editCategory(formData)
         .then((res) => {
           showSuccessCategory("Update Category successfully !!!");
@@ -268,7 +270,7 @@ export default function CategoryComponent() {
           );
         });
     } else {
-      showErrorCategory("Image must be less than 2MB and not empty !!");
+      showErrorCategory("Please input category name!!");
       setisLoadingUpdateFormCategory(false);
     }
   };

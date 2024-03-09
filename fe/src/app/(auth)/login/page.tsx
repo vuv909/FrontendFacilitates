@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import Image from "next/image";
 import LoginComponent from "../../../../components/LoginComponent";
 import Link from "next/link";
-import Logo from '../../../../public/icons8-logo.svg'
+import Logo from "../../../../public/icons8-logo.svg";
 import { useState, useEffect } from "react";
 import { getCategory } from "../../../../services/category.api";
 
@@ -10,27 +10,20 @@ import { getCategory } from "../../../../services/category.api";
 //   title: "Login",
 // };
 
-
-
 export default function Login() {
-  const [cate, setCate] = useState([])
+  const [cate, setCate] = useState([]);
 
   useEffect(() => {
     getCategory()
       .then((response) => {
-        setCate(response.data.item)
+        setCate(response.data.item);
       })
-      .catch((error) => console.error("Error fectching Category"))
-  }, [cate])
+      .catch((error) => console.error("Error fectching Category"));
+  }, []);
   return (
     <div className="h-screen">
       <div className=" bg-orange-500 h-full">
-        <Image
-          src="/fpt.jpg"
-          alt="fptu"
-          layout="fill"
-          className="opacity-80"
-        />
+        <Image src="/fpt.jpg" alt="fptu" layout="fill" className="opacity-80" />
 
         <div className="rounded-full overflow-hidden">
           <Link href={"/"}>
@@ -47,11 +40,11 @@ export default function Login() {
 
         <div className="w-screen h-screen flex flex-col items-center justify-center">
           <div className="flex items-center justify-center gap-20">
-            {cate.map((e) => {
+            {cate.map((e: any) => {
               return (
-                <div className="relative h-60 cursor-pointer" key={e._id}>
+                <div className="relative h-60 cursor-pointer" key={e?._id}>
                   <Image
-                    src={e.image}
+                    src={e?.image}
                     width={200}
                     height={200}
                     alt="bong da"
@@ -61,11 +54,10 @@ export default function Login() {
                     className="absolute text-center font-bold text-white left-1/2 transform -translate-x-1/2"
                     style={{ top: "100%", width: "100%" }}
                   >
-                    {e.categoryName}
+                    {e?.categoryName}
                   </p>
                 </div>
-
-              )
+              );
             })}
             {/* <div className="relative h-60 cursor-pointer">
               <Image

@@ -30,3 +30,12 @@ export function editBooking(data:any,id :string){
     data
   });
 }
+
+export function calendarBooking(weeks :string){
+  
+  return restClient({
+    url: "booking",
+    method: "GET",
+    params : {weeks}
+  });
+}

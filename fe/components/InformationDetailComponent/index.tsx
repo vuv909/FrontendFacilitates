@@ -6,7 +6,30 @@ import { useEffect, useRef, useState } from "react";
 import TableComponentBooked from "../TableComponentBooked";
 import { StorageService } from "../../services/storage";
 import { Toast } from "primereact/toast";
-import { addBooking } from "../../services/booking.api";
+import { addBooking, calendarBooking } from "../../services/booking.api";
+import {
+  checkValidSlotFriday,
+  checkValidSlotMonday,
+  checkValidSlotSaturday,
+  checkValidSlotSunday,
+  checkValidSlotThursday,
+  checkValidSlotTuesday,
+  checkValidSlotWednesday,
+  getCurrentDate,
+  getCurrentDay,
+  getCurrentWeek,
+  getStartAndEndDate,
+} from "../../utils";
+import { current } from "@reduxjs/toolkit";
+import {
+  FRIDAY,
+  MONDAY,
+  SATURDAY,
+  SUNDAY,
+  THURSDAY,
+  TUESDAY,
+  WEDNESDAY,
+} from "../../constant";
 
 const weeks = [
   "Monday",
@@ -46,7 +69,9 @@ const info = (data: any) => {
 };
 
 export default function InfomationDetailComponent({
-  detailData,showSuccessCategory,showErrorCategory
+  detailData,
+  showSuccessCategory,
+  showErrorCategory,
 }: {
   detailData: any;
   showSuccessCategory: any;
@@ -55,15 +80,35 @@ export default function InfomationDetailComponent({
   //booking
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const currentDay = getCurrentDay();
 
   //booking slot
   const [bookslot, setBookSlot] = useState<string | null>(null);
-
   const [weekValue, setWeekValue] = useState<string>("");
-
-  
+  const [disableButtonsMonday, setDisableButtonsMonday] =
+    useState<boolean>(false);
+  const [disableButtonsTuesday, setDisableButtonsTuesday] =
+    useState<boolean>(false);
+  const [disableButtonsWendsday, setDisableButtonsWendsday] =
+    useState<boolean>(false);
+  const [disableButtonsThurday, setDisableButtonsThurday] =
+    useState<boolean>(false);
+  const [disableButtonsFriday, setDisableButtonsFriday] =
+    useState<boolean>(false);
+  const [disableButtonsSaturday, setDisableButtonsSaturday] =
+    useState<boolean>(false);
+  const [disableButtonsSunday, setDisableButtonsSunday] =
+    useState<boolean>(false);
+  const [listBooking, setListBooking] = useState<any>(null);
+  const currentWeek: string = getCurrentWeek();
 
   useEffect(() => {
+    console.log("====================================");
+    console.log("valid day::", checkValidSlotThursday("Slot8", listBooking));
+    console.log("====================================");
+    console.log("====================================");
+    console.log("current day::", currentDay);
+    console.log("====================================");
     if (!weekValue) {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
@@ -80,6 +125,89 @@ export default function InfomationDetailComponent({
   }, [weekValue]);
 
   useEffect(() => {
+    if (currentWeek === weekValue) {
+      if (currentDay === MONDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(false);
+        setDisableButtonsWendsday(false);
+        setDisableButtonsThurday(false);
+        setDisableButtonsFriday(false);
+        setDisableButtonsSaturday(false);
+        setDisableButtonsSunday(true);
+      } else if (currentDay === TUESDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(false);
+        setDisableButtonsThurday(false);
+        setDisableButtonsFriday(false);
+        setDisableButtonsSaturday(false);
+        setDisableButtonsSunday(false);
+      } else if (currentDay === WEDNESDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(true);
+        setDisableButtonsThurday(false);
+        setDisableButtonsFriday(false);
+        setDisableButtonsSaturday(false);
+        setDisableButtonsSunday(false);
+      } else if (currentDay === THURSDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(true);
+        setDisableButtonsThurday(true);
+        setDisableButtonsFriday(false);
+        setDisableButtonsSaturday(false);
+        setDisableButtonsSunday(false);
+      } else if (currentDay === FRIDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(true);
+        setDisableButtonsThurday(true);
+        setDisableButtonsFriday(true);
+        setDisableButtonsSaturday(false);
+        setDisableButtonsSunday(false);
+      } else if (currentDay === SATURDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(true);
+        setDisableButtonsThurday(true);
+        setDisableButtonsFriday(true);
+        setDisableButtonsSaturday(true);
+        setDisableButtonsSunday(false);
+      } else if (currentDay === SUNDAY) {
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(true);
+        setDisableButtonsThurday(true);
+        setDisableButtonsFriday(true);
+        setDisableButtonsSaturday(true);
+        setDisableButtonsSunday(true);
+      }
+    } else {
+      // If weekValue is more than two weeks ahead of the current week, disable all buttons
+      const currentYear = parseInt(currentWeek.substring(0, 4), 10);
+      const currentWeekNum = parseInt(currentWeek.substring(6), 10);
+      const targetYear = parseInt(weekValue.substring(0, 4), 10);
+      const targetWeekNum = parseInt(weekValue.substring(6), 10);
+
+      // Calculate the difference in weeks
+      const weekDifference =
+        (targetYear - currentYear) * 52 + (targetWeekNum - currentWeekNum);
+
+      if (weekDifference > 2) {
+        // If the difference is greater than 2 weeks, disable all buttons
+        setDisableButtonsMonday(true);
+        setDisableButtonsTuesday(true);
+        setDisableButtonsWendsday(true);
+        setDisableButtonsThurday(true);
+        setDisableButtonsFriday(true);
+        setDisableButtonsSaturday(true);
+        setDisableButtonsSunday(true);
+      }
+    }
+  }, [weekValue]);
+
+  useEffect(() => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const isoWeek = getISOWeek(currentDate);
@@ -90,6 +218,16 @@ export default function InfomationDetailComponent({
       .padStart(2, "0")}`;
 
     setWeekValue(formattedWeekValue);
+
+    calendarBooking(currentWeek)
+      .then((res) => {
+        setListBooking(res.data?.booking);
+      })
+      .catch((err: Error) => {
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      });
   }, []);
 
   // Function to get ISO week number
@@ -104,7 +242,47 @@ export default function InfomationDetailComponent({
   };
 
   const handleWeekChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWeekValue(event.target.value);
+    const selectedWeek = event.target.value;
+    calendarBooking(event.target.value)
+      .then((res) => {
+        setListBooking(res.data?.booking);
+      })
+      .catch((err: Error) => {
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      });
+    setWeekValue(selectedWeek);
+
+    const selectedWeekNumber = parseInt(
+      selectedWeek.split("-")[1].substring(1),
+      10
+    );
+    const currentWeekNumber = parseInt(
+      currentWeek.split("-")[1].substring(1),
+      10
+    );
+
+    if (selectedWeekNumber < currentWeekNumber) {
+      setDisableButtonsMonday(true);
+      setDisableButtonsTuesday(true);
+      setDisableButtonsWendsday(true);
+      setDisableButtonsThurday(true);
+      setDisableButtonsFriday(true);
+      setDisableButtonsSaturday(true);
+      setDisableButtonsSunday(true);
+
+      console.log("Buttons Disabled");
+    } else {
+      setDisableButtonsMonday(false);
+      setDisableButtonsTuesday(false);
+      setDisableButtonsWendsday(false);
+      setDisableButtonsThurday(false);
+      setDisableButtonsFriday(false);
+      setDisableButtonsSaturday(false);
+      setDisableButtonsSunday(false);
+      console.log("Buttons Enabled");
+    }
   };
 
   const showModal = () => {
@@ -124,22 +302,42 @@ export default function InfomationDetailComponent({
   };
 
   const handleBooking = (data: string) => {
-    const arrayBooking = data.split("#")
+    const arrayBooking = data.split("#");
     const userId = StorageService.getUser()?.id ?? null;
+    const day = getCurrentDate(arrayBooking[1], arrayBooking[2]);
+    const { startDate, endDate } = getStartAndEndDate(
+      day,
+      arrayBooking[0],
+      arrayBooking[1],
+      arrayBooking[2]
+    );
     const bookingBody = {
-      slot : arrayBooking[0],
-      weekdays : arrayBooking[1],
-      weeks : arrayBooking[2],
-      facilityId : detailData?._id,
-      booker : userId,
-      status : 1
-    }
-    addBooking(bookingBody).then((res)=>{
-      showSuccessCategory("Booking successfully !!!");
-    }).catch((err) =>{
-      showErrorCategory("Booking failed !!!");
-    })
-    setOpen(false)
+      slot: arrayBooking[0],
+      weekdays: arrayBooking[1],
+      weeks: arrayBooking[2],
+      facilityId: detailData?._id,
+      startDate,
+      endDate,
+      booker: userId,
+      status: 1,
+    };
+    addBooking(bookingBody)
+      .then((res) => {
+        showSuccessCategory("Booking successfully !!!");
+        calendarBooking(weekValue)
+      .then((res) => {
+        setListBooking(res.data?.booking);
+      })
+      .catch((err: Error) => {
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      });
+      })
+      .catch((err) => {
+        showErrorCategory("Booking failed !!!");
+      });
+    setOpen(false);
   };
 
   return (
@@ -147,7 +345,8 @@ export default function InfomationDetailComponent({
       <div className="flex flex-col gap-10 items-center">
         <div className="font-bold text-5xl">{detailData?.name}</div>
         <div>
-          <span className="font-bold">Phân loại :</span> {detailData?.category?.categoryName}
+          <span className="font-bold">Phân loại :</span>{" "}
+          {detailData?.category?.categoryName}
         </div>
         <div>
           <Button
@@ -190,6 +389,17 @@ export default function InfomationDetailComponent({
               onChange={handleWeekChange}
             />
           </div>
+          <div className="flex gap-2 justify-end mb-3">
+            <Tooltip title="Đã có người đặt">
+              <div className="w-1 h-4 bg-red-500"></div>
+            </Tooltip>
+            <Tooltip title="Chưa có ai đặt">
+              <div className="w-1 h-4 bg-blue-500"></div>
+            </Tooltip>
+            <Tooltip title="Không thể đặt thời gian quá khứ">
+              <div className="w-1 h-4 bg-gray-400"></div>
+            </Tooltip>
+          </div>
           <div className="flex justify-center">
             <table className="border">
               <thead>
@@ -225,31 +435,88 @@ export default function InfomationDetailComponent({
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsMonday
+                            ? true
+                            : checkValidSlotMonday(`Slot${i + 1}`, listBooking)
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
-                        className="p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4"
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotMonday(`Slot${i + 1}`, listBooking) ===
+                          true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotMonday(`Slot${i + 1}`, listBooking) ===
+                            false && disableButtonsMonday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         Đặt
                       </button>
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsTuesday
+                            ? true
+                            : checkValidSlotTuesday(`Slot${i + 1}`, listBooking)
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Tuesday# ${weekValue}`)
                         }
-                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4`}
-                        disabled={bookslot !== null && bookslot !== ""}
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
+                          true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
+                            false && disableButtonsTuesday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         Đặt
                       </button>
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsWendsday
+                            ? true
+                            : checkValidSlotWednesday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              )
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Wednesday# ${weekValue}`)
                         }
-                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4`}
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotWednesday(
+                            `Slot${i + 1}`,
+                            listBooking
+                          ) === true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotWednesday(
+                            `Slot${i + 1}`,
+                            listBooking
+                          ) === false && disableButtonsWendsday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         {" "}
                         Đặt
@@ -257,10 +524,34 @@ export default function InfomationDetailComponent({
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsThurday
+                            ? true
+                            : checkValidSlotThursday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              )
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Thursday#${weekValue}`)
                         }
-                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotThursday(
+                            `Slot${i + 1}`,
+                            listBooking
+                          ) === true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotThursday(
+                            `Slot${i + 1}`,
+                            listBooking
+                          ) === false && disableButtonsThurday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         {" "}
                         Đặt
@@ -268,10 +559,27 @@ export default function InfomationDetailComponent({
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsFriday
+                            ? true
+                            : checkValidSlotFriday(`Slot${i + 1}`, listBooking)
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Friday#${weekValue}`)
                         }
-                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
+                          true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
+                            false && disableButtonsFriday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         {" "}
                         Đặt
@@ -279,10 +587,34 @@ export default function InfomationDetailComponent({
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsSaturday
+                            ? true
+                            : checkValidSlotSaturday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              )
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Saturday#${weekValue}`)
                         }
-                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotSaturday(
+                            `Slot${i + 1}`,
+                            listBooking
+                          ) === true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotSaturday(
+                            `Slot${i + 1}`,
+                            listBooking
+                          ) === false && disableButtonsSaturday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         {" "}
                         Đặt
@@ -290,10 +622,27 @@ export default function InfomationDetailComponent({
                     </td>
                     <td className="p-2 border">
                       <button
+                        disabled={
+                          disableButtonsSunday
+                            ? true
+                            : checkValidSlotSunday(`Slot${i + 1}`, listBooking)
+                        }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Sunday#${weekValue}`)
                         }
-                        className={`p-2 rounded-full bg-blue-500 hover:bg-blue-300 text-white px-4 `}
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
+                          true
+                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }
+                        ${
+                          checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
+                            false && disableButtonsSunday
+                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            : "bg-blue-500 hover:bg-blue-300"
+                        }`}
                       >
                         {" "}
                         Đặt
@@ -310,7 +659,6 @@ export default function InfomationDetailComponent({
           </div>
         </div>
       </Modal>
-   
     </>
   );
 }

@@ -158,7 +158,7 @@ export default function SearchAll({ params }: { params: object }) {
         <div className="flex flex-wrap items-center justify-center mt-20 gap-10">
           {facilityData &&
             facilityData.map((f, index) => (
-              <div className="basis-1/5  relative mb-5">
+              <div className="basis-1/5  relative mb-5 shadow-xl">
                 <div className="flex items-center justify-center">
                   <img src={f?.image} className="w-full h-72 rounded-md" />
                   <Tooltip title={f?.name}>

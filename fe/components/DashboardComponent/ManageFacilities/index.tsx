@@ -199,8 +199,8 @@ export default function ManageFacilities() {
     setImg(e.files[0]);
   };
 
-  const onChangePage: PaginationProps["onChange"] = (pageNumber : number) => {
-    setActivePage(pageNumber)
+  const onChangePage: PaginationProps["onChange"] = (pageNumber: number) => {
+    setActivePage(pageNumber);
     console.log("Page: ", pageNumber);
     getFacilities(pageNumber).then(
       (res) => {
@@ -216,8 +216,8 @@ export default function ManageFacilities() {
   };
 
   const handleCancelUpdate = () => {
-    setImgUpdate(null)
-    refUpdate.current?.setFiles([])
+    setImgUpdate(null);
+    refUpdate.current?.setFiles([]);
     setDescriptionUpdate("");
     resetUpdate();
     setOpenUpdate(false);
@@ -278,7 +278,8 @@ export default function ManageFacilities() {
               setActivePage(1);
               setTotalPage(0);
               console.log(err);
-            })
+            }
+          );
         })
         .catch((err) => {
           handleCancel();
@@ -302,21 +303,23 @@ export default function ManageFacilities() {
         "Description must be less than or equal to 700 characters."
       );
       setisLoadingUpdateFormCategory(false);
-    } else if (Object.keys(errorsUpdate).length === 0 && imgUpdate) {
+    } else if (Object.keys(errorsUpdate).length === 0) {
       const formData = new FormData();
       formData.append("id", dataUpdaate._id);
       formData.append("name", data.name);
       formData.append("category", data.category);
       formData.append("location", data.address);
       formData.append("description", descriptionUpdate || "");
-      formData.append("img", imgUpdate);
+      if (imgUpdate) {
+        formData.append("img", imgUpdate);
+      }
       updateFacility(formData)
         .then((res) => {
           handleCancelUpdate();
           resetUpdate();
           showSuccessCategory("Update facility successfully !!!");
           setisLoadingUpdateFormCategory(false);
-          setImgUpdate(null)
+          setImgUpdate(null);
           getFacilities(activePage).then(
             (res) => {
               setListFacility(res.data.items);
@@ -326,11 +329,12 @@ export default function ManageFacilities() {
               setActivePage(1);
               setTotalPage(0);
               console.log(err);
-            })
+            }
+          );
         })
         .catch((err) => {
           handleCancelUpdate();
-          showErrorCategory("Error update facility !!!");
+          showErrorCategory("Error update !!!");
           setisLoadingUpdateFormCategory(false);
         });
     } else {
@@ -442,10 +446,7 @@ export default function ManageFacilities() {
                         </p>
                       </td>
                       <td className="p-5  border text-center">
-                        <img 
-                          src={c?.image} 
-                          className="w-32 h-32 m-auto"
-                        />
+                        <img src={c?.image} className="w-32 h-32 m-auto" />
                       </td>
                       <td className="p-5 border text-center">
                         <p>{c?.location}</p>

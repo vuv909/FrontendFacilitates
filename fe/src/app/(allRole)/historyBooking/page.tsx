@@ -20,6 +20,7 @@ import { InputText } from "primereact/inputtext";
 import { useEffect, useState } from "react";
 import { getBookingByUserId } from "../../../../services/booking.api";
 import { StorageService } from "../../../../services/storage";
+import { convertWeekDateToDate } from "../../../../utils";
 
 export default function HistoryBookingPage() {
   const router = useRouter();
@@ -55,6 +56,9 @@ export default function HistoryBookingPage() {
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     console.log("Page: ", pageNumber);
   };
+
+ 
+
   return (
     <>
       <div>
@@ -132,14 +136,14 @@ export default function HistoryBookingPage() {
 
         <div className="mx-56 mt-5 flex items-center justify-center flex-wrap gap-10 pb-10">
           {data?.map((d, index) => {
-            const status = d?.booker?.status;
+            const status = d?.status;
             const color =
               status === 1
                 ? "bg-black"
                 : status === 2
                 ? "bg-green-600"
                 : status === 3
-                ? "bg-red"
+                ? "bg-red-500"
                 : status === 4
                 ? "bg-gray-500"
                 : undefined;
@@ -147,19 +151,20 @@ export default function HistoryBookingPage() {
             return (
               <div
                 key={d?._id}
-                onClick={() => router.push("/detail/2")}
-                className="relative bg-no-repeat bg-cover h-72 w-72 rounded-lg cursor-pointer"
+                onClick={() => router.push(`/detail/${d?.facilityId?._id}`)}
+                className="relative bg-no-repeat bg-cover h-72 w-72 rounded-lg cursor-pointer shadow-lg"
                 style={{
-                  backgroundImage: 'url("https://picsum.photos/200/300")',
+                  backgroundImage: `url("${d?.facilityId?.image}")`,
                 }}
               >
                 <p
                   className={`absolute top-0 left-1/2 transform -translate-x-1/2 text-xl font-bold ${color} shadow-xl text-white pb-2 px-2 rounded-b-xl z-50`}
                 >
-                  DE222
+                  {d?.facilityId?.name}
                 </p>
-                <p className="absolute bottom-0 w-full text-center left-1/2 transform -translate-x-1/2 text-xl font-bold bg-black shadow-xl text-white pb-2 px-2 rounded-b-xl z-50">
-                  Slot1-20/1/2024
+                <p className={`absolute bottom-0 w-full text-center left-1/2 transform -translate-x-1/2 text-xl font-bold ${color}  shadow-xl text-white pb-2 px-2 rounded-b-lg z-50`}>
+                  {d?.slot}-
+                  {convertWeekDateToDate(`${d?.weeks}-${d?.weekdays}`)}
                 </p>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                   {status === 1 && (
@@ -189,21 +194,6 @@ export default function HistoryBookingPage() {
                       spin
                     />
                   )}
-                </div>
-                <div className="absolute -right-2 -top-2 z-50">
-                  <button
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                      showModal(e)
-                    }
-                    className="bg-red-500 hover:bg-red-300 flex items-center justify-center text-white p-1 rounded-full"
-                  >
-                    <Tooltip title="Delete">
-                      <i
-                        className="pi pi-times"
-                        style={{ fontSize: "1.5rem" }}
-                      ></i>
-                    </Tooltip>
-                  </button>
                 </div>
                 <div className="absolute top-0 left-0 w-full h-full bg-white opacity-40 rounded-lg"></div>
               </div>
