@@ -5,8 +5,9 @@ import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { Carousel, CarouselResponsiveOption } from "primereact/carousel";
 import { Tag } from "primereact/tag";
-import { ProductService } from "../../services/ProductService";
+import { ProductService } from "../../services/product/ProductService";
 import "primeflex/primeflex.css";
+import { getCategory } from "../../services/category.api";
 
 interface Product {
   id: string;
@@ -21,35 +22,66 @@ interface Product {
   rating: number;
 }
 
-export default function CarouselComponent() {
+interface Category{
+  _id: string;
+  categoryName: string;
+  createdAt: string;
+  updatedAt: string;
+  image: string;
+}
+
+export default function CarouselComponent(props : any) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [cate, setCate] = useState<Category[]>([])
+  
 
   useEffect(() => {
-    ProductService.getProductsSmall().then((data) =>
-      setProducts(data.slice(0, 9))
-    );
-  }, []);
+    // ProductService.getProductsSmall().then((data) =>
+    //   setProducts(data.slice(0, 9))
+    // );
+    // setCate(props.data)
+    getCategory()
+    .then((response) =>  {
+      setCate(response.data.item)
+    })
+    .catch((error) => console.error("Error fectching Category"))
+    
+    
+  },[]);
 
-  const productTemplate = (product: Product) => {
+  if(!cate){
+    return(
+      <div>
+        loading...
+      </div>
+    )
+  }
+
+  const productTemplate = (cate: Category) => {
     return (
-      <div className="relative text-center h-96  cursor-pointer m-5 z-50">
-        <img
-          src="https://picsum.photos/200/300"
-          alt={product.name}
+      <div className="relative text-center h-96 cursor-pointer m-5 z-50">
+        <Image
+          width={500}
+          height={500}
+          src={cate.image}
+          alt={cate.categoryName}
           className="w-screen h-full rounded-lg"
         />
-
+  
         <div className="absolute top-72 left-1/2 -translate-x-1/2 bg-white rounded-lg p-3">
-          <h4 className="mb-1 font-bold text-xl">Sân bóng đá</h4>
+          <h4 className="w-28 mb-1 font-bold text-lg overflow-hidden whitespace-nowrap text-ellipsis">{cate.categoryName}</h4>
         </div>
       </div>
     );
   };
+  
+  
+
 
   return (
     <div className="px-32">
       <Carousel
-      value={products}
+      value={cate}
       numVisible={3}
       numScroll={3}
       circular

@@ -17,6 +17,10 @@ import ManageFacilites from "./ManageFacilities";
 import ManageBookingRequest from "./ManageBookingRequest";
 import ManageAccount from "./ManageAccount";
 import RecycleFacilities from "./Recycle";
+import CategoryComponent from "../CategoryComponent";
+import ManageBookingRequestAccept from "../ManageBookingRequestAccept";
+import ManageBookingRequestReject from "../ManageBookingRequestReject";
+import ManageBookingRequestExpired from "../ManageBookingRequestExpired";
 
 const { SubMenu } = Menu;
 
@@ -24,9 +28,29 @@ const items = [
   { key: "1", label: "Thống kê", icon: <LineChartOutlined /> },
   { key: "2", label: "Quản lý phòng , sân bóng", icon: <AppstoreOutlined /> },
   {
+    key: "6",
+    label: "Quản lý các thể loại dịch vụ",
+    icon: <AppstoreOutlined />,
+  },
+  {
     key: "3",
     label: "Duyệt yêu cầu đặt sân , phòng",
     icon: <CarryOutOutlined />,
+  },
+  {
+    key: "7",
+    label: "Các yêu cầu được duyệt",
+    icon: <AppstoreOutlined />,
+  },
+  {
+    key: "8",
+    label: "Các yêu cầu không được duyệt",
+    icon: <AppstoreOutlined />,
+  },
+  {
+    key: "9",
+    label: "Các yêu cầu quá hạn",
+    icon: <AppstoreOutlined />,
   },
   { key: "4", label: "Quản lý tài khoản", icon: <UserOutlined /> },
   {
@@ -67,7 +91,7 @@ const DashboardComponent: React.FC = () => {
             collapsed === true ? "block" : "hidden"
           } `}
         >
-         <RightOutlined />
+          <RightOutlined />
         </Button>
         <Button
           onClick={toggleCollapsed}
@@ -90,10 +114,14 @@ const DashboardComponent: React.FC = () => {
       </div>
       <div className="flex-grow">
         {key === "1" && <Analysist />}
-        {key === "2" && <ManageFacilites />}
+        {key === "2" && <ManageFacilites />}  
         {key === "3" && <ManageBookingRequest />}
+        {key === "7" && <ManageBookingRequestAccept />}
+        {key === "8" && <ManageBookingRequestReject />}
+        {key === "9" && <ManageBookingRequestExpired />}
         {key === "4" && <ManageAccount />}
         {key === "5" && <RecycleFacilities />}
+        {key === "6" && <CategoryComponent />}
       </div>
     </div>
   );

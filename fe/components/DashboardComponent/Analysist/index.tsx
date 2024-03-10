@@ -11,9 +11,9 @@ export default function Analysist() {
         <AmountFacilitateAnalysist />
         <AmountRoleAnalysist />
       </div>
-      <div className="flex gap-2">
+      <div>
         <BookingAnalysist />
-        <AccountAnalysist />
+        {/* <AccountAnalysist /> */}
       </div>
       <div className="mt-16 flex flex-col gap-16">
         <TableVoted />

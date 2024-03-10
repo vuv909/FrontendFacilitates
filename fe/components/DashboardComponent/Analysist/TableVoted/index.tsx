@@ -14,7 +14,11 @@ import { classNames } from "primereact/utils";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFileCsv,
+  faMagnifyingGlass,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 
 const info = () => {
   Modal.info({
@@ -61,7 +65,14 @@ export default function TableVoted() {
   return (
     <>
       <div className="">
-        <div>
+        <div className="relative">
+          <div className="absolute left-2">
+            <Tooltip title="Xuất dữ liệu bảng ra excel">
+              <p className="my-2 cursor-pointer bg-green-300 rounded-md text-green-800 text-3xl hover:text-green-500">
+                <FontAwesomeIcon icon={faFileCsv} />
+              </p>
+            </Tooltip>
+          </div>
           <div className="border flex flex-col justify-center">
             <div className="border text-center">
               <p className="text-2xl p-2 bg-blue-500 text-white font-semibold">
@@ -84,13 +95,15 @@ export default function TableVoted() {
                 </button>
               </div>
               <div className="py-2 flex justify-end bg-blue-100">
-                <select className="outline-none border border-gray-300 h-7 p-1 rounded-full">
-                  <option value="default">Mặc định</option>
-                  <option value="1">Điểm tăng dần</option>
-                  <option value="-1">Điểm giảm dần</option>
-                  <option value="1">Lượt sử dụng tăng dần</option>
-                  <option value="-1">Lượt sử dụng giảm dần</option>
-                </select>
+                <Tooltip title="Button này có chức năng sắp xếp điểm và sắp xếp về lượt sử dụng ">
+                  <select className="outline-none border border-gray-300 h-7 p-1 rounded-full">
+                    <option value="default">Mặc định</option>
+                    <option value="1">Điểm tăng dần</option>
+                    <option value="-1">Điểm giảm dần</option>
+                    <option value="1">Lượt sử dụng tăng dần</option>
+                    <option value="-1">Lượt sử dụng giảm dần</option>
+                  </select>
+                </Tooltip>
               </div>
             </div>
 

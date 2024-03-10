@@ -1,6 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
+import { Tooltip } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCsv } from "@fortawesome/free-solid-svg-icons";
 
 export default function AmountRoleAnalysist() {
   const [chartData, setChartData] = useState({});
@@ -41,10 +44,17 @@ export default function AmountRoleAnalysist() {
   }, []);
 
   return (
-    <div className="basis-1/2 h-96 border">
-        <p className="font-bold text-center mb-5">
-            Thống kê số lượng người sử dụng trang web
-        </p>
+    <div className="relative basis-1/2 h-96 border">
+      <div className="absolute">
+        <Tooltip title="Xuất dữ liệu bảng ra excel">
+          <p className="my-2 cursor-pointer text-green-800 text-3xl hover:text-green-500">
+            <FontAwesomeIcon icon={faFileCsv} />
+          </p>
+        </Tooltip>
+      </div>
+      <p className="font-bold text-center mb-5">
+        Thống kê số lượng người sử dụng trang web
+      </p>
       <div className="flex justify-center">
         <Chart
           type="pie"

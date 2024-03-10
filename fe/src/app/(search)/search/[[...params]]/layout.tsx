@@ -20,9 +20,11 @@ export default function SearchtLayout({
         colorNavbarTwo={colorNavbarTwo}
 
       />
+      <div className="flex flex-col min-h-screen">
       <div className="mt-32">{children}</div>
-      <div className="bg-gray-400">
+      <div className="bg-gray-400 mt-auto">
         <FooterComponent />
+      </div>
       </div>
     </>
   );

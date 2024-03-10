@@ -5,9 +5,12 @@ import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { Carousel, CarouselResponsiveOption } from "primereact/carousel";
 import { Tag } from "primereact/tag";
-import { ProductService } from "../../services/ProductService";
+import { ProductService } from "../../services/product/ProductService";
 import "primeflex/primeflex.css";
 import Link from "next/link";
+import { getFacilities, getFacilityDetail } from "../../services/facilities.api";
+
+
 interface Product {
   id: string;
   code: string;
@@ -21,26 +24,57 @@ interface Product {
   rating: number;
 }
 
-export default function CarouselTopComponent() {
+interface Facility{
+  _id: string;
+  name: string;
+  status: string;
+  description: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+export default function CarouselTopComponent(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [faci, setFaci] = useState<Facility[]>([]);
+  // console.log(props.data);
+  
 
   useEffect(() => {
-    ProductService.getProductsSmall().then((data) =>
-      setProducts(data.slice(0, 9))
-    );
-  }, []);
+    // ProductService.getProductsSmall().then((data) =>
+    //   setProducts(data.slice(0, 9))
+    // );
+    // setFaci(props.data)
 
-  const productTemplate = (product: Product) => {
+    getFacilities()
+      .then((response) =>{
+        setFaci(response.data.items)
+      })
+      .catch((error) => console.error("Error fetching Facilities"))
+  },[]);
+
+  if(!faci){
+    return(
+      <div>
+        loading...
+      </div>
+    )
+  }
+
+  const productTemplate = (facility: Facility) => {
     return (
-      <Link href={'/detail/2'}>
+      <Link href={"/detail/2"}>
         <div className="relative text-center h-72  cursor-pointer m-5 z-50">
-          <img
-            src="https://picsum.photos/200/300"
-            alt={product.name}
+          <Image
+            width={500}
+            height={500}
+            src={facility.image ? facility.image : "https://picsum.photos/200/300"}
+            alt={facility.name}
             className="w-screen h-full rounded-lg"
           />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 pb-2 rounded-b-lg">
-            <p className="font-bold">AL202</p>
+            <p className="font-bold">{facility.name}</p>
           </div>
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black hover:bg-opacity-80 p-2 rounded-full">
             <button className="text-white px-3 w-fit">100 lần</button>
@@ -53,7 +87,7 @@ export default function CarouselTopComponent() {
   return (
     <div className="px-16">
       <Carousel
-        value={products}
+        value={faci}
         numVisible={4}
         numScroll={4}
         circular
