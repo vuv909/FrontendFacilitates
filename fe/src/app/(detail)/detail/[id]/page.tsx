@@ -70,7 +70,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
               {/* comment */}
               <div className="flex justify-center pt-10">
-                <CommentComponent />
+                <CommentComponent detailData={detailData} showErrorCategory={showErrorCategory} showSuccessCategory={showSuccessCategory}/>
               </div>
               <div>
                 <div className="text-center font-bold text-4xl">

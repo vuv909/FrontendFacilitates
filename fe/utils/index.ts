@@ -195,40 +195,16 @@ export const getCurrentDate = (weekdays: any, weeks: any) => {
   return formattedDate;
 };
 
-export const getStartAndEndDate = (
-  day: string,
-  slot: string,
-  weekdays: string,
-  weeks: string
-) => {
-  // Define constants for start and end dates for each slot
-  const startDateMap: { [key: string]: string } = {
-    Slot1: STARTDATE_SLOT1,
-    Slot2: STARTDATE_SLOT2,
-    Slot3: STARTDATE_SLOT3,
-    Slot4: STARTDATE_SLOT4,
-    Slot5: STARTDATE_SLOT5,
-    Slot6: STARTDATE_SLOT6,
-    Slot7: STARTDATE_SLOT7,
-    Slot8: STARTDATE_SLOT8,
-    Slot9: STARTDATE_SLOT9,
-  };
 
-  const endDateMap: { [key: string]: string } = {
-    Slot1: ENDDATE_SLOT1,
-    Slot2: ENDDATE_SLOT2,
-    Slot3: ENDDATE_SLOT3,
-    Slot4: ENDDATE_SLOT4,
-    Slot5: ENDDATE_SLOT5,
-    Slot6: ENDDATE_SLOT6,
-    Slot7: ENDDATE_SLOT7,
-    Slot8: ENDDATE_SLOT8,
-    Slot9: ENDDATE_SLOT9,
-  };
+export const formatDate = (dateString: string) => {
+  // Parse the dateString into a Date object
+  const date = new Date(dateString);
 
-  // Get the start and end dates based on the slot
-  const startDate = `${day}${startDateMap[slot]}`;
-  const endDate = `${day}${endDateMap[slot]}`;
+  // Get the day, month, and year
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
 
-  return { startDate, endDate };
+  // Return the formatted date
+  return `${day}/${month}/${year}`;
 };

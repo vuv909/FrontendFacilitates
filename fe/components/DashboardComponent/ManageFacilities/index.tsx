@@ -38,6 +38,7 @@ import {
 } from "../../../services/facilities.api";
 import { getCategory } from "../../../services/category.api";
 import { Toast } from "primereact/toast";
+import { StorageService } from "../../../services/storage";
 
 interface City {
   name: string;
@@ -251,11 +252,6 @@ export default function ManageFacilities() {
     if (description && description.trim().length === 0) {
       showErrorCategory("Description must not be empty.");
       setIsLoadingAddFormCategory(false);
-    } else if (description && description.trim().length > 700) {
-      showErrorCategory(
-        "Description must be less than or equal to 700 characters."
-      );
-      setIsLoadingAddFormCategory(false);
     } else if (Object.keys(errors).length === 0 && img) {
       const formData = new FormData();
       formData.append("name", data.name);
@@ -297,11 +293,6 @@ export default function ManageFacilities() {
     setisLoadingUpdateFormCategory(true);
     if (descriptionUpdate && descriptionUpdate.trim().length === 0) {
       showErrorCategory("Description must not be empty.");
-      setisLoadingUpdateFormCategory(false);
-    } else if (descriptionUpdate && descriptionUpdate.trim().length > 700) {
-      showErrorCategory(
-        "Description must be less than or equal to 700 characters."
-      );
       setisLoadingUpdateFormCategory(false);
     } else if (Object.keys(errorsUpdate).length === 0) {
       const formData = new FormData();
