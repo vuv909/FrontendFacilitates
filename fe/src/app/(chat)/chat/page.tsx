@@ -155,7 +155,7 @@ const Chat = () => {
               className="bg-blue-500 text-white py-2 px-4 rounded-lg"
               onClick={sendMessage}
             >
-              Gửi
+              <i className="pi pi-send" style={{ fontSize: '1rem' }}></i>
             </button>
           </div>
         </div>
