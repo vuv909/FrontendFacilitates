@@ -1,80 +1,66 @@
 "use client";
-import React, { useState } from "react";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
-
-import { Editor, EditorTextChangeEvent } from "primereact/editor";
-
+import React, { useEffect, useState } from "react";
 import {
-  FileUpload,
-  FileUploadProps,
-  FileUploadSelectEvent,
-} from "primereact/fileupload";
-import { classNames } from "primereact/utils";
-import { icon } from "@fortawesome/fontawesome-svg-core";
-import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
+  Button,
+  InputNumber,
+  Modal,
+  Pagination,
+  PaginationProps,
+  Tooltip,
+} from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFileCsv,
-  faMagnifyingGlass,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
-interface City {
-  name: string;
-  code: string;
-}
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { getAllUser, updateProfile } from "../../../services/user.api";
+import { log } from "console";
+import { number } from "prop-types";
+import { pages } from "next/dist/build/templates/app-page";
 
 export default function ManageAccount() {
-  const [open, setOpen] = useState(false);
+  const [userData, setUserData] = useState<any[]>([]);
+  const [activePage, setActivePage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [searchValue, setSearchValue] = useState("");
+  const [page, setPage] = useState<number>(1);
 
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
-  const [textValue, setTextValue] = useState<string>("");
-  const [img, setImg] = useState<File | null>(null);
-  const [location, setLocation] = useState<string>("");
-  const [shortTitle, setShortTitle] = useState<string>("");
-  const [description, setDescription] = useState<string | null>("");
-
-  const cities: City[] = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" },
-  ];
-
-  const handleSelectedFile = (e: FileUploadSelectEvent) => {
-    setImg(e.files[0]);
+  const fetchApi = (searchValue: any, page: number) => {
+    getAllUser(searchValue, page)
+      .then((res) => {
+        setUserData(res?.data?.user);
+        setActivePage(res?.data?.activePage);
+        setTotalPage(res?.data?.totalPage);
+      })
+      .catch((err) => {});
   };
-  const data = new FormData();
-  const handleAdd = () => {
-    if (selectedCity?.name) {
-      data.append("category", selectedCity.name);
-    }
-    data.append("name", textValue);
-    if (img != null) {
-      data.append("img", img);
-    }
-    data.append("location", location);
-    data.append("shortTitle", shortTitle);
-    if (description != null) {
-      data.append("description", description);
-    }
-
-    const formDataEntries: [string, FormDataEntryValue][] = Array.from(
-      data.entries()
-    );
-
-    for (const [key, value] of formDataEntries) {
-      console.log(`${key}: ${value}`);
-    }
-  };
+  useEffect(() => {
+    fetchApi(searchValue, page);
+  }, []);
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     console.log("Page: ", pageNumber);
+    fetchApi(searchValue, pageNumber);
   };
 
- 
+  const handleFilter = (e: any) => {
+    const inputValue = e.target.value.toLowerCase();
+    fetchApi(inputValue, page);
+  };
 
+  const handleChangeStaus = async (userId: any, status: any) => {
+    if (confirm("Bạn có muốn thay đổi trạng thái không ?")) {
+      await updateProfile(userId, { status });
+      alert("Thay đổi thành công");
+    }
+    fetchApi(searchValue, page);
+  };
+  const handleChangeRole = async (userId: any, roleId: any) => {
+    console.log(roleId);
+    
+    if (confirm("Bạn có muốn thay đổi trạng thái không ?")) {
+      await updateProfile(userId, { roleId });
+      alert("Thay đổi thành công");
+    }
+   fetchApi(searchValue, page)
+  };
   return (
     <>
       <div className="">
@@ -82,16 +68,16 @@ export default function ManageAccount() {
           <div className="border flex flex-col justify-center">
             <div className="border text-center">
               <p className="text-2xl p-2 bg-blue-500 text-white font-semibold">
-               Quản Lý Tài Khoản
+                Quản Lý Tài Khoản
               </p>
             </div>
             <div className="flex justify-end bg-blue-100">
-             
               <div className="py-2 flex justify-end bg-blue-100">
                 <input
                   type="text"
                   className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
                   placeholder="Tìm Kiếm..."
+                  onChange={handleFilter}
                 />
                 <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
                   <FontAwesomeIcon
@@ -111,334 +97,109 @@ export default function ManageAccount() {
                   <th className="p-5 border">Địa chỉ</th>
                   <th className="p-5 border">Ngày tạo</th>
                   <th className="p-5 border">Trạng Thái</th>
-                  <th className="p-5 border">Xóa</th>
-
+                  <th className="p-5 border">Chức Vụ</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Quân</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>0987654321</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>quanbui@gmail.com</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Hà Nội</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>11-11-2022</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>Active</span>
-                     
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                  <div className="flex flex-col gap-2 w-full py-1">
-                      <button className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24">
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
+                {userData?.length > 0 &&
+                  userData?.map((u, index) => {
+                    return (
+                      <tr className="">
+                        <td className="p-5 border text-center">
+                          <p>{(activePage - 1) * 6 + index + 1}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
+                            <span>{u?.name}</span>
+                          </p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{u?.phoneNumber}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{u?.email}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{u?.address}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>
+                            {u?.createdAt
+                              ? new Date(u.createdAt).toLocaleDateString(
+                                  "vi-VN"
+                                )
+                              : ""}
+                          </p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <select
+                            className={`appearance-none bg-transparent border-none ${
+                              u?.status === 1
+                                ? "text-green-500"
+                                : u?.status === 3
+                                ? "text-red-600"
+                                : ""
+                            }`}
+                            value={u?.status} // Xử lý trường hợp u?.status không tồn tại
+                            onChange={(e) =>
+                              handleChangeStaus(u?._id, e.target.value)
+                            }
+                          >
+                            <option className="text-green-500" value="1">
+                              Active
+                            </option>
+                            <option className="text-red-500" value="3">
+                              Inactive
+                            </option>
+                          </select>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p className="cursor-pointer flex items-center justify-center gap-1">
+                            <select
+                             className={`appearance-none bg-transparent border-none ${
+                              u?.roleId?._id === "65d83cd06cca5d4d8383cc86"
+                                ? "text-blue-500"
+                                : u?.roleId?._id === "65da0c3969e68c4bff47fcb8"
+                                ? "text-yellow-500"
+                                : ""
+                            }`}
+                              value={u?.roleId?._id}
+                              onChange={(e) =>
+                                handleChangeRole(u?._id, e.target.value)
+                              }
+                              
+                            >
+                              <option
+                                className="text-blue-500"
+                                value="65d83cd06cca5d4d8383cc86"
+                              >
+                                Student
+                              </option>
+
+                              <option className="text-yellow-500"value="65da0c3969e68c4bff47fcb8">
+                              Admin
+                              </option>
+                            </select>
+                          </p>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
-            <div className="flex items-center justify-center ">
-              <Pagination
-                defaultCurrent={6}
-                total={500}
-                onChange={onChangePage}
-                showSizeChanger={false}
-              />
-            </div>
+            {totalPage > 0 && (
+              <div className="flex items-center justify-center ">
+                <Pagination
+                  defaultCurrent={activePage}
+                  total={Number(totalPage + "0")}
+                  onChange={onChangePage}
+                  showSizeChanger={false}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
-      
     </>
   );
 }
-
