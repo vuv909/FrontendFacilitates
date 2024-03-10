@@ -7,16 +7,19 @@ export default function restClient({
   method = "GET",
   params,
   data,
+  headers
 }: {
   url: string;
   method?: "POST" | "GET" | "PUT" | "PATCH" | "DELETE";
   params?: object;
   data?: any;
+  headers? : any
 }) {
   return axios({
     url: `${BASE_URL}/${url}`,
     method,
     params,
-    data
+    data,
+    headers 
   });
 }

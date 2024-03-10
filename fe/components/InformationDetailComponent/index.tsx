@@ -18,7 +18,6 @@ import {
   getCurrentDate,
   getCurrentDay,
   getCurrentWeek,
-  getStartAndEndDate,
 } from "../../utils";
 import { current } from "@reduxjs/toolkit";
 import {
@@ -77,6 +76,10 @@ export default function InfomationDetailComponent({
   showSuccessCategory: any;
   showErrorCategory: any;
 }) {
+  console.log("====================================");
+  console.log(detailData);
+  console.log("====================================");
+
   //booking
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -219,9 +222,9 @@ export default function InfomationDetailComponent({
 
     setWeekValue(formattedWeekValue);
 
-    calendarBooking(currentWeek)
+    calendarBooking(currentWeek, detailData?._id)
       .then((res) => {
-        setListBooking(res.data?.booking);
+        setListBooking(res.data);
       })
       .catch((err: Error) => {
         console.log("====================================");
@@ -243,9 +246,9 @@ export default function InfomationDetailComponent({
 
   const handleWeekChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedWeek = event.target.value;
-    calendarBooking(event.target.value)
+    calendarBooking(event.target.value, detailData?._id)
       .then((res) => {
-        setListBooking(res.data?.booking);
+        setListBooking(res.data);
       })
       .catch((err: Error) => {
         console.log("====================================");
@@ -305,34 +308,27 @@ export default function InfomationDetailComponent({
     const arrayBooking = data.split("#");
     const userId = StorageService.getUser()?.id ?? null;
     const day = getCurrentDate(arrayBooking[1], arrayBooking[2]);
-    const { startDate, endDate } = getStartAndEndDate(
-      day,
-      arrayBooking[0],
-      arrayBooking[1],
-      arrayBooking[2]
-    );
     const bookingBody = {
       slot: arrayBooking[0],
       weekdays: arrayBooking[1],
       weeks: arrayBooking[2],
       facilityId: detailData?._id,
-      startDate,
-      endDate,
       booker: userId,
+      isComment: false,
       status: 1,
     };
     addBooking(bookingBody)
       .then((res) => {
         showSuccessCategory("Booking successfully !!!");
-        calendarBooking(weekValue)
-      .then((res) => {
-        setListBooking(res.data?.booking);
-      })
-      .catch((err: Error) => {
-        console.log("====================================");
-        console.log("err::", err);
-        console.log("====================================");
-      });
+        calendarBooking(weekValue, detailData?._id)
+          .then((res) => {
+            setListBooking(res.data);
+          })
+          .catch((err: Error) => {
+            console.log("====================================");
+            console.log("err::", err);
+            console.log("====================================");
+          });
       })
       .catch((err) => {
         showErrorCategory("Booking failed !!!");

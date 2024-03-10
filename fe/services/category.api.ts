@@ -2,7 +2,7 @@ import restClient from "./restClient";
 
 export function getCategory(activePage?: number) {
   return restClient({
-    url: "category//list",
+    url: "category/list",
     params: {page : activePage}
   });
 }

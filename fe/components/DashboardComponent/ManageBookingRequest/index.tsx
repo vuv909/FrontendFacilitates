@@ -13,7 +13,7 @@ export default function ManageBookingRequest() {
   useEffect(() => {
     getAllBooking()
       .then((res) => {
-        setBookingData(res?.data);
+        setBookingData(res?.data?.booking);
       })
       .catch((err) => {});
   }, []);
@@ -24,11 +24,11 @@ export default function ManageBookingRequest() {
 
   const handleAccept = (data: any) => {
     const status = 2;
-    editBooking({  status },data?._id)
+    editBooking({ status }, data?._id)
       .then((res) => {
         getAllBooking()
           .then((res) => {
-            setBookingData(res?.data);
+            setBookingData(res?.data?.booking);
           })
           .catch((err) => {});
       })
@@ -37,11 +37,11 @@ export default function ManageBookingRequest() {
 
   const handleReject = (data: any) => {
     const status = 3;
-    editBooking({  status },data?._id)
+    editBooking({ status }, data?._id)
       .then((res) => {
         getAllBooking()
           .then((res) => {
-            setBookingData(res?.data);
+            setBookingData(res?.data?.booking);
           })
           .catch((err) => {});
       })
@@ -54,7 +54,7 @@ export default function ManageBookingRequest() {
         <div className="border flex flex-col justify-center">
           <div className="border text-center">
             <p className="text-2xl p-2 bg-blue-500 text-white font-semibold">
-              Các yêu cần đang chờ xử lí
+              Các yêu cầu đang chờ xử lí
             </p>
           </div>
           <div className="py-2 flex justify-between bg-blue-100">
@@ -84,16 +84,19 @@ export default function ManageBookingRequest() {
                 <th className="p-5 border">#</th>
                 <th className="p-5 border">Tên phòng (sân)</th>
                 <th className="p-5 border">Slot</th>
-                {/* <th className="p-5 border">Thời gian bắt đầu</th>
-                <th className="p-5 border">Thời gian kết thúc</th> */}
+                <th className="p-5 border">Thời gian bắt đầu</th>
+                <th className="p-5 border">Thời gian kết thúc</th>
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {bookingData?.map((b, index) => {
-                const status = b?.status;
+              {bookingData?.length > 0 && bookingData?.map((b, index) => {
+                console.log('====================================');
+                console.log("b::",b);
+                console.log('====================================');
+                const status = b?.status; 
 
                 if (status === 1) {
                   return (
@@ -117,18 +120,18 @@ export default function ManageBookingRequest() {
                       <td className="p-5 border text-center">
                         <p>{b?.slot}</p>
                       </td>
-                      {/* <td className="p-5 border text-center">
+                      <td className="p-5 border text-center">
                         <p>{b && new Date(b?.startDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
-                      </td> */}
+                      </td>
                       <td className="p-5 border text-center">
                         <p>Đang chờ xử lí</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                        <span>{b?.booker?.name}</span>
+                          <span>{b?.booker?.name}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height={10}

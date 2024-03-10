@@ -10,14 +10,14 @@ export function addBooking(data: any) {
 
 export function getBookingByUserId(id:number) {
   return restClient({
-    url: "booking/user/"+id,
+    url: "booking/user/"+id+"?page=1&&size=6",
     method: "GET",
   });
 }
 
-export function getAllBooking() {
+export function getAllBooking(page = 1 , size = 5) {
   return restClient({
-    url: "booking?page=1&size=100",
+    url: "booking?page="+page+"&size="+size,
     method: "GET",
   });
 }
@@ -31,10 +31,14 @@ export function editBooking(data:any,id :string){
   });
 }
 
-export function calendarBooking(weeks :string){
+export function calendarBooking(weeks ?:string,faciId ?: string){
   
+  console.log('====================================');
+  console.log("faciId: ",faciId);
+  console.log('====================================');
+
   return restClient({
-    url: "booking",
+    url: "booking/status/"+faciId,
     method: "GET",
     params : {weeks}
   });

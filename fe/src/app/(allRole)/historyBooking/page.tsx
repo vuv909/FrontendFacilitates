@@ -20,7 +20,7 @@ import { InputText } from "primereact/inputtext";
 import { useEffect, useState } from "react";
 import { getBookingByUserId } from "../../../../services/booking.api";
 import { StorageService } from "../../../../services/storage";
-import { convertWeekDateToDate } from "../../../../utils";
+import { convertWeekDateToDate, formatDate } from "../../../../utils";
 
 export default function HistoryBookingPage() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function HistoryBookingPage() {
   useEffect(() => {
     getBookingByUserId(StorageService.getUser()?.id)
       .then((res) => {
-        setData(res.data);
+        setData(res.data?.booking);
       })
       .catch((err) => {});
   }, []);
@@ -152,7 +152,7 @@ export default function HistoryBookingPage() {
               <div
                 key={d?._id}
                 onClick={() => router.push(`/detail/${d?.facilityId?._id}`)}
-                className="relative bg-no-repeat bg-cover h-72 w-72 rounded-lg cursor-pointer shadow-lg"
+                className="relative bg-no-repeat bg-cover h-72 w-72 rounded-lg cursor-pointer shadow-lg border"
                 style={{
                   backgroundImage: `url("${d?.facilityId?.image}")`,
                 }}
@@ -164,7 +164,7 @@ export default function HistoryBookingPage() {
                 </p>
                 <p className={`absolute bottom-0 w-full text-center left-1/2 transform -translate-x-1/2 text-xl font-bold ${color}  shadow-xl text-white pb-2 px-2 rounded-b-lg z-50`}>
                   {d?.slot}-
-                  {convertWeekDateToDate(`${d?.weeks}-${d?.weekdays}`)}
+                  {formatDate(d?.startDate)}
                 </p>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                   {status === 1 && (

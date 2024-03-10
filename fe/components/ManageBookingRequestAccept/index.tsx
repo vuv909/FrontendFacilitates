@@ -13,7 +13,7 @@ export default function ManageBookingRequestAccept() {
   useEffect(() => {
     getAllBooking()
       .then((res) => {
-        setBookingData(res?.data);
+        setBookingData(res?.data?.booking);
       })
       .catch((err) => {});
   }, []);
@@ -28,7 +28,7 @@ export default function ManageBookingRequestAccept() {
         <div className="border flex flex-col justify-center">
           <div className="border text-center">
             <p className="text-2xl p-2 bg-blue-500 text-white font-semibold">
-              Các yêu cần đang chờ xử lí
+              Các yêu cầu được duyệt
             </p>
           </div>
           <div className="py-2 flex justify-between bg-blue-100">
@@ -58,8 +58,8 @@ export default function ManageBookingRequestAccept() {
                 <th className="p-5 border">#</th>
                 <th className="p-5 border">Tên phòng (sân)</th>
                 <th className="p-5 border">Slot</th>
-                {/* <th className="p-5 border">Thời gian bắt đầu</th>
-                <th className="p-5 border">Thời gian kết thúc</th> */}
+                <th className="p-5 border">Thời gian bắt đầu</th>
+                <th className="p-5 border">Thời gian kết thúc</th>
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
                 <th></th>
@@ -91,12 +91,12 @@ export default function ManageBookingRequestAccept() {
                       <td className="p-5 border text-center">
                         <p>{b?.slot}</p>
                       </td>
-                      {/* <td className="p-5 border text-center">
+                      <td className="p-5 border text-center">
                         <p>{b && new Date(b?.startDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
-                      </td> */}
+                      </td>
                       <td className="p-5 border text-center">
                         <p>Được duyệt</p>
                       </td>
