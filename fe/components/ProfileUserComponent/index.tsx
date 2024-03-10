@@ -4,7 +4,7 @@ import { url } from "inspector";
 import React, { use, useEffect } from "react";
 import data  from "../../services/profile.service";
 import { useState } from "react";
-import { getProfile, updateProfile } from "../../services/profile.api";
+import { getProfile, updateProfile } from "../../services/user.api";
 import { log } from "console";
 import { set } from "react-hook-form";
 
