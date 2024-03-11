@@ -42,6 +42,7 @@ export default function Home() {
   const [showChat, setShowChat] = useState(false);
   const [socket, setSocket] = useState<Socket>();
   const [user, setUser] = useState<User>();
+  const [loginChat, setLoginChat] = useState(false);
 
   useEffect(() => {
     getCategory()
@@ -193,10 +194,12 @@ export default function Home() {
         <CarouselTopComponent data={faci} />
       </div>
       <i
-        className="pi pi-bell font-medium text-blue-500 text-3xl cursor-pointer fixed top-3/4 right-10"
-        onClick={() => setShowChat(!showChat)}
-      ></i>
-      {showChat && (
+  className="pi pi-inbox font-bold text-green-500 back text-3xl cursor-pointer fixed top-3/4 right-10  "
+  onClick={() => setLoginChat(!loginChat)}
+></i>
+
+
+      {loginChat && (
         <div
           className="fixed bottom-5 right-20 bg-white p-4 border border-gray-300 overflow-y-auto"
           style={{ maxHeight: "400px" }}
@@ -231,7 +234,7 @@ export default function Home() {
                 onClick={handleSendMessage}
                 className="px-4 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               >
-               <i className="pi pi-send" style={{ fontSize: '1rem' }}></i>
+                <i className="pi pi-send" style={{ fontSize: "1rem" }}></i>
               </button>
             </div>
           ) : (

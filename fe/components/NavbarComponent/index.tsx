@@ -9,6 +9,7 @@ import { StorageService } from "../../services/storage";
 import { addUser } from "@/redux/slices/storeUserSlice";
 import { useDispatch } from "react-redux";
 import { Menu } from "primereact/menu";
+import { getNotification } from "../../services/notification.api";
 
 interface NavbarComponentProps {
   colorNavbarOne: string;
@@ -26,6 +27,8 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   const menuLeft = useRef(null);
   const menuRight = useRef(null);
   const toast = useRef(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [data, setData] = useState<any>([]);
 
   useEffect(() => {
     if (
@@ -69,6 +72,16 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
       },
     },
   ];
+
+  useEffect(() => {
+    getNotification()
+      .then((res) => {
+        console.log(res);
+        setData(res?.data?.content);
+      })
+      .catch((err) => {});
+  }, []);
+  console.log(data);
 
   return (
     <>
@@ -117,13 +130,39 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                 <i
                   className="pi pi-bell p-overlay-badge"
                   style={{ fontSize: "1.5rem" }}
+                  onClick={() => setShowNotification(!showNotification)}
                 >
                   <Badge value="2"></Badge>
                 </i>
               </div>
+              {showNotification && (
+                <div className="fixed top-16 right-28 bg-white border border-gray-500 p-2 shadow-md w-90px">
+                  {/* Nội dung thông báo ở đây */}
+                  <button
+                    className="text-sm text-gray-700 mt-1 mb-2 ml-80 flex justify-end"
+                    onClick={() => setShowNotification(false)}
+                  >
+                    <i
+                      className="pi pi-times-circle"
+                      style={{ fontSize: "1.5rem" }}
+                    ></i>
+                  </button>
+                  {data?.length > 0 &&
+                    data.map((item:any, index:any) => (
+                      <div key={index} className="border border-gray-600 rounded-sm border-around mb-3 p-2">
+                        <h4 className="text-lg font-bold">{item?.userId}</h4>
+                        <p className="text-sm ">{item?.content}</p>
+                        <p  className="text-xs text-end">{(new Date(item?.createdAt)).toLocaleString('vi-VN', {month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'})}</p>
+                      </div>
+                    ))}
+                </div>
+              )}
+
               <div
                 className="cursor-pointer h-12 w-12 relative"
-                onMouseEnter={(event) => (menuLeft as any).current.toggle(event)}
+                onMouseEnter={(event) =>
+                  (menuLeft as any).current.toggle(event)
+                }
                 onMouseLeave={(event) => (menuLeft as any).current.hide(event)}
                 aria-controls="popup_menu_left"
                 aria-haspopup
@@ -132,7 +171,13 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                   src={`${user.value.avatar}`}
                   className="h-full w-full rounded-full"
                 />
-                <Menu model={items} popup ref={menuLeft} id="popup_menu_left" className="fix" />
+                <Menu
+                  model={items}
+                  popup
+                  ref={menuLeft}
+                  id="popup_menu_left"
+                  className="fix"
+                />
               </div>
             </div>
           )}
