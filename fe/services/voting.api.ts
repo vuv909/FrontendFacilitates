@@ -4,6 +4,7 @@ import { StorageService } from "./storage";
 interface IComment {
     content : string;
     facility : string;
+    star : number;
 }
 
 const tokenWithQuotes = StorageService.getToken();

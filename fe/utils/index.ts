@@ -170,7 +170,7 @@ export const checkValidSlotSunday = (slot: string, data: any): boolean => {
 
 export const getCurrentDate = (weekdays: any, weeks: any) => {
   // Split the weeks string to get the year and week number
-  const [year, weekNumber] = weeks.split("-W");
+  const [year, weekNumber] = weeks.trim().split("-W");
   const ISOWeekStart = new Date(year, 0, 1 + (weekNumber - 1) * 7); // Calculate the starting day of the ISO week
 
   // Calculate the day of the week based on the weekdays value
@@ -188,6 +188,9 @@ export const getCurrentDate = (weekdays: any, weeks: any) => {
   // Calculate the date for the provided day
   const targetDate = new Date(ISOWeekStart);
   targetDate.setDate(ISOWeekStart.getDate() + weekDayIndex);
+
+  // Add one day to the target date
+  targetDate.setDate(targetDate.getDate() + 1);
 
   // Format the date as desired (e.g., "YYYY-MM-DD")
   const formattedDate = targetDate.toISOString().split("T")[0];

@@ -136,7 +136,7 @@ export default function InfomationDetailComponent({
         setDisableButtonsThurday(false);
         setDisableButtonsFriday(false);
         setDisableButtonsSaturday(false);
-        setDisableButtonsSunday(true);
+        setDisableButtonsSunday(false);
       } else if (currentDay === TUESDAY) {
         setDisableButtonsMonday(true);
         setDisableButtonsTuesday(true);
@@ -197,7 +197,7 @@ export default function InfomationDetailComponent({
       const weekDifference =
         (targetYear - currentYear) * 52 + (targetWeekNum - currentWeekNum);
 
-      if (weekDifference > 2) {
+      if (weekDifference > 1) {
         // If the difference is greater than 2 weeks, disable all buttons
         setDisableButtonsMonday(true);
         setDisableButtonsTuesday(true);
@@ -314,9 +314,15 @@ export default function InfomationDetailComponent({
       weeks: arrayBooking[2],
       facilityId: detailData?._id,
       booker: userId,
+      startDate: day.trim(),
+      endDate: day.trim(),
       isComment: false,
       status: 1,
     };
+
+    console.log("====================================");
+    console.log("day::", day);
+    console.log("====================================");
     addBooking(bookingBody)
       .then((res) => {
         showSuccessCategory("Booking successfully !!!");
