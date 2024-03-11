@@ -2,7 +2,7 @@
 import { InputTextarea } from "primereact/inputtextarea";
 import { useEffect, useState } from "react";
 import { Rating, RatingChangeEvent } from "primereact/rating";
-import { Avatar, Pagination, PaginationProps } from "antd";
+import { Avatar, Empty, Pagination, PaginationProps } from "antd";
 import {
   addComment,
   checkComment,
@@ -19,8 +19,22 @@ export default function CommentComponent({
   const [starVoted, setStarVoted] = useState<number | null>(2); // Ensure star is nullable
   const [listComment, setListComment] = useState<any[]>([]);
   const [toggleComment, setToggleComment] = useState<boolean>(false);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [activePage, setActivePage] = useState<number>(0);
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
+    getCommentByFacilityId(detailData?._id, pageNumber)
+      .then((res) => {
+        setListComment(res.data.items);
+        setTotalPages(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      })
+      .catch((err) => {
+        setTotalPages(0);
+        setActivePage(0);
+        console.log("====================================");
+        console.log("err", err);
+        console.log("====================================");
+      });
   };
 
   useEffect(() => {
@@ -34,8 +48,12 @@ export default function CommentComponent({
     getCommentByFacilityId(detailData?._id)
       .then((res) => {
         setListComment(res.data.items);
+        setTotalPages(res.data.totalPage);
+        setActivePage(res.data.activePage);
       })
       .catch((err) => {
+        setTotalPages(0);
+        setActivePage(0);
         console.log("====================================");
         console.log("err", err);
         console.log("====================================");
@@ -56,6 +74,7 @@ export default function CommentComponent({
     } else {
       addComment({
         content: value,
+        star: starVoted,
         facility: detailData._id,
       })
         .then((res) => {
@@ -70,8 +89,12 @@ export default function CommentComponent({
           getCommentByFacilityId(detailData?._id)
             .then((res) => {
               setListComment(res.data.items);
+              setTotalPages(res.data.totalPage);
+              setActivePage(res.data.activePage);
             })
             .catch((err) => {
+              setTotalPages(0);
+              setActivePage(0);
               console.log("====================================");
               console.log("err", err);
               console.log("====================================");
@@ -125,66 +148,78 @@ export default function CommentComponent({
       )}
 
       <div className="mt-5">
-        <div>
+        {listComment && (
           <div>
-            <p className="font-bold text-lg">5 đánh giá</p>
+            <div>
+              <p className="font-bold text-lg text-center">{listComment.length} đánh giá</p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* comment */}
         <div className="mt-10">
-          <div className="flex gap-5 items-center">
-            <div>
-              <Avatar
-                src="https://picsum.photos/200/300"
-                size={{ xs: 14, sm: 22, md: 30, lg: 54, xl: 70, xxl: 90 }}
-              />
-            </div>
-            <div className="border border-solid border-gray-300 p-4 rounded-xl w-full">
-              <div className="flex gap-5">
+          {listComment &&
+            listComment.map((comment, index) => (
+              <div className="flex gap-5 items-center mt-5" key={index}>
                 <div>
-                  <p className="font-bold">Minh</p>
+                  <Avatar
+                    src={comment?.userId?.avatar}
+                    size={{ xs: 14, sm: 22, md: 30, lg: 54, xl: 70, xxl: 90 }}
+                  />
                 </div>
-                <div>
-                  <p className="text-gray-500 flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="16"
-                      width="14"
-                      viewBox="0 0 448 512"
-                    >
-                      <path d="M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z" />
-                    </svg>
-                    14h30
-                  </p>
+                <div className="border border-solid border-gray-300 p-4 rounded-xl w-full">
+                  <div className="flex gap-5">
+                    <div>
+                      <p className="font-bold">Minh</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 flex items-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="16"
+                          width="14"
+                          viewBox="0 0 448 512"
+                        >
+                          <path d="M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z" />
+                        </svg>
+                        &nbsp;{new Date(comment?.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="my-2">
+                    <Rating
+                      disabled
+                      cancelIcon={<></>}
+                      value={comment?.star}
+                      onChange={(e: RatingChangeEvent) =>
+                        setStarVoted(e.value !== undefined ? e.value : null)
+                      }
+                      className="shadow-none"
+                    />
+                  </div>
+                  <div>
+                    <p>{comment?.content}</p>
+                  </div>
                 </div>
               </div>
-              <div className="my-2">
-                <Rating
-                  disabled
-                  cancelIcon={<></>}
-                  value={!starVoted ? 0 : starVoted}
-                  onChange={(e: RatingChangeEvent) =>
-                    setStarVoted(e.value !== undefined ? e.value : null)
-                  }
-                  className="shadow-none"
-                />
-              </div>
-              <div>
-                <p>Wow very good</p>
-              </div>
+            ))}
+          {!listComment || totalPages === 0 && 
+            <div className="my-16">
+              <Empty />
             </div>
-          </div>
+          }
         </div>
       </div>
-      <div className="flex items-center justify-center my-16">
-        <Pagination
-          defaultCurrent={6}
-          total={500}
-          onChange={onChangePage}
-          showSizeChanger={false}
-        />
-      </div>
+      {totalPages > 0 && (
+        <div className="flex items-center justify-center my-16">
+          <Pagination
+            defaultCurrent={activePage}
+            total={Number(`${totalPages}0`)}
+            onChange={onChangePage}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
     </div>
   );
 }
