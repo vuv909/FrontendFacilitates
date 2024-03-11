@@ -28,7 +28,7 @@ export function addComment(data : IComment) {
       });
 }
 
-export function getCommentByFacilityId(facilityId: string,page ?: number ,size ?: number){
+export function getCommentByFacilityId(facilityId: string,page ?: any ,size ?: number){
     return restClient({
         url: "comment/list",
         params: {facilityId,page,size},

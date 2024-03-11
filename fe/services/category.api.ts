@@ -1,9 +1,9 @@
 import restClient from "./restClient";
 
-export function getCategory(activePage?: number) {
+export function getCategory(activePage?: number, name?: string) {
   return restClient({
-    url: "category/list",
-    params: {page : activePage}
+    url: "category/list?size=1",
+    params: { page: activePage, name },
   });
 }
 
@@ -18,7 +18,7 @@ export function addCategory(data: any) {
 export function editCategory(data: any) {
   return restClient({
     url: "category/edit",
-    method:"PUT",
+    method: "PUT",
     data: data,
   });
 }
@@ -26,6 +26,6 @@ export function editCategory(data: any) {
 export function deleteCategory(id: string) {
   return restClient({
     url: `category/delete?id=${id}`,
-    method: "DELETE"
+    method: "DELETE",
   });
 }

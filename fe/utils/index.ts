@@ -114,7 +114,7 @@ export const checkValidSlotMonday = (
   setDisableButtonsMonday?: any
 ): boolean => {
   try {
-    return !!data?.Monday?.find((res: any) => res.slot === slot);
+    return !!data?.Monday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }
@@ -122,7 +122,7 @@ export const checkValidSlotMonday = (
 
 export const checkValidSlotTuesday = (slot: string, data: any): boolean => {
   try {
-    return !!data?.Tuesday?.find((res: any) => res.slot === slot);
+    return !!data?.Tuesday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }
@@ -130,7 +130,7 @@ export const checkValidSlotTuesday = (slot: string, data: any): boolean => {
 
 export const checkValidSlotWednesday = (slot: string, data: any): boolean => {
   try {
-    return !!data?.Wednesday?.find((res: any) => res.slot === slot);
+    return !!data?.Wednesday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }
@@ -138,7 +138,7 @@ export const checkValidSlotWednesday = (slot: string, data: any): boolean => {
 
 export const checkValidSlotThursday = (slot: string, data: any): boolean => {
   try {
-    return !!data?.Thursday?.find((res: any) => res.slot === slot);
+    return !!data?.Thursday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }
@@ -146,7 +146,7 @@ export const checkValidSlotThursday = (slot: string, data: any): boolean => {
 
 export const checkValidSlotFriday = (slot: string, data: any): boolean => {
   try {
-    return !!data?.Friday?.find((res: any) => res.slot === slot);
+    return !!data?.Friday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }
@@ -154,7 +154,7 @@ export const checkValidSlotFriday = (slot: string, data: any): boolean => {
 
 export const checkValidSlotSaturday = (slot: string, data: any): boolean => {
   try {
-    return !!data?.Saturday?.find((res: any) => res.slot === slot);
+    return !!data?.Saturday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }
@@ -162,7 +162,7 @@ export const checkValidSlotSaturday = (slot: string, data: any): boolean => {
 
 export const checkValidSlotSunday = (slot: string, data: any): boolean => {
   try {
-    return !!data?.Sunday?.find((res: any) => res.slot === slot);
+    return !!data?.Sunday?.find((res: any) => res.slot === slot && res.status === 2);
   } catch (err) {
     return false;
   }

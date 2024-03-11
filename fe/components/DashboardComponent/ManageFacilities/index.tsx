@@ -134,6 +134,7 @@ export default function ManageFacilities() {
   const [dataUpdaate, setDataUpdaate] = useState<any>();
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(0);
+  const [text, setText] = useState<string>("");
 
   const {
     register,
@@ -178,6 +179,22 @@ export default function ManageFacilities() {
     );
   };
 
+  const handleSearch = (text: any) => {
+    setText(text.trim());
+    getFacilities(1, text.trim()).then(
+      (res) => {
+        setListFacility(res.data.items);
+        setActivePage(1);
+        setTotalPage(res.data.totalPage);
+      },
+      (err) => {
+        setActivePage(1);
+        setTotalPage(0);
+        console.log(err);
+      }
+    );
+  };
+
   const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
       severity: "error",
@@ -203,7 +220,7 @@ export default function ManageFacilities() {
   const onChangePage: PaginationProps["onChange"] = (pageNumber: number) => {
     setActivePage(pageNumber);
     console.log("Page: ", pageNumber);
-    getFacilities(pageNumber).then(
+    getFacilities(pageNumber,text).then(
       (res) => {
         setListFacility(res.data.items);
         setTotalPage(res.data.totalPage);
@@ -382,24 +399,15 @@ export default function ManageFacilities() {
                   </button>
                 </Tooltip>
 
-                <Tooltip title="Xuất dữ liệu bảng ra excel">
-                  <p className="ml-5 cursor-pointer text-green-800 text-3xl hover:text-green-500">
-                    <FontAwesomeIcon icon={faFileCsv} />
-                  </p>
-                </Tooltip>
               </div>
               <div className="py-2 flex justify-end bg-blue-100">
                 <input
                   type="text"
-                  className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                   placeholder="Điền kí tự để tìm kiếm ..."
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
-                <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-                  <FontAwesomeIcon
-                    icon={faMagnifyingGlass}
-                    className="text-white"
-                  />
-                </button>
+                
               </div>
             </div>
             <table>
