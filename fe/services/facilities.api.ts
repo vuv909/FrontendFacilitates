@@ -1,10 +1,10 @@
 import restClient from "./restClient";
 import { StorageService } from "./storage";
 
-export function getFacilities(activePage?: number) {
+export function getFacilities(activePage?: number|null, name ?: string | null) {
   return restClient({
     url: "facility/list",
-    params: { page: activePage },
+    params: { page: activePage  , name},
   });
 }
 

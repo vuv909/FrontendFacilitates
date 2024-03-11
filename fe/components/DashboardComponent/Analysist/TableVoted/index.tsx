@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 
@@ -12,36 +12,74 @@ import {
 } from "primereact/fileupload";
 import { classNames } from "primereact/utils";
 import { icon } from "@fortawesome/fontawesome-svg-core";
-import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
+import {
+  Avatar,
+  Button,
+  Empty,
+  Modal,
+  Pagination,
+  PaginationProps,
+  Tooltip,
+} from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileCsv,
   faMagnifyingGlass,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { getListDashboard } from "../../../../services/dashboard.api";
+import { getCommentByFacilityId } from "../../../../services/voting.api";
+import { Rating, RatingChangeEvent } from "primereact/rating";
 
-const info = () => {
+const info = (data: any) => {
   Modal.info({
     title: "Thông tin chi tiết",
+    width: 800,
     content: (
-      <div>
-        <div className="flex  justify-between">
-          <div className="py-2 flex justify-end ">
-            <input
-              type="text"
-              className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
-              placeholder="Điền kí tự để tìm kiếm ..."
-            />
-            <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="text-white"
-              />
-            </button>
-          </div>
-        </div>
-        <p>some messages...some messages...</p>
-        <p>some messages...some messages...</p>
+      <div className="my-5">
+        {data &&
+          data.map((comment: any, index: number) => (
+            <div className="flex gap-5 items-center mt-5" key={index}>
+              <div>
+                <Avatar
+                  src={comment?.userId?.avatar}
+                  size={{ xs: 14, sm: 22, md: 30, lg: 54, xl: 70, xxl: 90 }}
+                />
+              </div>
+              <div className="border border-solid border-gray-300 p-4 rounded-xl w-full">
+                <div className="flex gap-5">
+                  <div>
+                    <p className="font-bold">{comment?.userId?.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="16"
+                        width="14"
+                        viewBox="0 0 448 512"
+                      >
+                        <path d="M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z" />
+                      </svg>
+                      &nbsp;{new Date(comment?.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="my-2">
+                  <Rating
+                    disabled
+                    cancelIcon={<></>}
+                    value={comment?.star}
+                    className="shadow-none"
+                  />
+                </div>
+                <div>
+                  <p>{comment?.content}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        {data.length === 0 && <Empty />}
       </div>
     ),
     footer: (
@@ -58,21 +96,139 @@ const info = () => {
 };
 
 export default function TableVoted() {
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [activePage, setActivePage] = useState<number>(0);
+  const [listData, setListData] = useState<any[]>([]);
+  const [textSearch, setTextSearch] = useState<string>("");
+  const [selectedValue, setSelectedValue] = useState("default");
+
+  useEffect(() => {
+    getListDashboard().then(
+      (res) => {
+        console.log("====================================");
+        console.log("res::", res.data.items);
+        console.log("====================================");
+        setListData(res.data.items);
+        setTotalPage(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      },
+      (err) => {
+        setListData([]);
+        setTotalPage(0);
+        setActivePage(0);
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
+  }, []);
+
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     console.log("Page: ", pageNumber);
+    getListDashboard(
+      pageNumber,
+      textSearch.trim(),
+      selectedValue === "default" ? null : selectedValue
+    ).then(
+      (res) => {
+        console.log("====================================");
+        console.log("res::", res.data.items);
+        console.log("====================================");
+        setListData(res.data.items);
+        setTotalPage(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      },
+      (err) => {
+        setListData([]);
+        setTotalPage(0);
+        setActivePage(0);
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
+  };
+
+  const handleViewComment = (id: string) => {
+    console.log("====================================");
+    console.log("id::", id);
+    console.log("====================================");
+
+    getCommentByFacilityId(id, null, 100000000000000).then(
+      (res) => {
+        console.log("====================================");
+        console.log("res::", res);
+        console.log("====================================");
+        info(res.data.items);
+      },
+      (err) => {
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
+  };
+
+  const handleSearch = (text: any) => {
+    setTextSearch(text);
+    getListDashboard(
+      1,
+      text.trim(),
+      selectedValue === "default" ? null : selectedValue
+    ).then(
+      (res) => {
+        console.log("====================================");
+        console.log("res::", res.data.items);
+        console.log("====================================");
+        setListData(res.data.items);
+        setTotalPage(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      },
+      (err) => {
+        setListData([]);
+        setTotalPage(0);
+        setActivePage(0);
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
+  };
+
+  const handleChange = (data: any) => {
+    console.log('====================================');
+    console.log("data::", data);
+    console.log('====================================');
+    setSelectedValue(data);
+    getListDashboard(
+      1,
+      textSearch.trim(),
+      data === "default" ? null : data
+    ).then(
+      (res) => {
+        console.log("====================================");
+        console.log("res::", res.data.items);
+        console.log("====================================");
+        setListData(res.data.items);
+        setTotalPage(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      },
+      (err) => {
+        setListData([]);
+        setTotalPage(0);
+        setActivePage(0);
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
   };
 
   return (
     <>
       <div className="">
         <div className="relative">
-          <div className="absolute left-2">
-            <Tooltip title="Xuất dữ liệu bảng ra excel">
-              <p className="my-2 cursor-pointer bg-green-300 rounded-md text-green-800 text-3xl hover:text-green-500">
-                <FontAwesomeIcon icon={faFileCsv} />
-              </p>
-            </Tooltip>
-          </div>
+          <div className="absolute left-2"></div>
           <div className="border flex flex-col justify-center">
             <div className="border text-center">
               <p className="text-2xl p-2 bg-blue-500 text-white font-semibold">
@@ -84,27 +240,29 @@ export default function TableVoted() {
               <div className="py-2 flex justify-end bg-blue-100">
                 <input
                   type="text"
-                  className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                   placeholder="Điền kí tự để tìm kiếm ..."
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
-                <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-                  <FontAwesomeIcon
-                    icon={faMagnifyingGlass}
-                    className="text-white"
-                  />
-                </button>
-              </div>
-              <div className="py-2 flex justify-end bg-blue-100">
                 <Tooltip title="Button này có chức năng sắp xếp điểm và sắp xếp về lượt sử dụng ">
-                  <select className="outline-none border border-gray-300 h-7 p-1 rounded-full">
+                  <select
+                    className="outline-none border border-gray-300 h-7 p-1 rounded-full"
+                    value={selectedValue}
+                    onChange={(e) => handleChange(e.target.value)}
+                  >
                     <option value="default">Mặc định</option>
-                    <option value="1">Điểm tăng dần</option>
-                    <option value="-1">Điểm giảm dần</option>
-                    <option value="1">Lượt sử dụng tăng dần</option>
-                    <option value="-1">Lượt sử dụng giảm dần</option>
+                    <option value="SCORE_ASC">Điểm tăng dần</option>
+                    <option value="SCORE_DESC">Điểm giảm dần</option>
+                    <option value="TOTAL_BOOKED_ASC">
+                      Lượt sử dụng tăng dần
+                    </option>
+                    <option value="TOTAL_BOOKED_DESC">
+                      Lượt sử dụng giảm dần
+                    </option>
                   </select>
                 </Tooltip>
               </div>
+              <div className="py-2 flex justify-end bg-blue-100"></div>
             </div>
 
             <table>
@@ -118,130 +276,58 @@ export default function TableVoted() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>DE222</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Room</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>4/5</p>
-                  </td>
-
-                  <td className="p-5 border text-center">
-                    <p>45</p>
-                  </td>
-                  <td className="border">
-                    <div className="flex flex-col gap-2 w-full py-1">
-                      <button
-                        onClick={info}
-                        className=" bg-blue-400 w-full hover:bg-blue-300 p-2 text-white rounded-full "
-                      >
-                        Xem chi tiết
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>DE222</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Room</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>4/5</p>
-                  </td>
-
-                  <td className="p-5 border text-center">
-                    <p>45</p>
-                  </td>
-                  <td className="border">
-                    <div className="flex flex-col gap-2 w-full py-1">
-                      <button
-                        onClick={info}
-                        className=" bg-blue-400 w-full hover:bg-blue-300 p-2 text-white rounded-full "
-                      >
-                        Xem chi tiết
-                      </button>
-                    </div>
-                  </td>
-                </tr>{" "}
-                <tr className="">
-                  <td className="p-5 border text-center">
-                    <p>1</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                      <span>DE222</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height={10}
-                        width={10}
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                      </svg>
-                    </p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>Room</p>
-                  </td>
-                  <td className="p-5 border text-center">
-                    <p>4/5</p>
-                  </td>
-
-                  <td className="p-5 border text-center">
-                    <p>45</p>
-                  </td>
-                  <td className="border">
-                    <div className="flex flex-col gap-2 w-full py-1">
-                      <button
-                        onClick={info}
-                        className=" bg-blue-400 w-full hover:bg-blue-300 p-2 text-white rounded-full "
-                      >
-                        Xem chi tiết
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {listData &&
+                  listData.map((data, index) => (
+                    <tr key={index} className="">
+                      <td className="p-5 border text-center">
+                        <p>{index + 1}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
+                          <span>{data?.name}</span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height={10}
+                            width={10}
+                            viewBox="0 0 512 512"
+                          >
+                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                          </svg>
+                        </p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p>{data?.category?.categoryName}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p>{data?.score || 0}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <p>{data?.totalBooked || 0}</p>
+                      </td>
+                      <td className="border">
+                        <div className="flex flex-col gap-2 w-full py-1">
+                          <button
+                            onClick={() => handleViewComment(data?._id)}
+                            className=" bg-blue-400 w-full hover:bg-blue-300 p-2 text-white rounded-full "
+                          >
+                            Xem chi tiết
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
-            <div className="flex items-center justify-center ">
-              <Pagination
-                defaultCurrent={6}
-                total={500}
-                onChange={onChangePage}
-                showSizeChanger={false}
-              />
-            </div>
+            {totalPage > 0 && (
+              <div className="flex items-center justify-center ">
+                <Pagination
+                  defaultCurrent={activePage}
+                  total={Number(`${totalPage}0`)}
+                  onChange={onChangePage}
+                  showSizeChanger={false}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

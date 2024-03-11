@@ -97,6 +97,7 @@ export default function CategoryComponent() {
   const [totalPage, setTotalPage] = useState<number | null>(null);
   const [activePage, setActivePage] = useState<null | number>(1);
   const [dataUpdate, setDataUpdate] = useState<DataUpdateType | null>(null);
+  const [text, setText] = useState<string>("");
 
   const {
     register,
@@ -155,9 +156,23 @@ export default function CategoryComponent() {
   };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    if (pageNumber !== activePage) {
-      setActivePage(pageNumber);
-    }
+    // if (pageNumber !== activePage) {
+      console.log('====================================');
+      console.log("text::",text);
+      console.log('====================================');
+    getCategory(pageNumber, text)
+      .then((res) => {
+        setCategoryData(res.data.item);
+        setTotalPage(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      })
+      .catch((err) => {
+        setCategoryData([]);
+        setTotalPage(null);
+        setActivePage(null);
+        showErrorCategory("Error occurred !!!");
+      });
+    // }
   };
 
   //form
@@ -218,12 +233,12 @@ export default function CategoryComponent() {
 
   const onSubmitUpdate: SubmitHandler<updateCategorySchemaType> = (data) => {
     setisLoadingUpdateFormCategory(true);
-    if (Object.keys(errorUpdate).length === 0 ) {
+    if (Object.keys(errorUpdate).length === 0) {
       const formData = new FormData();
       formData.append("id", dataUpdate?._id || "");
       formData.append("categoryName", data.categoryName);
-      if(imgUpdate){
-      formData.append("img", imgUpdate);
+      if (imgUpdate) {
+        formData.append("img", imgUpdate);
       }
       editCategory(formData)
         .then((res) => {
@@ -329,7 +344,7 @@ export default function CategoryComponent() {
 
   //call api
   useEffect(() => {
-    if (activePage !== null && activePage > 0) {
+    if (activePage !== null) {
       getCategory(activePage)
         .then((res) => {
           setCategoryData(res.data.item);
@@ -342,21 +357,24 @@ export default function CategoryComponent() {
           setActivePage(null);
           showErrorCategory("Error occurred !!!");
         });
-    } else {
-      getCategory()
-        .then((res) => {
-          setCategoryData(res.data.item);
-          setTotalPage(res.data.totalPage);
-          setActivePage(res.data.activePage);
-        })
-        .catch((err) => {
-          setCategoryData([]);
-          setTotalPage(null);
-          setActivePage(null);
-          showErrorCategory("Error occurred !!!");
-        });
     }
-  }, [activePage]);
+  }, []);
+
+  const handleSearch = (textSearch: any) => {
+    setText(textSearch);
+    getCategory(1, textSearch.trim())
+      .then((res) => {
+        setCategoryData(res.data.item);
+        setTotalPage(res.data.totalPage);
+        setActivePage(res.data.activePage);
+      })
+      .catch((err) => {
+        setCategoryData([]);
+        setTotalPage(null);
+        setActivePage(null);
+        showErrorCategory("Error occurred !!!");
+      });
+  };
 
   return (
     <>
@@ -378,25 +396,14 @@ export default function CategoryComponent() {
                     <FontAwesomeIcon className="text-xl" icon={faPlus} />
                   </button>
                 </Tooltip>
-
-                <Tooltip title="Xuất dữ liệu bảng ra excel">
-                  <p className="ml-5 cursor-pointer text-green-800 text-3xl hover:text-green-500">
-                    <FontAwesomeIcon icon={faFileCsv} />
-                  </p>
-                </Tooltip>
               </div>
               <div className="py-2 flex justify-end bg-blue-100">
                 <input
                   type="text"
-                  className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                   placeholder="Điền kí tự để tìm kiếm ..."
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
-                <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-                  <FontAwesomeIcon
-                    icon={faMagnifyingGlass}
-                    className="text-white"
-                  />
-                </button>
               </div>
             </div>
             <table>
