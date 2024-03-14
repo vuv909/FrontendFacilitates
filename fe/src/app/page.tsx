@@ -49,7 +49,7 @@ export default function Home() {
 
   useEffect(() => {
     getTopNumber().then(
-      (res) => {
+      (res : any) => {
         console.log("====================================");
         console.log("res::", res);
         console.log("====================================");
@@ -63,19 +63,19 @@ export default function Home() {
     );
 
     getCategory()
-      .then((response) => {
+      .then((response : any) => {
         setCate(response.data.item);
       })
       .catch((error) => console.error("Error fectching Category"));
 
     getFacilities()
-      .then((response) => {
+      .then((response : any) => {
         setFaci(response.data.items);
       })
       .catch((error) => console.error("Error fetching Facilities"));
 
     getListUserMessage()
-      .then((response) => {
+      .then((response : any) => {
         const data = response.data;
         if (data.statusCode === 1) {
           console.log(data.data, "hi");

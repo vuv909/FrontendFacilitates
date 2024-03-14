@@ -42,7 +42,7 @@ export default function HistoryBookingPage() {
 
   useEffect(() => {
     getBookingByUserId(StorageService.getUser()?.id)
-      .then((res) => {
+      .then((res:any) => {
         setData(res.data?.booking);
         setActivePage(res.data?.activePage);
         setTotalPage(res.data?.totalPage);
@@ -69,7 +69,7 @@ export default function HistoryBookingPage() {
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     getBookingByUserId(StorageService.getUser()?.id,pageNumber)
-      .then((res) => {
+      .then((res:any) => {
         setData(res.data?.booking);
         setActivePage(res.data?.activePage);
         setTotalPage(res.data?.totalPage);

@@ -223,7 +223,7 @@ export default function InfomationDetailComponent({
     setWeekValue(formattedWeekValue);
 
     calendarBooking(currentWeek, detailData?._id)
-      .then((res) => {
+      .then((res : any) => {
         setListBooking(res.data);
       })
       .catch((err: Error) => {
@@ -247,7 +247,7 @@ export default function InfomationDetailComponent({
   const handleWeekChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedWeek = event.target.value;
     calendarBooking(event.target.value, detailData?._id)
-      .then((res) => {
+      .then((res : any) => {
         setListBooking(res.data);
       })
       .catch((err: Error) => {
@@ -327,7 +327,7 @@ export default function InfomationDetailComponent({
       .then((res) => {
         showSuccessCategory("Booking successfully !!!");
         calendarBooking(weekValue, detailData?._id)
-          .then((res) => {
+          .then((res : any) => {
             setListBooking(res.data);
           })
           .catch((err: Error) => {

@@ -39,7 +39,7 @@ export default function SearchAll({ params }: { params: object }) {
     console.log(category);
     console.log(text);
     searchFacility(text.trim(), category)
-      .then((res) => {
+      .then((res : any) => {
         setFacilityData(res.data.items);
         setActivePage(res.data.activePage);
         setTotalPage(res.data.totalPage);
@@ -68,7 +68,7 @@ export default function SearchAll({ params }: { params: object }) {
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     if (pageNumber !== activePage) {
       searchFacility(text, category,pageNumber)
-        .then((res) => {
+        .then((res : any) => {
           setFacilityData(res.data.items);
           setActivePage(res.data.activePage);
           setTotalPage(res.data.totalPage);
@@ -88,7 +88,7 @@ export default function SearchAll({ params }: { params: object }) {
     if (object && object.text) {
       setText(object.text);
       searchFacility(object.text.trim())
-        .then((res) => {
+        .then((res : any) => {
           setFacilityData(res.data.items);
           setActivePage(res.data.activePage);
           setTotalPage(res.data.totalPage);
@@ -102,7 +102,7 @@ export default function SearchAll({ params }: { params: object }) {
     } else if (object && object.category) {
       setCategory(object.category);
       searchFacility(null, object.category)
-        .then((res) => {
+        .then((res : any) => {
           setFacilityData(res.data.items);
           setActivePage(res.data.activePage);
           setTotalPage(res.data.totalPage);
@@ -115,7 +115,7 @@ export default function SearchAll({ params }: { params: object }) {
         });
     } else {
       searchFacility(text, category)
-        .then((res) => {
+        .then((res : any) => {
           setFacilityData(res.data.items);
           setActivePage(res.data.activePage);
           setTotalPage(res.data.totalPage);
@@ -131,7 +131,7 @@ export default function SearchAll({ params }: { params: object }) {
 
   useEffect(() => {
     getCategory(null,null,10000000000)
-      .then((res) => {
+      .then((res : any) => {
         console.log(res.data.item);
         setCategoryData(res.data.item);
       })

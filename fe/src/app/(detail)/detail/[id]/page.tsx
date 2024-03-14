@@ -44,7 +44,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     setIsGettingData(true);
 
     facilityById(params.id)
-      .then((res: any) => {
+      .then((res : any) => {
         setIsGettingData(false);
         console.log("res::", res.data.data);
         setDetailData(res.data.data);
@@ -58,7 +58,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     if (detailData && detailData?.category) {
       if (detailData?.category._id) {
         searchFacility(null, detailData?.category._id).then(
-          (res: any) => {
+          (res : any) => {
             console.log("====================================");
             console.log("resCate::", res.data);
             console.log("====================================");

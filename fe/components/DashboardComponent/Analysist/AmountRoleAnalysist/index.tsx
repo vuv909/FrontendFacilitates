@@ -11,7 +11,7 @@ export default function AmountRoleAnalysist() {
 
   useEffect(() => {
     userStatic()
-      .then((res) => {
+      .then((res: any) => {
         const data = {
           labels: Object.keys(res.data.data),
           datasets: [

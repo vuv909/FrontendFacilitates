@@ -161,7 +161,7 @@ export default function ManageFacilities() {
       () => {
         showSuccessCategory("Delete facility successfully !!!");
         getFacilities().then(
-          (res) => {
+          (res : any) => {
             setListFacility(res.data.items);
             setActivePage(1);
             setTotalPage(res.data.totalPage);
@@ -182,7 +182,7 @@ export default function ManageFacilities() {
   const handleSearch = (text: any) => {
     setText(text.trim());
     getFacilities(1, text.trim()).then(
-      (res) => {
+      (res : any) => {
         setListFacility(res.data.items);
         setActivePage(1);
         setTotalPage(res.data.totalPage);
@@ -221,7 +221,7 @@ export default function ManageFacilities() {
     setActivePage(pageNumber);
     console.log("Page: ", pageNumber);
     getFacilities(pageNumber,text).then(
-      (res) => {
+      (res : any) => {
         setListFacility(res.data.items);
         setTotalPage(res.data.totalPage);
       },
@@ -283,7 +283,7 @@ export default function ManageFacilities() {
           showSuccessCategory("Add facility successfully !!!");
           setIsLoadingAddFormCategory(false);
           getFacilities(activePage).then(
-            (res) => {
+            (res : any) => {
               setListFacility(res.data.items);
               setTotalPage(res.data.totalPage);
             },
@@ -329,7 +329,7 @@ export default function ManageFacilities() {
           setisLoadingUpdateFormCategory(false);
           setImgUpdate(null);
           getFacilities(activePage).then(
-            (res) => {
+            (res : any) => {
               setListFacility(res.data.items);
               setTotalPage(res.data.totalPage);
             },
@@ -357,7 +357,7 @@ export default function ManageFacilities() {
 
   useLayoutEffect(() => {
     getCategory()
-      .then((res) => {
+      .then((res : any) => {
         console.log(res);
         setListCategory(res.data.item);
       })
@@ -365,7 +365,7 @@ export default function ManageFacilities() {
         console.log(error);
       });
     getFacilities().then(
-      (res) => {
+      (res : any) => {
         setListFacility(res.data.items);
         setActivePage(1);
         setTotalPage(res.data.totalPage);
