@@ -5,10 +5,10 @@ const tokenWithQuotes = StorageService.getToken();
 const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, '') : ''; 
 const headers = token ? { Authorization: `Bearer ${token}` } : {}; 
 
-export function getCategory(activePage?: number, name?: string) {
+export function getCategory(activePage?: any, name?: any, size ?: any) {
   return restClient({
-    url: "category/list?size=1",
-    params: { page: activePage, name },
+    url: "category/list",
+    params: { page: activePage, name  , size},
     headers
   });
 }

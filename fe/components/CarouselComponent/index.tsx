@@ -41,7 +41,7 @@ export default function CarouselComponent(props: any) {
     //   setProducts(data.slice(0, 9))
     // );
     // setCate(props.data)
-    getCategory()
+    getCategory(null,null,1000000000)
       .then((response) => {
         setCate(response.data.item);
       })
