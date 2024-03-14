@@ -38,3 +38,13 @@ export function deleteCategory(id: string) {
     headers
   });
 }
+export function viewUpdate(id: string,type: string,page:number, size: number) {
+  return restClient({
+    url: `log/list?id=${id}`,
+    method: "GET",
+    params:{type:type,
+            page:page,
+            size:size   },
+    headers
+  });
+}
