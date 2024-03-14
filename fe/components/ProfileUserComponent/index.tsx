@@ -34,7 +34,7 @@ return true;
 }  
 const fetchData = async () => {
   try {
-      const response = await getProfile(userId);
+      const response : any= await getProfile(userId);
       setImage(response.data.avatar);
       setName(response.data.name);
       setEmail(response.data.email);

@@ -22,7 +22,7 @@ export default function restClient({
     params,
     data,
     headers 
-  }).catch((err : AxiosError)=>{
+  }).catch((err)=>{
     if(err.response){
       if(err.response.status === 403){
         StorageService.signout()

@@ -164,7 +164,7 @@ export default function CategoryComponent() {
     console.log("text::", text);
     console.log("====================================");
     getCategory(pageNumber, text)
-      .then((res) => {
+      .then((res : any) => {
         setCategoryData(res.data.item);
         setTotalPage(res.data.totalPage);
         setActivePage(res.data.activePage);
@@ -212,7 +212,7 @@ export default function CategoryComponent() {
       .then((res) => {
         showSuccessCategory("Delete Category successfully !!!");
         getCategory()
-          .then((res) => {
+          .then((res : any) => {
             setCategoryData(res.data.item);
             setTotalPage(res.data.totalPage);
             setActivePage(res.data.activePage);
@@ -250,7 +250,7 @@ export default function CategoryComponent() {
           handleCancelUpdate();
           if (typeof activePage === "number" && activePage > 0) {
             getCategory(activePage)
-              .then((res) => {
+              .then((res : any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 reset();
@@ -265,7 +265,7 @@ export default function CategoryComponent() {
               });
           } else {
             getCategory()
-              .then((res) => {
+              .then((res : any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 setActivePage(res.data.activePage);
@@ -304,7 +304,7 @@ export default function CategoryComponent() {
           showSuccessCategory("Add Category successfully !!!");
           if (typeof activePage === "number" && activePage > 0) {
             getCategory(activePage)
-              .then((res) => {
+              .then((res : any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 reset();
@@ -319,7 +319,7 @@ export default function CategoryComponent() {
               });
           } else {
             getCategory()
-              .then((res) => {
+              .then((res : any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 setActivePage(res.data.activePage);
@@ -349,7 +349,7 @@ export default function CategoryComponent() {
   useEffect(() => {
     if (activePage !== null) {
       getCategory(activePage)
-        .then((res) => {
+        .then((res : any) => {
           setCategoryData(res.data.item);
           setTotalPage(res.data.totalPage);
           setActivePage(res.data.activePage);
@@ -366,7 +366,7 @@ export default function CategoryComponent() {
   const handleSearch = (textSearch: any) => {
     setText(textSearch);
     getCategory(1, textSearch.trim())
-      .then((res) => {
+      .then((res : any) => {
         setCategoryData(res.data.item);
         setTotalPage(res.data.totalPage);
         setActivePage(res.data.activePage);
