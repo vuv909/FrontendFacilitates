@@ -3,49 +3,148 @@ import {
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Pagination, PaginationProps, Tooltip } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { editBooking, getAllBooking } from "../../../services/booking.api";
+import { Toast } from "primereact/toast";
 
 export default function ManageBookingRequest() {
   const [bookingData, setBookingData] = useState<any[]>([]);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [activePage, setActivePage] = useState<number>(0);
+  const [selectedValue, setSelectedValue] = useState<string>("default");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [idReject, setIdReject] = useState<string>("");
+  const [because, setBecause] = useState<string>("");
+  const toastAddCategory = useRef<any>(null);
+
+  const showErrorCategory = (msg: string) => {
+    toastAddCategory.current.show({
+      severity: "error",
+      summary: "Error",
+      detail: msg,
+      life: 3000,
+    });
+  };
+
+  const showSuccessCategory = (msg: string) => {
+    toastAddCategory.current.show({
+      severity: "success",
+      summary: "Success",
+      detail: msg,
+      life: 3000,
+    });
+  };
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
-    getAllBooking()
+    getAllBooking(1, selectedValue, 1)
       .then((res) => {
         setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
   }, []);
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
+    getAllBooking(1, selectedValue, pageNumber)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
   };
 
   const handleAccept = (data: any) => {
     const status = 2;
     editBooking({ status }, data?._id)
       .then((res) => {
-        getAllBooking()
+        getAllBooking(1, selectedValue, 1)
           .then((res) => {
             setBookingData(res?.data?.booking);
+            setTotalPage(res?.data?.totalPage);
+            setActivePage(res?.data?.activePage);
           })
-          .catch((err) => {});
+          .catch((err) => {
+            setBookingData([]);
+            setTotalPage(0);
+            setActivePage(0);
+          });
       })
       .catch((err) => {});
   };
 
   const handleReject = (data: any) => {
+    setIdReject(data?._id);
+    showModal();
+  };
+
+  const handleRejectModal = () => {
     const status = 3;
-    editBooking({ status }, data?._id)
+
+    if (because.trim() === "") {
+      showErrorCategory("Vui lòng không để trống !!!");
+      return;
+    }
+
+    editBooking({ status, reason: because }, idReject)
       .then((res) => {
-        getAllBooking()
+        handleCancel();
+        getAllBooking(1, selectedValue, 1)
           .then((res) => {
             setBookingData(res?.data?.booking);
+            setTotalPage(res?.data?.totalPage);
+            setActivePage(res?.data?.activePage);
           })
-          .catch((err) => {});
+          .catch((err) => {
+            setBookingData([]);
+            setTotalPage(0);
+            setActivePage(0);
+          });
       })
       .catch((err) => {});
+  };
+
+  const handleChange = (data: any) => {
+    setSelectedValue(data);
+    getAllBooking(1, data, 1)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
+  };
+
+  const handleSearch = (data: any) => {
+    console.log("====================================");
+    console.log(data);
+    console.log("====================================");
   };
 
   return (
@@ -67,15 +166,19 @@ export default function ManageBookingRequest() {
             <div>
               <input
                 type="text"
-                className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
+                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                 placeholder="Điền kí tự để tìm kiếm ..."
+                onChange={(e) => handleSearch(e.target.value)}
               />
-              <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  className="text-white"
-                />
-              </button>
+              <select
+                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
+                value={selectedValue}
+                onChange={(e) => handleChange(e.target.value)}
+              >
+                <option value="default">Ngày tạo</option>
+                <option value="createdDate:asc">Ngày đặt tăng dần</option>
+                <option value="createdDate:desc">Ngày đặt giảm dần</option>
+              </select>
             </div>
           </div>
           <table>
@@ -86,94 +189,123 @@ export default function ManageBookingRequest() {
                 <th className="p-5 border">Slot</th>
                 <th className="p-5 border">Thời gian bắt đầu</th>
                 <th className="p-5 border">Thời gian kết thúc</th>
+                <th className="p-5 border">Cấp bậc</th>
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {bookingData?.length > 0 && bookingData?.map((b, index) => {
-                console.log('====================================');
-                console.log("b::",b);
-                console.log('====================================');
-                const status = b?.status; 
+              {bookingData?.length > 0 &&
+                bookingData?.map((b, index) => {
+                  console.log("====================================");
+                  console.log("b::", b);
+                  console.log("====================================");
+                  const status = b?.status;
 
-                if (status === 1) {
-                  return (
-                    <tr className="border">
-                      <td className="p-5 border text-center">
-                        <p>{index + 1}</p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                          <span>{b?.facilityId?.name}</span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            height={10}
-                            width={10}
-                            viewBox="0 0 512 512"
-                          >
-                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                          </svg>
-                        </p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p>{b?.slot}</p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p>{b && new Date(b?.startDate).toLocaleString()}</p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p>{b && new Date(b?.endDate).toLocaleString()}</p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p>Đang chờ xử lí</p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                          <span>{b?.booker?.name}</span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            height={10}
-                            width={10}
-                            viewBox="0 0 512 512"
-                          >
-                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                          </svg>
-                        </p>
-                      </td>
-                      <td className="">
-                        <div className="flex flex-col gap-2 w-full py-1">
-                          <button
-                            className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full"
-                            onClick={() => handleAccept(b)}
-                          >
-                            Chấp nhận
-                          </button>
-                          <button
-                            className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full"
-                            onClick={() => handleReject(b)}
-                          >
-                            Hủy
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                }
-              })}
+                  if (status === 1) {
+                    return (
+                      <tr className="border">
+                        <td className="p-5 border text-center">
+                          <p>{index + 1}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
+                            <span>{b?.facilityId?.name}</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              height={10}
+                              width={10}
+                              viewBox="0 0 512 512"
+                            >
+                              <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                            </svg>
+                          </p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{b?.slot}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{b && new Date(b?.startDate).toLocaleString()}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{b && new Date(b?.endDate).toLocaleString()}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{b?.booker?.roleId?.roleName}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>Đang chờ xử lí</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
+                            <span>{b?.booker?.name}</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              height={10}
+                              width={10}
+                              viewBox="0 0 512 512"
+                            >
+                              <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                            </svg>
+                          </p>
+                        </td>
+                        <td className="">
+                          <div className="flex flex-col gap-2 w-full py-1">
+                            <button
+                              className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full"
+                              onClick={() => handleAccept(b)}
+                            >
+                              Chấp nhận
+                            </button>
+                            <button
+                              className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full"
+                              onClick={() => handleReject(b)}
+                            >
+                              Hủy
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
             </tbody>
           </table>
-          {/* <div className="flex items-center justify-center ">
-            <Pagination
-              defaultCurrent={6}
-              total={500}
-              onChange={onChangePage}
-              showSizeChanger={false}
-            />
-          </div> */}
+          {totalPage > 0 && (
+            <div className="flex items-center justify-center ">
+              <Pagination
+                defaultCurrent={activePage}
+                total={Number(`${totalPage}0`)}
+                onChange={onChangePage}
+                showSizeChanger={false}
+              />
+            </div>
+          )}
         </div>
       </div>
+      <Toast ref={toastAddCategory} />
+      <Modal title="Lý do hủy" open={isModalOpen} footer={<></>}>
+        <input
+          type="text"
+          className="outline-none border border-gray-300 h-7 p-1 rounded-lg w-full my-5"
+          placeholder="..."
+          onChange={(e) => setBecause(e.target.value)}
+        />
+
+        <div className="flex justify-end">
+          <Button key="back" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button
+            className="bg-blue-500 text-white"
+            htmlType="submit"
+            onClick={handleRejectModal}
+          >
+            OK
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }

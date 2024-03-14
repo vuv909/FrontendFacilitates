@@ -1,60 +1,56 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import { Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileCsv } from "@fortawesome/free-solid-svg-icons";
+import { userStatic } from "../../../../services/static.api";
 
 export default function AmountRoleAnalysist() {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
   useEffect(() => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const data = {
-      labels: ["Admin", "Sinh viên", "Nhân viên hỗ trợ"],
-      datasets: [
-        {
-          data: [540, 325, 702],
-          backgroundColor: [
-            documentStyle.getPropertyValue("--blue-500"),
-            documentStyle.getPropertyValue("--yellow-500"),
-            documentStyle.getPropertyValue("--green-500"),
+    userStatic()
+      .then((res) => {
+        const data = {
+          labels: Object.keys(res.data.data),
+          datasets: [
+            {
+              data: Object.values(res.data.data),
+              backgroundColor: ["#007bff", "#ffc107", "#28a745"], // Blue, Yellow, Green
+              hoverBackgroundColor: ["#0056b3", "#d39e00", "#218838"], // Darker shades
+            },
           ],
-          hoverBackgroundColor: [
-            documentStyle.getPropertyValue("--blue-400"),
-            documentStyle.getPropertyValue("--yellow-400"),
-            documentStyle.getPropertyValue("--green-400"),
-          ],
-        },
-      ],
-    };
-    const options = {
-      plugins: {
-        legend: {
-          labels: {
-            usePointStyle: true,
-          },
-        },
-      },
-    };
+        };
 
-    setChartData(data);
-    setChartOptions(options);
+        const options = {
+          plugins: {
+            legend: {
+              labels: {
+                usePointStyle: true,
+              },
+            },
+          },
+        };
+
+        setChartData(data);
+        setChartOptions(options);
+      })
+      .catch((err) => {
+        console.log("Error fetching data:", err);
+      });
   }, []);
 
   return (
     <div className="relative basis-1/2 h-96 border">
       <div className="absolute">
-        <Tooltip title="Xuất dữ liệu bảng ra excel">
+        <Tooltip title="Export data to Excel">
           <p className="my-2 cursor-pointer text-green-800 text-3xl hover:text-green-500">
             <FontAwesomeIcon icon={faFileCsv} />
           </p>
         </Tooltip>
       </div>
-      <p className="font-bold text-center mb-5">
-        Thống kê số lượng người sử dụng trang web
-      </p>
+      <p className="font-bold text-center mb-5">Statistics of website users</p>
       <div className="flex justify-center">
         <Chart
           type="pie"

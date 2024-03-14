@@ -7,16 +7,21 @@ import CarouselDetailComponent from "../../../../../components/CarouselDetailCom
 import { Metadata } from "next";
 import { Spin } from "antd";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { facilityById } from "../../../../../services/facilities.api";
+import {
+  facilityById,
+  searchFacility,
+} from "../../../../../services/facilities.api";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
 import { getCurrentWeek } from "../../../../../utils";
-
+import { useRouter } from "next/navigation";
 
 export default function DetailPage({ params }: { params: { id: string } }) {
   const [isGettingData, setIsGettingData] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
+  const [listData, setListData] = useState<any[]>([]);
   const toastAddCategory = useRef<any>(null);
+  const router = useRouter();
 
   const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
@@ -37,6 +42,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   };
   useLayoutEffect(() => {
     setIsGettingData(true);
+
     facilityById(params.id)
       .then((res) => {
         setIsGettingData(false);
@@ -46,8 +52,28 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       .catch((err) => {
         setIsGettingData(false);
       });
-
   }, []);
+
+  useEffect(() => {
+    if (detailData && detailData?.category) {
+      if (detailData?.category._id) {
+        searchFacility(null, detailData?.category._id).then(
+          (res) => {
+            console.log("====================================");
+            console.log("resCate::", res.data);
+            console.log("====================================");
+            setListData(res.data.items);
+          },
+          (err) => {
+            setListData([]);
+            console.log("====================================");
+            console.log("err::", err.data);
+            console.log("====================================");
+          }
+        );
+      }
+    }
+  }, [detailData]);
 
   return (
     <>
@@ -70,14 +96,55 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
               {/* comment */}
               <div className="flex justify-center pt-10">
-                <CommentComponent detailData={detailData} showErrorCategory={showErrorCategory} showSuccessCategory={showSuccessCategory}/>
+                <CommentComponent
+                  detailData={detailData}
+                  showErrorCategory={showErrorCategory}
+                  showSuccessCategory={showSuccessCategory}
+                />
               </div>
               <div>
-                <div className="text-center font-bold text-4xl">
-                  <p>Các đề xuất dành cho bạn</p>
-                </div>
+                {listData &&  listData.filter((item) => item._id !== detailData._id).length>0 && (
+                  <div className="text-center font-bold text-4xl">
+                    <p>Các đề xuất dành cho bạn</p>
+                  </div>
+                )}
                 <div>
-                  <CarouselDetailComponent />
+                  {listData && listData.filter((item) => item._id !== detailData._id).length < 4 ? (
+                    <div className="flex justify-center">
+                      {listData.filter((item) => item._id !== detailData._id).map((data: any) => {
+                        return (
+                          <div
+                            className={`relative basis-1/3 text-center h-72  cursor-pointer m-5 z-50 shadow-xl border rounded-lg ${
+                              data.length === 1 ? "w-5 flex justify-center" : ""
+                            }`}
+                            onClick={() => router.push("/detail/" + data._id)}
+                          >
+                            <Image
+                              width={500}
+                              height={500}
+                              src={
+                                data.image
+                                  ? data.image
+                                  : "https://picsum.photos/200/300"
+                              }
+                              alt={data.name}
+                              className="w-screen h-full rounded-lg"
+                            />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 pb-2 rounded-b-lg">
+                              <p className="font-bold">{data.name}</p>
+                            </div>
+                            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black hover:bg-opacity-80 p-2 rounded-full">
+                              <button className="text-white px-3 w-fit">
+                                {data.name}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <CarouselDetailComponent listData={listData} />
+                  )}
                 </div>
                 <div className="bg-gray-400">
                   <FooterComponent />
@@ -91,3 +158,6 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     </>
   );
 }
+
+// 
+// && listData.filter((item) => item._id !== detailData._id)

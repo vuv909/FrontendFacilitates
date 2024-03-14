@@ -8,12 +8,14 @@ import {
   getFacilities,
   searchFacility,
 } from "../../../../../services/facilities.api";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SearchAll({ params }: { params: object }) {
   console.log("====================================");
   console.log(params);
   console.log("====================================");
   const toastAddCategory = useRef<any>(null);
+  const router = useRouter();
   const [text, setText] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
@@ -22,6 +24,7 @@ export default function SearchAll({ params }: { params: object }) {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<0>(0);
   const [facilityData, setFacilityData] = useState<any[]>([]);
+  const searchParam = useSearchParams();
 
   const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
@@ -63,21 +66,68 @@ export default function SearchAll({ params }: { params: object }) {
   };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    if(pageNumber !== activePage){
-      getFacilities(pageNumber)
-      .then((res) => {
-        setFacilityData(res.data.items);
-        setActivePage(res.data.activePage);
-        setTotalPage(res.data.totalPage);
-      })
-      .catch((err) => {
-        setFacilityData([]);
-        setActivePage(1);
-        setTotalPage(0);
-        showErrorCategory("Error occurred !!!");
-      });
+    if (pageNumber !== activePage) {
+      searchFacility(text, category,pageNumber)
+        .then((res) => {
+          setFacilityData(res.data.items);
+          setActivePage(res.data.activePage);
+          setTotalPage(res.data.totalPage);
+        })
+        .catch((err) => {
+          setFacilityData([]);
+          setActivePage(1);
+          setTotalPage(0);
+          showErrorCategory("Error occurred !!!");
+        });
     }
   };
+
+  useEffect(() => {
+    const object = Object.fromEntries(searchParam.entries());
+
+    if (object && object.text) {
+      setText(object.text);
+      searchFacility(object.text.trim())
+        .then((res) => {
+          setFacilityData(res.data.items);
+          setActivePage(res.data.activePage);
+          setTotalPage(res.data.totalPage);
+        })
+        .catch((err) => {
+          setFacilityData([]);
+          setActivePage(1);
+          setTotalPage(0);
+          showErrorCategory("Error occurred !!!");
+        });
+    } else if (object && object.category) {
+      setCategory(object.category);
+      searchFacility(null, object.category)
+        .then((res) => {
+          setFacilityData(res.data.items);
+          setActivePage(res.data.activePage);
+          setTotalPage(res.data.totalPage);
+        })
+        .catch((err) => {
+          setFacilityData([]);
+          setActivePage(1);
+          setTotalPage(0);
+          showErrorCategory("Error occurred !!!");
+        });
+    } else {
+      searchFacility(text, category)
+        .then((res) => {
+          setFacilityData(res.data.items);
+          setActivePage(res.data.activePage);
+          setTotalPage(res.data.totalPage);
+        })
+        .catch((err) => {
+          setFacilityData([]);
+          setActivePage(1);
+          setTotalPage(0);
+          showErrorCategory("Error occurred !!!");
+        });
+    }
+  }, []);
 
   useEffect(() => {
     getCategory()
@@ -89,19 +139,11 @@ export default function SearchAll({ params }: { params: object }) {
         setCategoryData([]);
         showErrorCategory("Error occurred !!!");
       });
-    getFacilities()
-      .then((res) => {
-        setFacilityData(res.data.items);
-        setActivePage(res.data.activePage);
-        setTotalPage(res.data.totalPage);
-      })
-      .catch((err) => {
-        setFacilityData([]);
-        setActivePage(1);
-        setTotalPage(0);
-        showErrorCategory("Error occurred !!!");
-      });
   }, []);
+
+  const handleChangePage = (data: any) => {
+    router.replace("/detail/" + data._id);
+  };
 
   return (
     <div className="mx-20">
@@ -128,7 +170,7 @@ export default function SearchAll({ params }: { params: object }) {
                 value={category}
                 onChange={(e) => setCategory(e.value)}
                 options={[
-                  { label: "Select an option", value: "" }, 
+                  { label: "Select an option", value: "" },
                   ...categoryData.map((item) => ({
                     label: item.categoryName,
                     value: item._id,
@@ -158,13 +200,16 @@ export default function SearchAll({ params }: { params: object }) {
         <div className="flex flex-wrap items-center justify-center mt-20 gap-10">
           {facilityData &&
             facilityData.map((f, index) => (
-              <div className="basis-1/5  relative mb-5 shadow-xl">
+              <div
+                className="basis-1/5  relative mb-5 shadow-xl"
+                onClick={() => handleChangePage(f)}
+              >
                 <div className="flex items-center justify-center">
                   <img src={f?.image} className="w-full h-72 rounded-md" />
                   <Tooltip title={f?.name}>
-                  <p className="font-bold text-2xl bg-black text-white w-1/2 shadow-md rounded-b-md text-ellipsis overflow-hidden text-center absolute top-0 left-1/2 transform -translate-x-1/2">
-                    {f?.name}
-                  </p>
+                    <p className="font-bold text-2xl bg-black text-white w-1/2 shadow-md rounded-b-md text-ellipsis overflow-hidden text-center absolute top-0 left-1/2 transform -translate-x-1/2">
+                      {f?.name}
+                    </p>
                   </Tooltip>
                   <button className="absolute bottom-5 bg-green-500 hover:bg-green-300 text-white font-semibold p-1 rounded-md">
                     Đặt phòng

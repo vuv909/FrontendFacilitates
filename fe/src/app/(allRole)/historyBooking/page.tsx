@@ -29,15 +29,29 @@ export default function HistoryBookingPage() {
   const [valueInput, setValueInput] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [date, setDate] = useState("");
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [activePage, setActivePage] = useState<number>(1);
   const [data, setData] = useState<any[]>([]);
   const statusValue = [{ name: "pending" }, { name: "success" }];
+
+  useEffect(()=>{
+    if(StorageService.isLoggedIn()=== false){
+      router.push('/')
+    }
+  },[])
 
   useEffect(() => {
     getBookingByUserId(StorageService.getUser()?.id)
       .then((res) => {
         setData(res.data?.booking);
+        setActivePage(res.data?.activePage);
+        setTotalPage(res.data?.totalPage);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setData([]);
+        setActivePage(1);
+        setTotalPage(0);
+      });
   }, []);
 
   const showModal = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,10 +68,18 @@ export default function HistoryBookingPage() {
   };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
+    getBookingByUserId(StorageService.getUser()?.id,pageNumber)
+      .then((res) => {
+        setData(res.data?.booking);
+        setActivePage(res.data?.activePage);
+        setTotalPage(res.data?.totalPage);
+      })
+      .catch((err) => {
+        setData([]);
+        setActivePage(1);
+        setTotalPage(0);
+      });
   };
-
- 
 
   return (
     <>
@@ -162,9 +184,10 @@ export default function HistoryBookingPage() {
                 >
                   {d?.facilityId?.name}
                 </p>
-                <p className={`absolute bottom-0 w-full text-center left-1/2 transform -translate-x-1/2 text-xl font-bold ${color}  shadow-xl text-white pb-2 px-2 rounded-b-lg z-50`}>
-                  {d?.slot}-
-                  {formatDate(d?.startDate)}
+                <p
+                  className={`absolute bottom-0 w-full text-center left-1/2 transform -translate-x-1/2 text-xl font-bold ${color}  shadow-xl text-white pb-2 px-2 rounded-b-lg z-50`}
+                >
+                  {d?.slot}-{formatDate(d?.startDate)}
                 </p>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                   {status === 1 && (
@@ -201,14 +224,16 @@ export default function HistoryBookingPage() {
           })}
         </div>
         {/* pagination */}
-        {/* <div className="flex items-center justify-center my-16">
-          <Pagination
-            defaultCurrent={6}
-            total={500}
-            onChange={onChangePage}
-            showSizeChanger={false}
-          />
-        </div> */}
+        {totalPage > 0 && (
+          <div className="flex items-center justify-center my-16">
+            <Pagination
+              current={activePage}
+              total={Number(`${totalPage}0`)}
+              onChange={onChangePage}
+              showSizeChanger={false}
+            />
+          </div>
+        )}
 
         {/* deleteModal */}
       </div>

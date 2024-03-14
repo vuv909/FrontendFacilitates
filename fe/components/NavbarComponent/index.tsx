@@ -30,6 +30,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   const toast = useRef(null);
   const [showNotification, setShowNotification] = useState(false);
   const [data, setData] = useState<any>([]);
+  const [role, setRole] = useState<string>("");
   const[read,setRead] = useState<any>([]);
 
   useEffect(() => {
@@ -44,6 +45,10 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
     ) {
       dispatch(addUser(StorageService.getUser()));
       setIsLogin(StorageService.isLoggedIn());
+    }
+
+    if (StorageService.getUser() && StorageService.getUser().role.roleName) {
+      setRole(StorageService.getUser().role.roleName);
     }
   }, []);
 
@@ -60,6 +65,20 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   }, []);
 
   let items = [
+    ...(role === "Admin"
+      ? [
+          {
+            label: "Quản lí",
+            icon: "pi pi-check",
+            command: (event: any) => router.push("/dashboard"),
+          },
+        ]
+      : []),
+    {
+      label: "Lịch sử đặt phòng",
+      icon: "pi pi-calendar",
+      command: (event: any) => router.push("/historyBooking"),
+    },
     {
       label: "Hồ sơ của tôi",
       icon: "pi pi-cog",
@@ -166,7 +185,14 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                       <div key={index} className="border border-gray-600 rounded-sm border-around mb-3 p-2"  onClick={() => router.push(item?.path)}>
                         <h4 className="text-lg font-bold">{item?.name}</h4>
                         <p className="text-sm ">{item?.content}</p>
-                        <p  className="text-xs text-end">{(new Date(item?.createdAt)).toLocaleString('vi-VN', {month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'})}</p>
+                        <p className="text-xs text-end">
+                          {new Date(item?.createdAt).toLocaleString("vi-VN", {
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                          })}
+                        </p>
                       </div>
                     ))}
                 </div>
