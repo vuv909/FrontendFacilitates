@@ -46,7 +46,7 @@ export default function CommentComponent({
         setToggleComment(res.data.data);
       })
       .catch((err) => {
-        setToggleComment(err.response.data.data);
+        setToggleComment(false);
       });
     getCommentByFacilityId(detailData?._id)
       .then((res : any) => {
@@ -89,7 +89,7 @@ export default function CommentComponent({
               setToggleComment(res.data.data);
             })
             .catch((err) => {
-              setToggleComment(err.response.data.data);
+              setToggleComment(false);
             });
           getCommentByFacilityId(detailData?._id)
             .then((res : any) => {
