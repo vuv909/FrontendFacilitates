@@ -299,7 +299,7 @@ export default function TableVoted() {
                         <p>{data?.category?.categoryName}</p>
                       </td>
                       <td className="p-5 border text-center">
-                        <p>{data?.score || 0}</p>
+                        <p>{data?.score.toFixed(2) || 0}</p>
                       </td>
                       <td className="p-5 border text-center">
                         <p>{data?.totalBooked || 0}</p>
@@ -318,10 +318,15 @@ export default function TableVoted() {
                   ))}
               </tbody>
             </table>
+            {!(Array.isArray(listData) && listData.length > 0) && (
+              <div className="text-center">
+                <h1 className="font-bold text-3xl my-10">No data</h1>
+              </div>
+            )}
             {totalPage > 0 && (
               <div className="flex items-center justify-center ">
                 <Pagination
-                  defaultCurrent={activePage}
+                  current={activePage}
                   total={Number(`${totalPage}0`)}
                   onChange={onChangePage}
                   showSizeChanger={false}

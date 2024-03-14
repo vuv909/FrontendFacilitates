@@ -21,16 +21,19 @@ export default function CommentComponent({
   const [toggleComment, setToggleComment] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(0);
+  const [totalComments, setTotalComments] = useState<number>(0);
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     getCommentByFacilityId(detailData?._id, pageNumber)
       .then((res) => {
         setListComment(res.data.items);
         setTotalPages(res.data.totalPage);
         setActivePage(res.data.activePage);
+        setTotalComments(res.data.totalComment);
       })
       .catch((err) => {
         setTotalPages(0);
         setActivePage(0);
+        setTotalComments(0);
         console.log("====================================");
         console.log("err", err);
         console.log("====================================");
@@ -50,10 +53,12 @@ export default function CommentComponent({
         setListComment(res.data.items);
         setTotalPages(res.data.totalPage);
         setActivePage(res.data.activePage);
+        setTotalComments(res.data.totalComment);
       })
       .catch((err) => {
         setTotalPages(0);
         setActivePage(0);
+        setTotalComments(0);
         console.log("====================================");
         console.log("err", err);
         console.log("====================================");
@@ -91,10 +96,12 @@ export default function CommentComponent({
               setListComment(res.data.items);
               setTotalPages(res.data.totalPage);
               setActivePage(res.data.activePage);
+              setTotalComments(res.data.totalComment);
             })
             .catch((err) => {
               setTotalPages(0);
               setActivePage(0);
+              setTotalComments(0);
               console.log("====================================");
               console.log("err", err);
               console.log("====================================");
@@ -151,7 +158,9 @@ export default function CommentComponent({
         {listComment && (
           <div>
             <div>
-              <p className="font-bold text-lg text-center">{listComment.length} đánh giá</p>
+              <p className="font-bold text-lg text-center">
+                {totalComments} đánh giá
+              </p>
             </div>
           </div>
         )}
@@ -203,11 +212,12 @@ export default function CommentComponent({
                 </div>
               </div>
             ))}
-          {!listComment || totalPages === 0 && 
-            <div className="my-16">
-              <Empty />
-            </div>
-          }
+          {!listComment ||
+            (totalPages === 0 && (
+              <div className="my-16">
+                <Empty />
+              </div>
+            ))}
         </div>
       </div>
       {totalPages > 0 && (

@@ -57,7 +57,7 @@ export function facilityById(id: string) {
 }
 
 export function searchFacility(
-  name?: string,
+  name?: any,
   categoryId?: string,
   page?: number,
   size?: number
@@ -67,7 +67,7 @@ export function searchFacility(
     method: "GET",
     params: {
       page,
-      size,
+      size ,
       name,
       categoryId,
     },

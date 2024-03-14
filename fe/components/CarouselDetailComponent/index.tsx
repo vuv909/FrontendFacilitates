@@ -20,14 +20,8 @@ interface Product {
   rating: number;
 }
 
-export default function CarouselDetailComponent() {
+export default function CarouselDetailComponent(props: any) {
   const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    ProductService.getProductsSmall().then((data) =>
-      setProducts(data.slice(0, 9))
-    );
-  }, []);
 
   const productTemplate = (product: Product) => {
     return (
@@ -52,7 +46,7 @@ export default function CarouselDetailComponent() {
   return (
     <div className="px-16">
       <Carousel
-        value={products}
+        value={props.listData}
         numVisible={4}
         numScroll={4}
         circular

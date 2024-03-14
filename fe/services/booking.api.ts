@@ -8,17 +8,24 @@ export function addBooking(data: any) {
   });
 }
 
-export function getBookingByUserId(id:number) {
+export function getBookingByUserId(id:number,page : number = 1 , size : number = 9) {
   return restClient({
-    url: "booking/user/"+id+"?page=1&&size=6",
+    url: "booking/user/"+id,
     method: "GET",
+    params : {page,size}
   });
 }
 
-export function getAllBooking(page = 1 , size = 5) {
+export function getAllBooking(status: any = null, sort: any = 'default', page: number = 1, size: number = 5) {
   return restClient({
-    url: "booking?page="+page+"&size="+size,
+    url: "booking",
     method: "GET",
+    params: {
+      status,
+      sort: sort === 'default' ? null : sort,
+      page,
+      size
+    }
   });
 }
 

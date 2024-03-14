@@ -18,6 +18,7 @@ import { Socket } from "socket.io-client";
 import io from "socket.io-client";
 import { changeConfirmLocale } from "antd/es/modal/locale";
 import { chat, getListUserMessage } from "../../services/chat.api";
+import { getListDashboard, getTopNumber } from "../../services/dashboard.api";
 interface Message {
   text: string;
   sender: "left" | "right";
@@ -35,6 +36,7 @@ export default function Home() {
   const colorNavbarTwo: string = "bg-transparent";
   const [faci, setFaci] = useState([]);
   const [cate, setCate] = useState([]);
+  const [text, setText] = useState<string>("");
 
   // Bắt đầu chat to admin - TrungNQ
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,8 +45,23 @@ export default function Home() {
   const [socket, setSocket] = useState<Socket>();
   const [user, setUser] = useState<User>();
   const [loginChat, setLoginChat] = useState(false);
+  const [topData, setTopData] = useState<any[]>([]);
 
   useEffect(() => {
+    getTopNumber().then(
+      (res) => {
+        console.log("====================================");
+        console.log("res::", res);
+        console.log("====================================");
+        setTopData(res.data.items);
+      },
+      (err) => {
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
+
     getCategory()
       .then((response) => {
         setCate(response.data.item);
@@ -150,6 +167,10 @@ export default function Home() {
     return <div>loading...</div>;
   }
 
+  const handleSearch = () => {
+    router.push("/search?text=" + text);
+  };
+
   return (
     <div>
       <NavbarComponent
@@ -168,11 +189,10 @@ export default function Home() {
           <InputText
             className="outline-none p-3 shadow-none w-96 md:rounded-l-lg"
             placeholder="Điền tên thông tin bạn muốn tìm kiếm..."
-            tooltip="Hello world"
-            tooltipOptions={{ position: "top" }}
+            onChange={(e) => setText(e.target.value)}
           />
           <button
-            onClick={() => router.push("/search")}
+            onClick={handleSearch}
             className="bg-blue-500 hover:bg-blue-300 p-3 md:rounded-r-lg"
           >
             <span className="pi pi-search text-white h-full"></span>
@@ -191,13 +211,51 @@ export default function Home() {
         <h1 className="ml-7 font-bold text-lg">
           Top các phòng , sân thể dục được sử dụng nhiều
         </h1>
-        <CarouselTopComponent data={faci} />
+        {topData.filter((data: any) => data.totalBooked > 0).length > 3 ? (
+          <CarouselTopComponent data={topData} />
+        ) : (
+       
+          <div className="flex justify-center">
+            {topData
+              .filter((data: any) => data.totalBooked > 0)
+              .map((data: any) => {
+                return (
+                  <div
+                    className={`relative basis-1/3 text-center h-72  cursor-pointer m-5 z-50 shadow-xl border rounded-lg ${
+                      data.length === 1 ? "w-5 flex justify-center" : ""
+                    }`}
+                    onClick={()=>router.push("/detail/" + data._id)}
+                  >
+                    <Image
+                      width={500}
+                      height={500}
+                      src={
+                        data.image
+                          ? data.image
+                          : "https://picsum.photos/200/300"
+                      }
+                      alt={data.name}
+                      className="w-screen h-full rounded-lg"
+                    />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 pb-2 rounded-b-lg">
+                      <p className="font-bold">{data.name}</p>
+                    </div>
+                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black hover:bg-opacity-80 p-2 rounded-full">
+                      <button className="text-white px-3 w-fit">
+                        {data?.totalBooked} lần sử dụng
+                      </button>
+                    </div>
+                    </div>
+                );
+              })}
+          </div>
+         
+        )}
       </div>
       <i
-  className="pi pi-inbox font-bold text-green-500 back text-3xl cursor-pointer fixed top-3/4 right-10  "
-  onClick={() => setLoginChat(!loginChat)}
-></i>
-
+        className="pi pi-inbox font-bold text-green-500 back text-3xl cursor-pointer fixed top-3/4 right-10  "
+        onClick={() => setLoginChat(!loginChat)}
+      ></i>
 
       {loginChat && (
         <div

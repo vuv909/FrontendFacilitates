@@ -9,17 +9,35 @@ import { getAllBooking } from "../../services/booking.api";
 
 export default function ManageBookingRequestReject() {
   const [bookingData, setBookingData] = useState<any[]>([]);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [activePage, setActivePage] = useState<number>(0);
 
   useEffect(() => {
-    getAllBooking()
+    getAllBooking(3)
       .then((res) => {
         setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
   }, []);
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
+    getAllBooking(3, null, pageNumber)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
   };
 
   return (
@@ -102,7 +120,7 @@ export default function ManageBookingRequestReject() {
                       </td>
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
-                         <span>{b?.booker?.name}</span>
+                          <span>{b?.booker?.name}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height={10}
@@ -119,14 +137,16 @@ export default function ManageBookingRequestReject() {
               })}
             </tbody>
           </table>
-          {/* <div className="flex items-center justify-center ">
-            <Pagination
-              defaultCurrent={6}
-              total={500}
-              onChange={onChangePage}
-              showSizeChanger={false}
-            />
-          </div> */}
+          {totalPage > 0 && (
+            <div className="flex items-center justify-center ">
+              <Pagination
+                defaultCurrent={activePage}
+                total={Number(`${totalPage}0`)}
+                onChange={onChangePage}
+                showSizeChanger={false}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

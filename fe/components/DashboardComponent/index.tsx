@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Button, Menu } from "antd";
 import {
   MailOutlined,
@@ -21,6 +21,8 @@ import CategoryComponent from "../CategoryComponent";
 import ManageBookingRequestAccept from "../ManageBookingRequestAccept";
 import ManageBookingRequestReject from "../ManageBookingRequestReject";
 import ManageBookingRequestExpired from "../ManageBookingRequestExpired";
+import { StorageService } from "../../services/storage";
+import { useRouter } from "next/navigation";
 
 const { SubMenu } = Menu;
 
@@ -53,16 +55,29 @@ const items = [
     icon: <AppstoreOutlined />,
   },
   { key: "4", label: "Quản lý tài khoản", icon: <UserOutlined /> },
-  {
-    key: "5",
-    label: "Thùng rác phòng và sân thể dục đã xóa",
-    icon: <FileZipOutlined />,
-  },
+  // {
+  //   key: "5",
+  //   label: "Thùng rác phòng và sân thể dục đã xóa",
+  //   icon: <FileZipOutlined />,
+  // },
 ];
 
 const DashboardComponent: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [key, setKey] = useState<string>("1");
+  const [role, setRole] = useState<string>("");
+  const router = useRouter();
+
+  useLayoutEffect(() => {
+    if (StorageService.getUser() && StorageService.getUser().role.roleName) {
+      if (StorageService.getUser().role.roleName !== "Admin") {
+        router.push("/not-found");
+      }
+    }
+    if (StorageService.getUser() && StorageService.getUser().role.roleName) {
+      setRole(StorageService.getUser().role.roleName);
+    }
+  }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -76,30 +91,11 @@ const DashboardComponent: React.FC = () => {
   return (
     <div className="flex">
       <div className="flex flex-col border-r-2 border-b-2 w-fit min-h-screen bg-gray-100">
-        {/* <Button
-          onClick={toggleCollapsed}
-          className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-center  ${
-            !collapsed ? "absolute -right-11" : "absolute -right-11"
-          }`}
-        >
-          {collapsed ? <RightOutlined /> : <LeftOutlined />}
-        </Button> */}
-
         <Button
           onClick={toggleCollapsed}
-          className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-end  ${
-            collapsed === true ? "block" : "hidden"
-          } `}
+          className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-end `}
         >
-          <RightOutlined />
-        </Button>
-        <Button
-          onClick={toggleCollapsed}
-          className={` bg-blue-300 text-white font-bold z-50 flex items-center justify-end  ${
-            collapsed === false ? "block" : "hidden"
-          }`}
-        >
-          <LeftOutlined />
+          {collapsed === false ? <LeftOutlined /> : <RightOutlined />}
         </Button>
         <Menu
           style={{ width: collapsed ? 50 : 256 }}
@@ -114,13 +110,13 @@ const DashboardComponent: React.FC = () => {
       </div>
       <div className="flex-grow">
         {key === "1" && <Analysist />}
-        {key === "2" && <ManageFacilites />}  
+        {key === "2" && <ManageFacilites />}
         {key === "3" && <ManageBookingRequest />}
         {key === "7" && <ManageBookingRequestAccept />}
         {key === "8" && <ManageBookingRequestReject />}
         {key === "9" && <ManageBookingRequestExpired />}
         {key === "4" && <ManageAccount />}
-        {key === "5" && <RecycleFacilities />}
+        {/* {key === "5" && <RecycleFacilities />} */}
         {key === "6" && <CategoryComponent />}
       </div>
     </div>
