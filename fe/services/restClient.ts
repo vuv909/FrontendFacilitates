@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { StorageService } from "./storage";
 
 const BASE_URL = "http://localhost:5152";
 
@@ -21,5 +22,11 @@ export default function restClient({
     params,
     data,
     headers 
+  }).catch((err : AxiosError)=>{
+    if(err.response){
+      if(err.response.status === 403){
+        StorageService.signout()
+      }
+    }
   });
 }

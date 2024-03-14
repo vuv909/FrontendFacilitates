@@ -40,6 +40,20 @@ export default function ManageBookingRequestAccept() {
       });
   };
 
+  const handleSearch = (text: any)=>{
+    getAllBooking(2,'default',1,5,text)
+    .then((res) => {
+      setBookingData(res?.data?.booking);
+      setTotalPage(res?.data?.totalPage);
+      setActivePage(res?.data?.activePage);
+    })
+    .catch((err) => {
+      setBookingData([]);
+      setTotalPage(0);
+      setActivePage(0);
+    });
+  }
+
   return (
     <div>
       <div>
@@ -59,15 +73,10 @@ export default function ManageBookingRequestAccept() {
             <div>
               <input
                 type="text"
-                className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
+                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                 placeholder="Điền kí tự để tìm kiếm ..."
+                onChange={(e)=>handleSearch(e.target.value)}
               />
-              <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  className="text-white"
-                />
-              </button>
             </div>
           </div>
           <table>
