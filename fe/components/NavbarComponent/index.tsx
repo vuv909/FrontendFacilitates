@@ -9,7 +9,8 @@ import { StorageService } from "../../services/storage";
 import { addUser } from "@/redux/slices/storeUserSlice";
 import { useDispatch } from "react-redux";
 import { Menu } from "primereact/menu";
-import { getNotification } from "../../services/notification.api";
+import { getNotification, readNotification } from "../../services/notification.api";
+import { set } from "zod";
 
 interface NavbarComponentProps {
   colorNavbarOne: string;
@@ -30,6 +31,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   const [showNotification, setShowNotification] = useState(false);
   const [data, setData] = useState<any>([]);
   const [role, setRole] = useState<string>("");
+  const[read,setRead] = useState<any>([]);
 
   useEffect(() => {
     if (
@@ -91,19 +93,28 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
       },
     },
   ];
+  const handleNotification = async () => {
+    setShowNotification(!showNotification)
+    await readNotification();
+    await getNotification()
+      .then((res) => {
+        setRead(res?.data);
+      })
+  };
 
   useEffect(() => {
     getNotification()
       .then((res) => {
         console.log(res);
         setData(res?.data?.content);
+        setRead(res?.data);
       })
       .catch((err) => {});
   }, []);
   console.log(data);
 
   return (
-    <>
+    < >
       <div
         style={{
           position: "fixed",
@@ -149,16 +160,18 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                 <i
                   className="pi pi-bell p-overlay-badge"
                   style={{ fontSize: "1.5rem" }}
-                  onClick={() => setShowNotification(!showNotification)}
+                  onClick={handleNotification}
                 >
-                  <Badge value="2"></Badge>
+                  <Badge value={read?.totalNotRead}></Badge>
                 </i>
               </div>
               {showNotification && (
                 <div className="fixed top-16 right-28 bg-white border border-gray-500 p-2 shadow-md w-90px">
                   {/* Nội dung thông báo ở đây */}
+                 
+                   
                   <button
-                    className="text-sm text-gray-700 mt-1 mb-2 ml-80 flex justify-end"
+                    className="text-sm text-gray-700 mt-1 mb-2 ml-auto flex justify-end  fix"
                     onClick={() => setShowNotification(false)}
                   >
                     <i
@@ -166,13 +179,11 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                       style={{ fontSize: "1.5rem" }}
                     ></i>
                   </button>
+                  <div style={{ maxHeight: '300px', overflowY: 'auto',paddingRight: '0px' }}>
                   {data?.length > 0 &&
-                    data.map((item: any, index: any) => (
-                      <div
-                        key={index}
-                        className="border border-gray-600 rounded-sm border-around mb-3 p-2"
-                      >
-                        <h4 className="text-lg font-bold">{item?.userId}</h4>
+                    data.map((item:any, index:any) => (
+                      <div key={index} className="border border-gray-600 rounded-sm border-around mb-3 p-2"  onClick={() => router.push(item?.path)}>
+                        <h4 className="text-lg font-bold">{item?.name}</h4>
                         <p className="text-sm ">{item?.content}</p>
                         <p className="text-xs text-end">
                           {new Date(item?.createdAt).toLocaleString("vi-VN", {
@@ -185,6 +196,8 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                       </div>
                     ))}
                 </div>
+              </div>
+
               )}
 
               <div
