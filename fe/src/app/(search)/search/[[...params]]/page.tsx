@@ -130,7 +130,7 @@ export default function SearchAll({ params }: { params: object }) {
   }, []);
 
   useEffect(() => {
-    getCategory()
+    getCategory(null,null,10000000000)
       .then((res) => {
         console.log(res.data.item);
         setCategoryData(res.data.item);

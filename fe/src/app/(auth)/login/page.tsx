@@ -5,6 +5,8 @@ import Link from "next/link";
 import Logo from "../../../../public/icons8-logo.svg";
 import { useState, useEffect } from "react";
 import { getCategory } from "../../../../services/category.api";
+import { StorageService } from "../../../../services/storage";
+import { useRouter } from "next/navigation";
 
 // export const metadata = {
 //   title: "Login",
@@ -12,9 +14,13 @@ import { getCategory } from "../../../../services/category.api";
 
 export default function Login() {
   const [cate, setCate] = useState([]);
-
+  const router = useRouter()
+  
   useEffect(() => {
-    getCategory()
+    if(StorageService.isLoggedIn()===true){
+      router.push('/');
+    }
+    getCategory(null,null,10000000000000)
       .then((response) => {
         setCate(response.data.item);
       })
