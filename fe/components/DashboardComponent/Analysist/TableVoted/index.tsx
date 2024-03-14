@@ -104,7 +104,7 @@ export default function TableVoted() {
 
   useEffect(() => {
     getListDashboard().then(
-      (res) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");
@@ -130,7 +130,7 @@ export default function TableVoted() {
       textSearch.trim(),
       selectedValue === "default" ? null : selectedValue
     ).then(
-      (res) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");
@@ -155,7 +155,7 @@ export default function TableVoted() {
     console.log("====================================");
 
     getCommentByFacilityId(id, null, 100000000000000).then(
-      (res) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res);
         console.log("====================================");
@@ -176,7 +176,7 @@ export default function TableVoted() {
       text.trim(),
       selectedValue === "default" ? null : selectedValue
     ).then(
-      (res) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");
@@ -205,7 +205,7 @@ export default function TableVoted() {
       textSearch.trim(),
       data === "default" ? null : data
     ).then(
-      (res) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");

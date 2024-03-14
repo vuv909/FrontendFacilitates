@@ -24,7 +24,7 @@ export default function CommentComponent({
   const [totalComments, setTotalComments] = useState<number>(0);
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     getCommentByFacilityId(detailData?._id, pageNumber)
-      .then((res) => {
+      .then((res: any) => {
         setListComment(res.data.items);
         setTotalPages(res.data.totalPage);
         setActivePage(res.data.activePage);
@@ -42,14 +42,14 @@ export default function CommentComponent({
 
   useEffect(() => {
     checkComment(detailData?._id)
-      .then((res) => {
+      .then((res: any) => {
         setToggleComment(res.data.data);
       })
       .catch((err) => {
-        setToggleComment(err.response.data.data);
+        setToggleComment(false);
       });
     getCommentByFacilityId(detailData?._id)
-      .then((res) => {
+      .then((res: any) => {
         setListComment(res.data.items);
         setTotalPages(res.data.totalPage);
         setActivePage(res.data.activePage);
@@ -85,14 +85,14 @@ export default function CommentComponent({
         .then((res) => {
           showSuccessCategory("Comment added successfully !!!");
           checkComment(detailData?._id)
-            .then((res) => {
+            .then((res: any) => {
               setToggleComment(res.data.data);
             })
             .catch((err) => {
-              setToggleComment(err.response.data.data);
+              setToggleComment(false);
             });
           getCommentByFacilityId(detailData?._id)
-            .then((res) => {
+            .then((res: any) => {
               setListComment(res.data.items);
               setTotalPages(res.data.totalPage);
               setActivePage(res.data.activePage);

@@ -16,7 +16,7 @@ export function getBookingByUserId(id:number,page : number = 1 , size : number =
   });
 }
 
-export function getAllBooking(status: any = null, sort: any = 'default', page: number = 1, size: number = 5) {
+export function getAllBooking(status: any = null, sort: any = 'default', page: number | any = 1, size: number | any = 5, name ?: any) {
   return restClient({
     url: "booking",
     method: "GET",
@@ -24,7 +24,8 @@ export function getAllBooking(status: any = null, sort: any = 'default', page: n
       status,
       sort: sort === 'default' ? null : sort,
       page,
-      size
+      size,
+      name
     }
   });
 }

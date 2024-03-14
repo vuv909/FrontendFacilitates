@@ -27,14 +27,14 @@ interface Category {
 
 export default function Login() {
   const [cate, setCate] = useState([]);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     if (StorageService.isLoggedIn() === true) {
-      router.push('/');
+      router.push("/");
     }
     getCategory(null, null, 10000000000000)
-      .then((response) => {
+      .then((response: any) => {
         setCate(response.data.item);
       })
       .catch((error) => console.error("Error fectching Category"));

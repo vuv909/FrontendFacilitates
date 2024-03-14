@@ -33,6 +33,7 @@ import {
   deleteCategory,
   editCategory,
   getCategory,
+  viewUpdate,
 } from "../../services/category.api";
 interface City {
   name: string;
@@ -98,6 +99,8 @@ export default function CategoryComponent() {
   const [activePage, setActivePage] = useState<null | number>(1);
   const [dataUpdate, setDataUpdate] = useState<DataUpdateType | null>(null);
   const [text, setText] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [viewData, setViewData] = useState<any>([null]);
 
   const {
     register,
@@ -157,9 +160,9 @@ export default function CategoryComponent() {
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     // if (pageNumber !== activePage) {
-      console.log('====================================');
-      console.log("text::",text);
-      console.log('====================================');
+    console.log("====================================");
+    console.log("text::", text);
+    console.log("====================================");
     getCategory(pageNumber, text)
       .then((res) => {
         setCategoryData(res.data.item);
@@ -375,7 +378,27 @@ export default function CategoryComponent() {
         showErrorCategory("Error occurred !!!");
       });
   };
+  const showModalView = (id: any) => {
+    viewUpdate(id, "Category", 1, 1000)
+      .then((res) => {
+        setViewData(res?.data?.items);
+      })
+      .catch((err) => {
+        // Xử lý lỗi nếu cần
+      });
+    console.log("--------------------");
 
+    console.log(viewData);
+
+    setModalVisible(true);
+  };
+  const handleOkV = () => {
+    setModalVisible(false);
+  };
+
+  const handleCancelV = () => {
+    setModalVisible(false);
+  };
   return (
     <>
       <div className="">
@@ -414,6 +437,7 @@ export default function CategoryComponent() {
                   <th className="p-5 border">Ảnh</th>
                   <th className="p-5 border">Thời gian tạo</th>
                   <th className="p-5 border">Thời gian cập nhập</th>
+                  <th className="p-5 border">Lịch sử</th>
                   <th></th>
                 </tr>
               </thead>
@@ -438,6 +462,14 @@ export default function CategoryComponent() {
                       </td>
                       <td className="p-5 border text-center">
                         <p>{c && new Date(c.updatedAt).toLocaleString()}</p>
+                      </td>
+                      <td className="p-5 border text-center">
+                        <button
+                          className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full w-24"
+                          onClick={() => showModalView(c._id)}
+                        >
+                          Xem
+                        </button>
                       </td>
                       <td className="border">
                         <div className="flex flex-col items-center gap-2 w-full py-1">
@@ -604,12 +636,119 @@ export default function CategoryComponent() {
               <Button key="back" onClick={handleCancelUpdate}>
                 Hủy
               </Button>
-              <Button className="bg-blue-500 text-white" htmlType="submit">
+              <Button className="bg-blue-600 text-white" htmlType="submit">
                 Cập nhập
               </Button>
             </div>
           </form>
         </Spin>
+      </Modal>
+      <Modal
+        className=" "
+        open={modalVisible}
+        onOk={handleOkV}
+        onCancel={handleCancelV}
+        closeIcon={<></>}
+        footer={[]}
+        width={900}
+      >
+        <div className="flex flex-col items-center h-full w-full">
+          <div>
+            <h1 className="text-center font-bold uppercase mb-5 text-xl">
+              Lịch sử cập nhập các loại dịch vụ
+            </h1>
+          </div>
+          <div className="overflow-auto max-h-full w-full">
+            <table className="w-full divide-gray-200">
+              <thead className="bg-blue-400">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    #
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Tên Mới
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Ảnh Mới
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Tên Cũ
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Ảnh cũ
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Thời gian cập nhật
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                className="bg-white divide-y divide-gray-200"
+                style={{ maxHeight: "300px", overflowY: "auto" }}
+              >
+                {viewData?.length > 0 ? (
+                  viewData.map((d: any, index: any) => (
+                    <tr key={index}>
+                      <td className="text-center">{index + 1}</td>
+                      <td className="text-center">
+                        {d?.objectAfter?.categoryName}
+                      </td>
+                      <td className="justify-center">
+                        <img
+                          className="w-32 h-32"
+                          src={d?.objectAfter?.image}
+                          alt=""
+                        />
+                      </td>
+                      <td className="text-center">
+                        {d?.objectBefore?.categoryName}
+                      </td>
+                      <td className="justify-center">
+                        <img
+                          className="w-32 h-32"
+                          src={d?.objectBefore?.image}
+                          alt=""
+                        />
+                      </td>
+                      <td className="text-center">
+                      {new Date(d?.createdAt).toLocaleString("vi-VN", {
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                          })}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="text-center">
+                      Chưa được cập nhật
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </Modal>
     </>
   );
