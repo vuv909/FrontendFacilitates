@@ -42,7 +42,7 @@ export default function CarouselComponent(props: any) {
     // );
     // setCate(props.data)
     getCategory(null,null,1000000000)
-      .then((response) => {
+      .then((response : any) => {
         setCate(response.data.item);
       })
       .catch((error) => console.error("Error fectching Category"));

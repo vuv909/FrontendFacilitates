@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import io from "socket.io-client";
-import { chat, getListAdminMessage, getListUser } from "../../services/chat.api";
+import {
+  chat,
+  getListAdminMessage,
+  getListUser,
+} from "../../services/chat.api";
 
 interface Message {
   text: string;
@@ -42,7 +46,7 @@ const ChatComponent = () => {
   const handleUserSelect = async (user: string) => {
     const existedUser = users.find((cUser) => cUser._id === user);
     if (existedUser === undefined) {
-      const response = await getListUser();
+      const response : any = await getListUser();
       const data = response.data;
       if (data.statusCode === 1) {
         const listUser = data.data;
@@ -52,7 +56,7 @@ const ChatComponent = () => {
     setMessages([]);
     setSelectedUser(user);
     try {
-      const response = await getListAdminMessage(user);
+      const response : any = await getListAdminMessage(user);
       const data = response.data;
 
       if (data.statusCode === 1) {
@@ -71,7 +75,7 @@ const ChatComponent = () => {
     const newSocket = io(host);
     setSocket(newSocket);
     getListUser()
-      .then((response) => {
+      .then((response : any) => {
         const data = response.data;
         if (data.statusCode === 1) {
           const listUser = data.data;

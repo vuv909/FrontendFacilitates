@@ -11,7 +11,7 @@ export default function AmountFacilitateAnlalysist() {
 
   useEffect(() => {
     faciStatic()
-      .then((res) => {
+      .then((res : any) => {
         const documentStyle = getComputedStyle(document.documentElement);
         const data = {
           labels: Object.keys(res.data.data),
