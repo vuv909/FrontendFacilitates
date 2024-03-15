@@ -164,11 +164,7 @@ export default function ManageAccount() {
                                 : ""
                             }`}
                               value={u?.roleId?._id}
-                              onChange={(e) => {
-                                if (e.target.value !== "65da0c3969e68c4bff47fcb8") {
-                                  handleChangeRole(u?._id, e.target.value);
-                                }
-                              }}
+                            onChange={(e) => handleChangeRole(u?._id,e.target.value)}
                               
                             >
                               <option
