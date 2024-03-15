@@ -148,7 +148,11 @@ export default function ManageAccount() {
                             <option className="text-green-500" value="1">
                               Active
                             </option>
-                            <option className="text-red-500" value="3">
+                            <option  value="3"   
+                                className={`text-red-500 ${
+                                  u?.roleId?._id === "65f3ea0e52803b2dc5044495" ? "disabled" : ""
+                                }`}
+                                disabled={u?.roleId?._id === "65f3ea0e52803b2dc5044495"}>
                               Inactive
                             </option>
                           </select>
@@ -157,9 +161,9 @@ export default function ManageAccount() {
                           <p className="cursor-pointer flex items-center justify-center gap-1">
                             <select
                              className={`appearance-none bg-transparent border-none ${
-                              u?.roleId?._id === "65d83cd06cca5d4d8383cc86"
+                              u?.roleId?._id === "65f3ea0e52803b2dc5044497"
                                 ? "text-blue-500"
-                                : u?.roleId?._id === "65da0c3969e68c4bff47fcb8"
+                                : u?.roleId?._id === "65f3ea0e52803b2dc5044495"
                                 ? "text-yellow-500"
                                 : ""
                             }`}
@@ -169,16 +173,16 @@ export default function ManageAccount() {
                             >
                               <option
   
-                                value="65d83cd06cca5d4d8383cc86"
+                                value="65f3ea0e52803b2dc5044497"
                                 className={`text-blue-500 ${
-                                  u?.roleId?._id === "65da0c3969e68c4bff47fcb8" ? "disabled" : ""
+                                  u?.roleId?._id === "65f3ea0e52803b2dc5044495" ? "disabled" : ""
                                 }`}
-                                disabled={u?.roleId?._id === "65da0c3969e68c4bff47fcb8"}
+                                disabled={u?.roleId?._id === "65f3ea0e52803b2dc5044495"}
                               >
                                 Student
                               </option>
 
-                              <option className="text-yellow-500"value="65da0c3969e68c4bff47fcb8">
+                              <option className="text-yellow-500"value="65f3ea0e52803b2dc5044495">
                               Admin
                               </option>
                             </select>

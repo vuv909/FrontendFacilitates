@@ -29,8 +29,8 @@ interface User {
   email: string;
   _id: string;
 }
-const host = "http://192.168.10.203:5152";
-// const host = "http://localhost:5152";
+// const host = "http://192.168.10.203:5152";
+const host = "http://localhost:5152";
 
 export default function Home() {
   const router = useRouter();
