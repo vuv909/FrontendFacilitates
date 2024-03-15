@@ -93,7 +93,7 @@ export const getCurrentWeekTime = () => {
   return index;
 };
 
-export const statusFilter = ['Pending','Completed','Refused','Expired']
+export const statusFilter = [1,2,3,4]
 
 export const years = () => {
   const date = new Date();

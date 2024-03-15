@@ -1,10 +1,11 @@
+'use client'
 import type { Metadata } from "next";
 import FooterComponent from "../../../../components/FooterComponent";
 import NavbarComponent from "../../../../components/NavbarComponent";
+import { useEffect } from "react";
+import { StorageService } from "../../../../services/storage";
+import { useRouter } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "quản lý",
-};
 
 export default function SearchtLayout({
   children,
@@ -13,6 +14,15 @@ export default function SearchtLayout({
 }) {
   const colorNavbarOne: string = "bg-gray-300";
   const colorNavbarTwo: string = "bg-gray-300";
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if(StorageService.isLoggedIn() === false){
+      router.push('/')
+    }
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <NavbarComponent

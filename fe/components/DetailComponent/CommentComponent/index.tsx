@@ -8,6 +8,7 @@ import {
   checkComment,
   getCommentByFacilityId,
 } from "../../../services/voting.api";
+import { useSelector } from "react-redux";
 
 export default function CommentComponent({
   detailData,
@@ -22,6 +23,7 @@ export default function CommentComponent({
   const [totalPages, setTotalPages] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(0);
   const [totalComments, setTotalComments] = useState<number>(0);
+  const user = useSelector((state) => (state as any).userInfo);
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     getCommentByFacilityId(detailData?._id, pageNumber)
       .then((res : any) => {
@@ -117,10 +119,12 @@ export default function CommentComponent({
     <div>
       {toggleComment && (
         <div className="flex gap-5 items-center mx-auto">
-          <Avatar
-            src="https://picsum.photos/200/300"
+          {user && (
+            <Avatar
+            src={`${user.value.avatar}`}
             size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
           />
+          )}
           <div className="flex flex-col gap-3">
             <Rating
               value={!starVoted ? 0 : starVoted}
@@ -179,7 +183,7 @@ export default function CommentComponent({
                 <div className="border border-solid border-gray-300 p-4 rounded-xl w-full">
                   <div className="flex gap-5">
                     <div>
-                      <p className="font-bold">Minh</p>
+                      <p className="font-bold">{comment.userId?.name}</p>
                     </div>
                     <div>
                       <p className="text-gray-500 flex items-center">

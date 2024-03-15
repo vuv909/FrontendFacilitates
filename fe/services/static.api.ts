@@ -20,3 +20,10 @@ export function faciStatic() {
     headers,
   });
 }
+
+export function statisticStaticByYear(year?: number, status?: number) {
+  return restClient({
+    url: "booking/dashboard/month",
+    params: {status,year}
+  });
+}

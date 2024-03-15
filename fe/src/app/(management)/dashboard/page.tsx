@@ -6,13 +6,7 @@ import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
 
-  const router = useRouter()
-
-  useEffect(() => {
-    if(StorageService.isLoggedIn() === false){
-      router.push('/')
-    }
-  }, []);
+ 
   return (
     <div>
       <DashboardComponent />
