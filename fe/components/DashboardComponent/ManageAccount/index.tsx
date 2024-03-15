@@ -164,14 +164,17 @@ export default function ManageAccount() {
                                 : ""
                             }`}
                               value={u?.roleId?._id}
-                              onChange={(e) =>
-                                handleChangeRole(u?._id, e.target.value)
-                              }
+                              onChange={(e) => {
+                                if (e.target.value !== "65da0c3969e68c4bff47fcb8") {
+                                  handleChangeRole(u?._id, e.target.value);
+                                }
+                              }}
                               
                             >
                               <option
                                 className="text-blue-500"
                                 value="65d83cd06cca5d4d8383cc86"
+                                disabled
                               >
                                 Student
                               </option>
