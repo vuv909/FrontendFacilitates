@@ -172,9 +172,12 @@ export default function ManageAccount() {
                               
                             >
                               <option
-                                className="text-blue-500"
+  
                                 value="65d83cd06cca5d4d8383cc86"
-                                disabled
+                                className={`text-blue-500 ${
+                                  u?.roleId?._id === "65da0c3969e68c4bff47fcb8" ? "disabled" : ""
+                                }`}
+                                disabled={u?.roleId?._id === "65da0c3969e68c4bff47fcb8"}
                               >
                                 Student
                               </option>
