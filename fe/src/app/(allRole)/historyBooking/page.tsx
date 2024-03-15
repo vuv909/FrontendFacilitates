@@ -22,6 +22,23 @@ import { getBookingByUserId } from "../../../../services/booking.api";
 import { StorageService } from "../../../../services/storage";
 import { convertWeekDateToDate, formatDate } from "../../../../utils";
 
+const info = (data: any) => {
+  Modal.info({
+    title: "Lý do",
+    content: <div dangerouslySetInnerHTML={{ __html: data }}></div>,
+    footer: (
+      <div className="relative pb-8">
+        <Button
+          onClick={() => Modal.destroyAll()}
+          className="absolute right-0 bottom-2 bg-blue-500 text-white hover:bg-blue-300"
+        >
+          OK
+        </Button>
+      </div>
+    ),
+  });
+};
+
 export default function HistoryBookingPage() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -93,6 +110,19 @@ export default function HistoryBookingPage() {
         setActivePage(1);
         setTotalPage(0);
       });
+  };
+
+  const handleShow = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    data: any
+  ) => {
+    e.stopPropagation(); // Stop event propagation
+    // Your logic here
+    console.log('====================================');
+    console.log("data::",data);
+    console.log('====================================');
+    // onClick={() => info(detailData?.description)}
+    info(data.reason)
   };
 
   return (
@@ -221,11 +251,16 @@ export default function HistoryBookingPage() {
                     />
                   )}
                   {status === 3 && (
-                    <FontAwesomeIcon
-                      className="text-5xl text-red-600"
-                      icon={faClose}
-                    />
+                    <Button
+                      className="bg-red-600 text-white font-bold"
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                        handleShow(e, d)
+                      }
+                    >
+                      Xem lý do hủy
+                    </Button>
                   )}
+
                   {status === 4 && (
                     <FontAwesomeIcon
                       className="text-4xl"
@@ -239,7 +274,7 @@ export default function HistoryBookingPage() {
               </div>
             );
           })}
-           {data.length === 0 && <Empty />}
+          {data.length === 0 && <Empty />}
         </div>
         {/* pagination */}
         {totalPage > 0 && (
