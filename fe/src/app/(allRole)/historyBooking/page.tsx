@@ -34,15 +34,15 @@ export default function HistoryBookingPage() {
   const [data, setData] = useState<any[]>([]);
   const statusValue = [{ name: "pending" }, { name: "success" }];
 
-  useEffect(()=>{
-    if(StorageService.isLoggedIn()=== false){
-      router.push('/')
+  useEffect(() => {
+    if (StorageService.isLoggedIn() === false) {
+      router.push("/");
     }
-  },[])
+  }, []);
 
   useEffect(() => {
     getBookingByUserId(StorageService.getUser()?.id)
-      .then((res:any) => {
+      .then((res: any) => {
         setData(res.data?.booking);
         setActivePage(res.data?.activePage);
         setTotalPage(res.data?.totalPage);
@@ -68,8 +68,22 @@ export default function HistoryBookingPage() {
   };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
-    getBookingByUserId(StorageService.getUser()?.id,pageNumber)
-      .then((res:any) => {
+    getBookingByUserId(StorageService.getUser()?.id, pageNumber)
+      .then((res: any) => {
+        setData(res.data?.booking);
+        setActivePage(res.data?.activePage);
+        setTotalPage(res.data?.totalPage);
+      })
+      .catch((err) => {
+        setData([]);
+        setActivePage(1);
+        setTotalPage(0);
+      });
+  };
+
+  const handleSearch = () => {
+    getBookingByUserId(StorageService.getUser()?.id, 1, 9, valueInput)
+      .then((res: any) => {
         setData(res.data?.booking);
         setActivePage(res.data?.activePage);
         setTotalPage(res.data?.totalPage);
@@ -103,7 +117,10 @@ export default function HistoryBookingPage() {
           </div>
 
           <div>
-            <button className="px-10 py-3 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600">
+            <button
+              className="px-10 py-3 text-white font-semibold rounded-md hover:bg-blue-400 bg-blue-600"
+              onClick={handleSearch}
+            >
               Tìm kiếm
             </button>
           </div>
@@ -222,6 +239,7 @@ export default function HistoryBookingPage() {
               </div>
             );
           })}
+           {data.length === 0 && <Empty />}
         </div>
         {/* pagination */}
         {totalPage > 0 && (

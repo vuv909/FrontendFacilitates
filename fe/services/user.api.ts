@@ -26,3 +26,11 @@ export function getAllUser(email?:any,page?: number,size?:number){
     })
 }
 
+export function getAllRole(){
+    return restClient({
+        url:`role`,
+        method:`GET`,
+    })
+}
+
+

@@ -19,6 +19,7 @@ import io from "socket.io-client";
 import { changeConfirmLocale } from "antd/es/modal/locale";
 import { chat, getListUserMessage } from "../../services/chat.api";
 import { getListDashboard, getTopNumber } from "../../services/dashboard.api";
+import { StorageService } from "../../services/storage";
 interface Message {
   text: string;
   sender: "left" | "right";
@@ -37,6 +38,7 @@ export default function Home() {
   const [faci, setFaci] = useState([]);
   const [cate, setCate] = useState([]);
   const [text, setText] = useState<string>("");
+  const [role, setRole] = useState<string>("");
 
   // Bắt đầu chat to admin - TrungNQ
   const [messages, setMessages] = useState<Message[]>([]);
@@ -48,8 +50,12 @@ export default function Home() {
   const [topData, setTopData] = useState<any[]>([]);
 
   useEffect(() => {
+    if (StorageService.getUser() && StorageService.getUser().role.roleName) {
+      setRole(StorageService.getUser().role.roleName);
+    }
+
     getTopNumber().then(
-      (res : any) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res);
         console.log("====================================");
@@ -63,19 +69,19 @@ export default function Home() {
     );
 
     getCategory()
-      .then((response : any) => {
+      .then((response: any) => {
         setCate(response.data.item);
       })
       .catch((error) => console.error("Error fectching Category"));
 
     getFacilities()
-      .then((response : any) => {
+      .then((response: any) => {
         setFaci(response.data.items);
       })
       .catch((error) => console.error("Error fetching Facilities"));
 
     getListUserMessage()
-      .then((response : any) => {
+      .then((response: any) => {
         const data = response.data;
         if (data.statusCode === 1) {
           console.log(data.data, "hi");
@@ -214,7 +220,6 @@ export default function Home() {
         {topData.filter((data: any) => data.totalBooked > 0).length > 3 ? (
           <CarouselTopComponent data={topData} />
         ) : (
-       
           <div className="flex justify-center">
             {topData
               .filter((data: any) => data.totalBooked > 0)
@@ -224,7 +229,7 @@ export default function Home() {
                     className={`relative basis-1/3 text-center h-72  cursor-pointer m-5 z-50 shadow-xl border rounded-lg ${
                       data.length === 1 ? "w-5 flex justify-center" : ""
                     }`}
-                    onClick={()=>router.push("/detail/" + data._id)}
+                    onClick={() => router.push("/detail/" + data._id)}
                   >
                     <Image
                       width={500}
@@ -245,11 +250,10 @@ export default function Home() {
                         {data?.totalBooked} lần sử dụng
                       </button>
                     </div>
-                    </div>
+                  </div>
                 );
               })}
           </div>
-         
         )}
       </div>
       <i
@@ -262,41 +266,50 @@ export default function Home() {
           className="fixed bottom-5 right-20 bg-white p-4 border border-gray-300 overflow-y-auto"
           style={{ maxHeight: "400px" }}
         >
-          <h2 className="text-lg font-semibold mb-2">Chat Box</h2>
-          <div className="flex flex-col space-y-2">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`text-sm p-2 rounded-lg ${
-                  message.sender === "right"
-                    ? "bg-blue-100 self-end"
-                    : "bg-gray-100 self-start"
-                }`}
-              >
-                {message.text}
+          {role === "Student" && (
+            <>
+              <h2 className="text-lg font-semibold mb-2">Chat Box</h2>
+              <div className="flex flex-col space-y-2">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`text-sm p-2 rounded-lg ${
+                      message.sender === "right"
+                        ? "bg-blue-100 self-end"
+                        : "bg-gray-100 self-start"
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {showChat ? (
-            <div className="flex space-x-2 mt-4">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="flex-grow p-2 border border-gray-300 rounded-lg"
-                placeholder="Type your message..."
-              />
-              <button
-                onClick={handleSendMessage}
-                className="px-4 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                <i className="pi pi-send" style={{ fontSize: "1rem" }}></i>
-              </button>
-            </div>
-          ) : (
-            <span>Đăng nhập để chat</span>
+              <div className="flex space-x-2 mt-4">
+                {showChat ? (
+                  <>
+                    <input
+                      type="text"
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      className="flex-grow p-2 border border-gray-300 rounded-lg"
+                      placeholder="Type your message..."
+                    />
+                    <button
+                      onClick={handleSendMessage}
+                      className="px-4 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    >
+                      <i
+                        className="pi pi-send"
+                        style={{ fontSize: "1rem" }}
+                      ></i>
+                    </button>
+                  </>
+                ) : (
+                  <span>Đăng nhập để chat</span>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}

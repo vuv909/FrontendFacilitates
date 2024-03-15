@@ -7,6 +7,7 @@ import { Button, Modal, Pagination, PaginationProps, Tooltip } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { editBooking, getAllBooking } from "../../../services/booking.api";
 import { Toast } from "primereact/toast";
+import { getAllRole } from "../../../services/user.api";
 
 export default function ManageBookingRequest() {
   const [bookingData, setBookingData] = useState<any[]>([]);
@@ -17,6 +18,9 @@ export default function ManageBookingRequest() {
   const [idReject, setIdReject] = useState<string>("");
   const [because, setBecause] = useState<string>("");
   const toastAddCategory = useRef<any>(null);
+  const [role, setRole] = useState<any[]>([]);
+  const [roleValue, setRoleValue] = useState<string>("");
+  const [text, setText] = useState<string>("");
 
   const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
@@ -49,6 +53,16 @@ export default function ManageBookingRequest() {
   };
 
   useEffect(() => {
+    getAllRole().then(
+      (res: any) => {
+        setRole(res.data);
+        console.log("====================================");
+        console.log("role::", res.data);
+        console.log("====================================");
+      },
+      (err: any) => {}
+    );
+
     getAllBooking(1, selectedValue, 1)
       .then((res) => {
         setBookingData(res?.data?.booking);
@@ -141,10 +155,34 @@ export default function ManageBookingRequest() {
       });
   };
 
+  const handleRole = (data: any) => {
+    setRoleValue(data);
+    getAllBooking(1, selectedValue, 1, 5, text, data)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
+  };
+
   const handleSearch = (data: any) => {
-    console.log("====================================");
-    console.log(data);
-    console.log("====================================");
+    setText(data);
+    getAllBooking(1, selectedValue, 1, 5, data, roleValue)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
   };
 
   return (
@@ -179,6 +217,21 @@ export default function ManageBookingRequest() {
                 <option value="createdDate:asc">Ngày đặt tăng dần</option>
                 <option value="createdDate:desc">Ngày đặt giảm dần</option>
               </select>
+              <select
+                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
+                value={roleValue}
+                onChange={(e) => handleRole(e.target.value)}
+              >
+                <option value="default">Cấp bậc</option>
+                {role &&
+                  role.map((role, index: number) => {
+                    return (
+                      <option value={`${role?._id}`} key={index}>
+                        {role?.roleName}
+                      </option>
+                    );
+                  })}
+              </select>
             </div>
           </div>
           <table>
@@ -189,6 +242,7 @@ export default function ManageBookingRequest() {
                 <th className="p-5 border">Slot</th>
                 <th className="p-5 border">Thời gian bắt đầu</th>
                 <th className="p-5 border">Thời gian kết thúc</th>
+                <th className="p-5 border">Thời gian đặt</th>
                 <th className="p-5 border">Cấp bậc</th>
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
@@ -232,6 +286,9 @@ export default function ManageBookingRequest() {
                           <p>{b && new Date(b?.endDate).toLocaleString()}</p>
                         </td>
                         <td className="p-5 border text-center">
+                          <p>{b && new Date(b?.createdAt).toLocaleString()}</p>
+                        </td>
+                        <td className="p-5 border text-center">
                           <p>{b?.booker?.roleId?.roleName}</p>
                         </td>
                         <td className="p-5 border text-center">
@@ -250,7 +307,7 @@ export default function ManageBookingRequest() {
                             </svg>
                           </p>
                         </td>
-                        <td className="">
+                        <td className="w-1">
                           <div className="flex flex-col gap-2 w-full py-1">
                             <button
                               className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full"

@@ -67,7 +67,7 @@ export function searchFacility(
     method: "GET",
     params: {
       page,
-      size ,
+      size : 12 ,
       name,
       categoryId,
     },
