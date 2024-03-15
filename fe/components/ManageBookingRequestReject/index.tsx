@@ -11,6 +11,7 @@ export default function ManageBookingRequestReject() {
   const [bookingData, setBookingData] = useState<any[]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(0);
+  const [text, setTextSearch] = useState<string>("");
 
   useEffect(() => {
     getAllBooking(3)
@@ -28,6 +29,20 @@ export default function ManageBookingRequestReject() {
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     getAllBooking(3, null, pageNumber)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
+  };
+
+  const handleSearch = () => {
+    getAllBooking(3, null, 1, 5, text)
       .then((res) => {
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
@@ -61,8 +76,12 @@ export default function ManageBookingRequestReject() {
                 type="text"
                 className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
                 placeholder="Điền kí tự để tìm kiếm ..."
+                onChange={(e) => setTextSearch(e.target.value)}
               />
-              <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">
+              <button
+                className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full"
+                onClick={handleSearch}
+              >
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
                   className="text-white"

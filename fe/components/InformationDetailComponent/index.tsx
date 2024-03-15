@@ -223,7 +223,7 @@ export default function InfomationDetailComponent({
     setWeekValue(formattedWeekValue);
 
     calendarBooking(currentWeek, detailData?._id)
-      .then((res : any) => {
+      .then((res: any) => {
         setListBooking(res.data);
       })
       .catch((err: Error) => {
@@ -247,7 +247,7 @@ export default function InfomationDetailComponent({
   const handleWeekChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedWeek = event.target.value;
     calendarBooking(event.target.value, detailData?._id)
-      .then((res : any) => {
+      .then((res: any) => {
         setListBooking(res.data);
       })
       .catch((err: Error) => {
@@ -324,21 +324,32 @@ export default function InfomationDetailComponent({
     console.log("day::", day);
     console.log("====================================");
     addBooking(bookingBody)
-      .then((res) => {
-        showSuccessCategory("Booking successfully !!!");
-        calendarBooking(weekValue, detailData?._id)
-          .then((res : any) => {
-            setListBooking(res.data);
-          })
-          .catch((err: Error) => {
-            console.log("====================================");
-            console.log("err::", err);
-            console.log("====================================");
-          });
+      .then((res: any) => {
+        if (
+          res.statusCode === 400 &&
+          res.message === "You already have a booking"
+        ) {
+          showErrorCategory("Booking failed: You already have a booking");
+        } else {
+          showSuccessCategory("Booking successfully !!!");
+          calendarBooking(weekValue, detailData?._id)
+            .then((res: any) => {
+              setListBooking(res.data);
+            })
+            .catch((err: Error) => {
+              console.log("====================================");
+              console.log("err::", err);
+              console.log("====================================");
+            });
+        }
       })
       .catch((err) => {
-        showErrorCategory("Booking failed !!!");
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+        showErrorCategory("Bạn đã đặt slot này rồi");
       });
+
     setOpen(false);
   };
 
@@ -398,7 +409,7 @@ export default function InfomationDetailComponent({
             <Tooltip title="Chưa có ai đặt">
               <div className="w-1 h-4 bg-blue-500"></div>
             </Tooltip>
-            <Tooltip title="Không thể đặt thời gian quá khứ">
+            <Tooltip title="Không thể đặt slot này">
               <div className="w-1 h-4 bg-gray-400"></div>
             </Tooltip>
           </div>
