@@ -698,6 +698,12 @@ export default function CategoryComponent() {
                   >
                     Thời gian cập nhật
                   </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Người sửa
+                  </th>
                 </tr>
               </thead>
               <tbody
