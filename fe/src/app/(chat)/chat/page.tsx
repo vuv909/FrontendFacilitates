@@ -5,12 +5,10 @@ import NavbarComponent from "../../../../components/NavbarComponent";
 import { StorageService } from "../../../../services/storage";
 import { useRouter } from "next/navigation";
 
-export const metadata = {
-  title: "Chat",
-};
+
 export default function Chat({ children }: { children: React.ReactNode }) {
   const colorNavbarOne: string = "bg-gray-300";
-  const colorNavbarTwo: string = "bg-gray-300";
+  const colorNavbarTwo: string = "bg-gray-200";
   const router = useRouter();
 
   useEffect(() => {
@@ -22,13 +20,15 @@ export default function Chat({ children }: { children: React.ReactNode }) {
   });
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="">
+      <div className="mt-20">
       <NavbarComponent
         colorNavbarOne={colorNavbarOne}
         colorNavbarTwo={colorNavbarTwo}
       />
-      <div className="mt-20 w-auto h-max">
-        {" "}
+      </div>
+     
+      <div  >
         <ChatComponent />
       </div>
     </div>
