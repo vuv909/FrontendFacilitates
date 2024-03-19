@@ -54,12 +54,12 @@ export default function ManageAccount() {
   };
   const handleChangeRole = async (userId: any, roleId: any) => {
     console.log(roleId);
-    
+
     if (confirm("Bạn có muốn thay đổi trạng thái không ?")) {
       await updateProfile(userId, { roleId });
       alert("Thay đổi thành công");
     }
-   fetchApi(searchValue, page)
+    fetchApi(searchValue, page);
   };
   return (
     <>
@@ -132,57 +132,43 @@ export default function ManageAccount() {
                           </p>
                         </td>
                         <td className="p-5 border text-center">
-                          <select
-                            className={`appearance-none bg-transparent border-none ${
-                              u?.status === 1
-                                ? "text-green-500"
-                                : u?.status === 3
-                                ? "text-red-600"
-                                : ""
-                            }`}
-                            value={u?.status} // Xử lý trường hợp u?.status không tồn tại
-                            onChange={(e) =>
-                              handleChangeStaus(u?._id, e.target.value)
-                            }
-                          >
-                            <option className="text-green-500" value="1">
-                              Active
-                            </option>
-                            <option className="text-red-500" value="3">
-                              Inactive
-                            </option>
-                          </select>
-                        </td>
-                        <td className="p-5 border text-center">
-                          <p className="cursor-pointer flex items-center justify-center gap-1">
+                          {u?.roleId?.roleName === "Student" ? (
                             <select
-                             className={`appearance-none bg-transparent border-none ${
-                              u?.roleId?._id === "65d83cd06cca5d4d8383cc86"
-                                ? "text-blue-500"
-                                : u?.roleId?._id === "65da0c3969e68c4bff47fcb8"
-                                ? "text-yellow-500"
-                                : ""
-                            }`}
-                              value={u?.roleId?._id}
-                            onChange={(e) => handleChangeRole(u?._id,e.target.value)}
-                              
-                            >
-                              <option
-  
-                                value="65d83cd06cca5d4d8383cc86"
-                                className={`text-blue-500 ${
-                                  u?.roleId?._id === "65da0c3969e68c4bff47fcb8" ? "disabled" : ""
-                                }`}
-                                disabled={u?.roleId?._id === "65da0c3969e68c4bff47fcb8"}
-                              >
-                                Student
-                              </option>
 
-                              <option className="text-yellow-500"value="65da0c3969e68c4bff47fcb8">
-                              Admin
+                              className={`appearance-none bg-transparent border-none ${
+                                u?.status === 1
+                                  ? "text-green-500"
+                                  : u?.status === 3
+                                  ? "text-red-600"
+                                  : ""
+                              }`}
+                              value={u?.status} // Xử lý trường hợp u?.status không tồn tại
+                              onChange={(e) =>
+                                handleChangeStaus(u?._id, e.target.value)
+                              }
+                            >
+                              <option className="text-green-500" value="1">
+                                Active
+
+                              </option>
+                              <option className="text-red-500" value="3">
+                                Inactive
                               </option>
                             </select>
-                          </p>
+                          ) : (
+                            // Nếu là Admin, không hiển thị select
+                            <p className="text-green-500">Active</p>
+                          )}
+                        </td>
+
+                        <td
+                          className={`p-5 border text-center ${
+                            u?.roleId?.roleName === "Student"
+                              ? "text-blue-500"
+                              : "text-yellow-500"
+                          }`}
+                        >
+                          <p>{u?.roleId?.roleName}</p>
                         </td>
                       </tr>
                     );
