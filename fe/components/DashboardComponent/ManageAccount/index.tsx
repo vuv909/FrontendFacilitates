@@ -134,6 +134,7 @@ export default function ManageAccount() {
                         <td className="p-5 border text-center">
                           {u?.roleId?.roleName === "Student" ? (
                             <select
+
                               className={`appearance-none bg-transparent border-none ${
                                 u?.status === 1
                                   ? "text-green-500"
@@ -148,6 +149,7 @@ export default function ManageAccount() {
                             >
                               <option className="text-green-500" value="1">
                                 Active
+
                               </option>
                               <option className="text-red-500" value="3">
                                 Inactive

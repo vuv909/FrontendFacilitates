@@ -1,50 +1,64 @@
 import restClient from "./restClient";
 import { StorageService } from "./storage";
 
-const tokenWithQuotes = StorageService.getToken(); 
-const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, '') : ''; 
-const headers = token ? { Authorization: `Bearer ${token}` } : {}; 
-
-export function getCategory(activePage?: any, name?: any, size ?: any) {
+export function getCategory(activePage?: any, name?: any, size?: any) {
+  const tokenWithQuotes = StorageService.getToken();
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
     url: "category/list",
-    params: { page: activePage, name  , size},
-    headers
+    params: { page: activePage, name, size },
+    headers,
   });
 }
 
 export function addCategory(data: any) {
+  const tokenWithQuotes = StorageService.getToken();
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
     url: "category/create",
     method: "POST",
     data: data,
-    headers
+    headers,
   });
 }
 
 export function editCategory(data: any) {
+  const tokenWithQuotes = StorageService.getToken();
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
     url: "category/edit",
     method: "PUT",
     data: data,
-    headers
+    headers,
   });
 }
 
 export function deleteCategory(id: string) {
+  const tokenWithQuotes = StorageService.getToken();
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
     url: `category/delete?id=${id}`,
     method: "DELETE",
-    headers
+    headers,
   });
 }
-export function viewUpdate(id: string,type: string,page:number, size: number) {
+export function viewUpdate(
+  id: string,
+  type: string,
+  page: number,
+  size: number
+) {
+  const tokenWithQuotes = StorageService.getToken();
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
     url: `log/list?id=${id}`,
     method: "GET",
-    params:{type:type,
-            page:page,
-            size:size   },
-    headers
+    params: { type: type, page: page, size: size },
+    headers,
   });
 }

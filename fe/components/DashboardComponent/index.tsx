@@ -117,7 +117,8 @@ const DashboardComponent: React.FC = () => {
         {key === "9" && <ManageBookingRequestExpired />}
         {key === "4" && <ManageAccount />}
         {/* {key === "5" && <RecycleFacilities />} */}
-        {key === "6" && <CategoryComponent />}
+        {key === "6" && <CategoryComponent />}     
+        {/* 6 2 3 7 8 */}
       </div>
     </div>
   );

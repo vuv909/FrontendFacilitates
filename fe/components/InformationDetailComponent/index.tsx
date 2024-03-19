@@ -289,6 +289,10 @@ export default function InfomationDetailComponent({
   };
 
   const showModal = () => {
+    if (StorageService.isLoggedIn() === false) {
+      showErrorCategory("You must login in to book room !!!");
+      return;
+    }
     setOpen(true);
   };
 

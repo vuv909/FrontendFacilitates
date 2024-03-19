@@ -2,6 +2,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 import { Editor, EditorTextChangeEvent } from "primereact/editor";
 
@@ -136,6 +137,8 @@ export default function ManageFacilities() {
   const [totalPage, setTotalPage] = useState<number>(0);
   const [text, setText] = useState<string>("");
 
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
@@ -161,7 +164,7 @@ export default function ManageFacilities() {
       () => {
         showSuccessCategory("Delete facility successfully !!!");
         getFacilities().then(
-          (res : any) => {
+          (res: any) => {
             setListFacility(res.data.items);
             setActivePage(1);
             setTotalPage(res.data.totalPage);
@@ -182,7 +185,7 @@ export default function ManageFacilities() {
   const handleSearch = (text: any) => {
     setText(text.trim());
     getFacilities(1, text.trim()).then(
-      (res : any) => {
+      (res: any) => {
         setListFacility(res.data.items);
         setActivePage(1);
         setTotalPage(res.data.totalPage);
@@ -220,8 +223,8 @@ export default function ManageFacilities() {
   const onChangePage: PaginationProps["onChange"] = (pageNumber: number) => {
     setActivePage(pageNumber);
     console.log("Page: ", pageNumber);
-    getFacilities(pageNumber,text).then(
-      (res : any) => {
+    getFacilities(pageNumber, text).then(
+      (res: any) => {
         setListFacility(res.data.items);
         setTotalPage(res.data.totalPage);
       },
@@ -283,7 +286,7 @@ export default function ManageFacilities() {
           showSuccessCategory("Add facility successfully !!!");
           setIsLoadingAddFormCategory(false);
           getFacilities(activePage).then(
-            (res : any) => {
+            (res: any) => {
               setListFacility(res.data.items);
               setTotalPage(res.data.totalPage);
             },
@@ -296,7 +299,9 @@ export default function ManageFacilities() {
         })
         .catch((err) => {
           handleCancel();
-          showErrorCategory("Error add facility !!!");
+          showErrorCategory(
+            err.response.data.message || "Error adding facility !!! "
+          );
           setIsLoadingAddFormCategory(false);
         });
     } else {
@@ -329,7 +334,7 @@ export default function ManageFacilities() {
           setisLoadingUpdateFormCategory(false);
           setImgUpdate(null);
           getFacilities(activePage).then(
-            (res : any) => {
+            (res: any) => {
               setListFacility(res.data.items);
               setTotalPage(res.data.totalPage);
             },
@@ -342,7 +347,9 @@ export default function ManageFacilities() {
         })
         .catch((err) => {
           handleCancelUpdate();
-          showErrorCategory("Error update !!!");
+          showErrorCategory(
+            err.response.data.message || "Error updating facility !!! "
+          );
           setisLoadingUpdateFormCategory(false);
         });
     } else {
@@ -356,8 +363,9 @@ export default function ManageFacilities() {
   };
 
   useLayoutEffect(() => {
+    setIsSpinning(true);
     getCategory()
-      .then((res : any) => {
+      .then((res: any) => {
         console.log(res);
         setListCategory(res.data.item);
       })
@@ -365,15 +373,17 @@ export default function ManageFacilities() {
         console.log(error);
       });
     getFacilities().then(
-      (res : any) => {
+      (res: any) => {
         setListFacility(res.data.items);
         setActivePage(1);
         setTotalPage(res.data.totalPage);
+        setIsSpinning(false);
       },
       (err) => {
         setActivePage(1);
         setTotalPage(0);
         console.log(err);
+        setIsSpinning(false);
       }
     );
   }, []);
@@ -398,7 +408,6 @@ export default function ManageFacilities() {
                     <FontAwesomeIcon className="text-xl" icon={faPlus} />
                   </button>
                 </Tooltip>
-
               </div>
               <div className="py-2 flex justify-end bg-blue-100">
                 <input
@@ -407,7 +416,6 @@ export default function ManageFacilities() {
                   placeholder="Điền kí tự để tìm kiếm ..."
                   onChange={(e) => handleSearch(e.target.value)}
                 />
-                
               </div>
             </div>
             <table>
@@ -422,6 +430,7 @@ export default function ManageFacilities() {
                   <th></th>
                 </tr>
               </thead>
+
               <tbody>
                 {/* Uncomment this part if categoryData is supposed to be used */}
                 {Array.isArray(listFacility) &&
@@ -476,20 +485,32 @@ export default function ManageFacilities() {
                   ))}
               </tbody>
             </table>
-            {!(Array.isArray(listFacility) && listFacility.length > 0) && (
-              <div className="text-center">
-                <h1 className="font-bold text-3xl my-10">No data</h1>
-              </div>
-            )}
-            {totalPage > 0 && (
-              <div className="flex items-center justify-center ">
-                <Pagination
-                  defaultCurrent={activePage}
-                  total={Number(totalPage + "0")}
-                  onChange={onChangePage}
-                  showSizeChanger={false}
-                />
-              </div>
+
+            {isSpinning === true ? (
+              <ProgressSpinner
+                className="w-52 h-52 my-10"
+                strokeWidth="3"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              />
+            ) : (
+              <>
+                {!Array.isArray(listFacility) || listFacility.length === 0 ? (
+                  <div className="text-center">
+                    <h1 className="font-bold text-3xl my-10">No data</h1>
+                  </div>
+                ) : null}
+                {totalPage > 0 && (
+                  <div className="flex items-center justify-center">
+                    <Pagination
+                      defaultCurrent={activePage}
+                      total={Number(totalPage + "0")}
+                      onChange={onChangePage}
+                      showSizeChanger={false}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
