@@ -92,7 +92,7 @@ export default function ManageBookingRequestAccept() {
                 <th className="p-5 border">Slot</th>
                 <th className="p-5 border">Thời gian bắt đầu</th>
                 <th className="p-5 border">Thời gian kết thúc</th>
-                <th className="p-5 border">Cấp bậc</th>
+                <th className="p-5 border">Người duyệt</th>
                 <th className="p-5 border">Trạng thái</th>
                 <th className="p-5 border">Người đặt</th>
                 <th></th>

@@ -1,6 +1,6 @@
 // components/Chat.js
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { Socket } from "socket.io-client";
 import io from "socket.io-client";
 import {
@@ -26,6 +26,8 @@ const ChatComponent = () => {
   const [socket, setSocket] = useState<Socket>();
   const [users, setUsers] = useState<User[]>([]);
   const [user, setUser] = useState<User>();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
 
   const sendMessage = () => {
     if (newMessage.trim() === "") return;
@@ -125,63 +127,72 @@ const ChatComponent = () => {
     }
   };
 
+  useEffect(() => {
+    // Scroll xuống dưới cùng sau khi tin nhắn được cập nhật
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   return (
-    <div className="flex h-">
-      <div className="w-1/4 bg-gray-100 p-1  border-t-red-50 border-b-red-50 border">
+    <div className="flex " style={{ height: `calc(100vh - 80px)` }}>
+      <div className="w-1/4 bg-white p-1    border ">
         <h1 className="text-2xl font-bold  mb-4">Đoạn chat</h1>
-        <ul>
+        <div>
           {users.map((user, index) => (
-            <li
+            <div
               key={index}
-              className={`cursor-pointer p-4 border-collapse border mb-2 bg-white ${
-                selectedUser === user._id ? "font-bold bg-blue-200" : ""
+              className={`cursor-pointer p-8   mb-2 ${
+                selectedUser === user._id ? "font-bold bg-blue-100" : ""
               }`}
               onClick={() => handleUserSelect(user._id)}
             >
               {user.email}
-            </li>
+            </div>
           ))}
-        </ul>
-      </div>
-      <div className="flex-grow bg-gray-100">
-        {/* Chat interface */}
-        <div className="h-screen flex flex-col justify-between bg-white">
-          <div className="overflow-y-auto px-4 pt-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex justify-${
-                  message.sender === "right" ? "end" : "start"
-                } mb-4`}
-              >
-                <div
-                  className={`bg-${
-                    message.sender === "right" ? "blue" : "gray"
-                  }-500 text-white rounded-lg py-2 px-4`}
-                >
-                  {message.text}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center bg-white border-t border-gray-200 p-4">
-            <input
-              type="text"
-              className="flex-grow border rounded-lg py-2 px-4 mr-2"
-              placeholder="Type your message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <button
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-              onClick={sendMessage}
-            >
-              <i className="pi pi-send" style={{ fontSize: "1rem" }}></i>
-            </button>
-          </div>
         </div>
       </div>
+      <div className="flex-grow bg-gray-100">
+  {/* Chat interface */}
+  <div className="h-screen flex flex-col justify-end bg-gray-50" style={{ height: `calc(100vh - 80px)` }}>
+    <div className="overflow-y-auto px-4 pt-4 ">
+      {messages.map((message, index) => (
+        <div
+          key={index}
+          className={`flex justify-${
+            message.sender === "right" ? "end" : "start"
+          } mb-4`}
+        >
+          <div
+            className={`bg-${
+              message.sender === "right" ? "blue" : "gray"
+            }-500 text-white rounded-lg py-2 px-4`}
+          >
+            {message.text}
+          </div>
+        </div>
+      ))}
+      <div ref={messagesEndRef}></div>
+    </div>
+    <div className="flex items-center bg-white border-t border-gray-200 p-4">
+      <input
+        type="text"
+        className="flex-grow border rounded-lg py-2 px-4 mr-2"
+        placeholder="Type your message..."
+        value={newMessage}
+        onChange={(e) => setNewMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+      <button
+        className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+        onClick={sendMessage}
+      >
+        <i className="pi pi-send" style={{ fontSize: "1rem" }}></i>
+      </button>
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };

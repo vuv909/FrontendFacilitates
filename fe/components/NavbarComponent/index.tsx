@@ -99,13 +99,13 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   const handleNotification = async () => {
     setShowNotification(!showNotification);
     await readNotification();
-    await getNotification().then((res) => {
+    await getNotification(1,1000).then((res) => {
       setRead(res?.data);
     });
   };
 
   useEffect(() => {
-    getNotification()
+    getNotification(1,1000)
       .then((res) => {
         console.log(res);
         setData(res?.data?.content);
