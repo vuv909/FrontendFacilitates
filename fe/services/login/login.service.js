@@ -12,10 +12,16 @@ const login = (url) => {
         axios.post(url, { credential: response.credential })
             .then((response) => {
                 const data = response.data;
+
                 if (data?.user) {
                     localStorage.setItem("accessToken", JSON.stringify(data?.token?.token));
                     localStorage.setItem("user", JSON.stringify(data?.user));
-                    router.push('/')
+
+                    if (response.data.user.roleId.roleName === 'Admin') {
+                        router.push('/dashboard')
+                    } else {
+                        router.push('/')
+                    }
                 }
 
                 // throw new Error(data?.message || data);

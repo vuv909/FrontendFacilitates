@@ -5,9 +5,6 @@ import NavbarComponent from "../../../../components/NavbarComponent";
 import { StorageService } from "../../../../services/storage";
 import { useRouter } from "next/navigation";
 
-export const metadata = {
-  title: "Chat",
-};
 export default function Chat({ children }: { children: React.ReactNode }) {
   const colorNavbarOne: string = "bg-gray-300";
   const colorNavbarTwo: string = "bg-gray-300";

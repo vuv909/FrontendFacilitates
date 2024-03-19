@@ -211,10 +211,21 @@ export default function BookingAnalysist() {
       ],
     };
 
+    // const options = {
+    //   scales: {
+    //     y: {
+    //       beginAtZero: true,
+    //     },
+    //   },
+    // };
+
     const options = {
       scales: {
         y: {
           beginAtZero: true,
+          ticks: {
+            precision: 0, // Set precision to 0 to display integers only
+          },
         },
       },
     };
@@ -349,7 +360,9 @@ export default function BookingAnalysist() {
           </div>
         </div>
       </div>
-
+      <div className="mt-2">
+        <p>Đơn vị số lần</p>
+      </div>
       <Chart type="bar" height="100" data={chartData} options={chartOptions} />
     </div>
   );

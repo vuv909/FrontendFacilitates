@@ -60,6 +60,8 @@ export default function HistoryBookingPage() {
   useEffect(() => {
     getBookingByUserId(StorageService.getUser()?.id)
       .then((res: any) => {
+        console.log("booking of user ::", res.data);
+
         setData(res.data?.booking);
         setActivePage(res.data?.activePage);
         setTotalPage(res.data?.totalPage);
@@ -118,11 +120,11 @@ export default function HistoryBookingPage() {
   ) => {
     e.stopPropagation(); // Stop event propagation
     // Your logic here
-    console.log('====================================');
-    console.log("data::",data);
-    console.log('====================================');
+    console.log("====================================");
+    console.log("data::", data);
+    console.log("====================================");
     // onClick={() => info(detailData?.description)}
-    info(data.reason)
+    info(data.reason);
   };
 
   return (

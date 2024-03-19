@@ -18,7 +18,7 @@ interface User {
   email: string;
   _id: string;
 }
-const host = "http://localhost:5152";
+const host = "http://192.168.43.189:5152";
 const ChatComponent = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");

@@ -35,6 +35,7 @@ import {
   getCategory,
   viewUpdate,
 } from "../../services/category.api";
+import { ProgressSpinner } from "primereact/progressspinner";
 interface City {
   name: string;
   code: string;
@@ -101,6 +102,7 @@ export default function CategoryComponent() {
   const [text, setText] = useState<string>("");
   const [modalVisible, setModalVisible] = useState(false);
   const [viewData, setViewData] = useState<any>([null]);
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
   const {
     register,
@@ -164,7 +166,7 @@ export default function CategoryComponent() {
     console.log("text::", text);
     console.log("====================================");
     getCategory(pageNumber, text)
-      .then((res : any) => {
+      .then((res: any) => {
         setCategoryData(res.data.item);
         setTotalPage(res.data.totalPage);
         setActivePage(res.data.activePage);
@@ -212,7 +214,7 @@ export default function CategoryComponent() {
       .then((res) => {
         showSuccessCategory("Delete Category successfully !!!");
         getCategory()
-          .then((res : any) => {
+          .then((res: any) => {
             setCategoryData(res.data.item);
             setTotalPage(res.data.totalPage);
             setActivePage(res.data.activePage);
@@ -250,7 +252,7 @@ export default function CategoryComponent() {
           handleCancelUpdate();
           if (typeof activePage === "number" && activePage > 0) {
             getCategory(activePage)
-              .then((res : any) => {
+              .then((res: any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 reset();
@@ -265,7 +267,7 @@ export default function CategoryComponent() {
               });
           } else {
             getCategory()
-              .then((res : any) => {
+              .then((res: any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 setActivePage(res.data.activePage);
@@ -281,10 +283,12 @@ export default function CategoryComponent() {
               });
           }
         })
-        .catch((err) => {
+        .catch((err: any) => {
+          console.log("errUpdate::", err);
+
           setisLoadingUpdateFormCategory(false);
           showErrorCategory(
-            err.response.data[0]?.msg || "Error updating category !!!"
+            err.response.data.message || "Error adding category !!! "
           );
         });
     } else {
@@ -304,7 +308,7 @@ export default function CategoryComponent() {
           showSuccessCategory("Add Category successfully !!!");
           if (typeof activePage === "number" && activePage > 0) {
             getCategory(activePage)
-              .then((res : any) => {
+              .then((res: any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 reset();
@@ -319,7 +323,7 @@ export default function CategoryComponent() {
               });
           } else {
             getCategory()
-              .then((res : any) => {
+              .then((res: any) => {
                 setCategoryData(res.data.item);
                 setTotalPage(res.data.totalPage);
                 setActivePage(res.data.activePage);
@@ -337,7 +341,9 @@ export default function CategoryComponent() {
         })
         .catch((err) => {
           setIsLoadingAddFormCategory(false);
-          showErrorCategory("Error adding category !!! ");
+          showErrorCategory(
+            err.response.data.message || "Error adding category !!! "
+          );
         });
     } else {
       showErrorCategory("Image must be less than 2MB and not empty !!");
@@ -348,13 +354,16 @@ export default function CategoryComponent() {
   //call api
   useEffect(() => {
     if (activePage !== null) {
+      setIsSpinning(true);
       getCategory(activePage)
-        .then((res : any) => {
+        .then((res: any) => {
           setCategoryData(res.data.item);
           setTotalPage(res.data.totalPage);
           setActivePage(res.data.activePage);
+          setIsSpinning(false);
         })
         .catch((err) => {
+          setIsSpinning(false);
           setCategoryData([]);
           setTotalPage(null);
           setActivePage(null);
@@ -366,7 +375,7 @@ export default function CategoryComponent() {
   const handleSearch = (textSearch: any) => {
     setText(textSearch);
     getCategory(1, textSearch.trim())
-      .then((res : any) => {
+      .then((res: any) => {
         setCategoryData(res.data.item);
         setTotalPage(res.data.totalPage);
         setActivePage(res.data.activePage);
@@ -492,21 +501,30 @@ export default function CategoryComponent() {
               </tbody>
             </table>
 
-            {!(Array.isArray(categoryData) && categoryData.length > 0) && (
+            {isSpinning === true ? (
+              <ProgressSpinner
+                className="w-52 h-52 my-10"
+                strokeWidth="3"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              />
+            ) : !Array.isArray(categoryData) || categoryData.length === 0 ? (
               <div className="text-center">
                 <h1 className="font-bold text-3xl my-10">No data</h1>
               </div>
-            )}
-
-            {totalPage != null && totalPage > 0 && activePage != null && (
-              <div className="flex items-center justify-center ">
-                <Pagination
-                  defaultCurrent={activePage}
-                  total={Number(totalPage + "0")}
-                  onChange={onChangePage}
-                  showSizeChanger={false}
-                />
-              </div>
+            ) : (
+              totalPage != null &&
+              totalPage > 0 &&
+              activePage != null && (
+                <div className="flex items-center justify-center">
+                  <Pagination
+                    defaultCurrent={activePage}
+                    total={Number(totalPage + "0")}
+                    onChange={onChangePage}
+                    showSizeChanger={false}
+                  />
+                </div>
+              )
             )}
           </div>
         </div>
@@ -729,12 +747,12 @@ export default function CategoryComponent() {
                         />
                       </td>
                       <td className="text-center">
-                      {new Date(d?.createdAt).toLocaleString("vi-VN", {
-                            month: "numeric",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "numeric",
-                          })}
+                        {new Date(d?.createdAt).toLocaleString("vi-VN", {
+                          month: "numeric",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                        })}
                       </td>
                     </tr>
                   ))
