@@ -760,6 +760,9 @@ export default function CategoryComponent() {
                           minute: "numeric",
                         })}
                       </td>
+                      <td className="justify-center text-center ">
+                       <p>{d?.actionUser?.name}</p>
+                      </td>
                     </tr>
                   ))
                 ) : (
