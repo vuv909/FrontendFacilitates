@@ -59,8 +59,8 @@ export default function Home() {
         console.log("====================================");
         console.log("res::", res);
         console.log("====================================");
-        if(res && res.data && res.data.items){
-        setTopData(res.data.items);
+        if (res && res.data && res.data.items) {
+          setTopData(res.data.items);
         }
       },
       (err) => {
@@ -258,10 +258,12 @@ export default function Home() {
           </div>
         )}
       </div>
-      <i
-        className="pi pi-inbox font-bold text-green-500 back text-3xl cursor-pointer fixed top-3/4 right-10  "
-        onClick={() => setLoginChat(!loginChat)}
-      ></i>
+      {role === "Student" && (
+        <i
+          className="pi pi-inbox font-bold text-green-500 back text-3xl cursor-pointer fixed top-3/4 right-10  "
+          onClick={() => setLoginChat(!loginChat)}
+        ></i>
+      )}
 
       {loginChat && (
         <div

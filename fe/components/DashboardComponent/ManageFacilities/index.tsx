@@ -37,7 +37,7 @@ import {
   getFacilities,
   updateFacility,
 } from "../../../services/facilities.api";
-import { getCategory } from "../../../services/category.api";
+import { getCategory, viewUpdate } from "../../../services/category.api";
 import { Toast } from "primereact/toast";
 import { StorageService } from "../../../services/storage";
 
@@ -138,7 +138,51 @@ export default function ManageFacilities() {
   const [text, setText] = useState<string>("");
 
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibles, setModalVisibles] = useState(false);
+  const [viewData, setViewData] = useState<any>([null]);
 
+  const showModalView = (id: any) => {
+    viewUpdate(id, "Facility", 1, 1000)
+      .then((res) => {
+        setViewData(res?.data?.items);
+      })
+      .catch((err) => {
+        // Xử lý lỗi nếu cần
+      });
+    console.log("--------------------");
+
+    console.log(viewData);
+
+    setModalVisible(true);
+  };
+  const handleOkV = () => {
+    setModalVisible(false);
+  };
+  const showModalViews = (id: any) => {
+    viewUpdate(id, "Facility", 1, 1000)
+      .then((res) => {
+        setViewData(res?.data?.items);
+      })
+      .catch((err) => {
+        // Xử lý lỗi nếu cần
+      });
+    console.log("--------------------");
+
+    console.log(viewData);
+
+    setModalVisibles(true);
+  };
+  const handleCancelV = () => {
+    setModalVisible(false);
+  };
+  const handleOkS = () => {
+    setModalVisibles(false);
+  };
+
+  const handleCancelS = () => {
+    setModalVisibles(false);
+  };
   const {
     register,
     handleSubmit,
@@ -426,7 +470,7 @@ export default function ManageFacilities() {
                   <th className="p-5 border">Ảnh</th>
                   <th className="p-5 border">Địa chỉ</th>
                   <th className="p-5 border">Thời gian tạo</th>
-                  <th className="p-5 border">Thời gian cập nhập</th>
+                  <th className="p-5 border">Lịch sử cập nhật</th>
                   <th></th>
                 </tr>
               </thead>
@@ -463,7 +507,12 @@ export default function ManageFacilities() {
                         <p>{c && new Date(c.createdAt).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
-                        <p>{c && new Date(c.updatedAt).toLocaleString()}</p>
+                        <button
+                          className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full w-24"
+                          onClick={() => showModalView(c._id)}
+                        >
+                          Xem
+                        </button>
                       </td>
                       <td className="border">
                         <div className="flex flex-col items-center gap-2 w-full py-1">
@@ -761,6 +810,125 @@ export default function ManageFacilities() {
           </form>
         </Spin>
       </Modal>
+      <Modal
+        className=" "
+        open={modalVisible}
+        onOk={handleOkV}
+        onCancel={handleCancelV}
+        closeIcon={<></>}
+        footer={[]}
+        width={1200}
+      >
+        <div className="flex flex-col items-center h-full w-full">
+          <div>
+            <h1 className="text-center font-bold uppercase mb-5 text-xl">
+              Lịch sử cập nhập các loại dịch vụ
+            </h1>
+          </div>
+          <div className="overflow-auto max-h-full w-full">
+            <table className="w-full divide-gray-200">
+              <thead className="bg-blue-400">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    #
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Tên Mới
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Ảnh Mới
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Tên Cũ
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Ảnh cũ
+                  </th>
+                  <th 
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    T/G cập nhật
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                  >
+                    Người sửa
+                  </th>          
+                </tr>
+              </thead>
+              <tbody
+                className="bg-white divide-y divide-gray-200"
+                style={{ maxHeight: "300px", overflowY: "auto" }}
+              >
+                {viewData?.length > 0 ? (
+                  viewData.map((d: any, index: any) => (
+                    <tr key={index}>
+                      <td className="text-center">{index + 1}</td>
+                      <td className="text-center">
+                        {d?.objectAfter?.name}
+                      </td>
+                      <td className="justify-center">
+                        <img
+                          className="w-32 h-32"
+                          src={d?.objectAfter?.image}
+                          alt=""
+                        />
+                      </td>
+                      <td className="text-center">
+                        {d?.objectBefore?.name}
+                      </td>
+                      <td className="justify-center">
+                        <img
+                          className="w-32 h-32"
+                          src={d?.objectBefore?.image}
+                          alt=""
+                        />
+                      </td>
+                      <td className="text-center">
+                        {new Date(d?.createdAt).toLocaleString("vi-VN", {
+                          month: "numeric",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                        })}
+                      </td>
+                      <td className="justify-center text-center ">
+                       <p className="font-medium">{d?.actionUser?.name}</p>
+                      </td>
+                      
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="text-center">
+                      Chưa được cập nhật
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Modal>
+
+    
     </>
   );
 }
