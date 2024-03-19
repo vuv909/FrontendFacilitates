@@ -46,7 +46,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     facilityById(params.id)
       .then((res : any) => {
         setIsGettingData(false);
-        console.log("res::", res.data.data);
+        console.log("resFacibyId::", res.data.data);
         setDetailData(res.data.data);
       })
       .catch((err) => {

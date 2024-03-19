@@ -6,20 +6,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination, PaginationProps, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { getAllBooking } from "../../services/booking.api";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 export default function ManageBookingRequestAccept() {
   const [bookingData, setBookingData] = useState<any[]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(0);
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsSpinning(true)
     getAllBooking(2)
       .then((res) => {
+        setIsSpinning(false)
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
         setActivePage(res?.data?.activePage);
       })
       .catch((err) => {
+        setIsSpinning(false)
         setBookingData([]);
         setTotalPage(0);
         setActivePage(0);
@@ -40,19 +45,19 @@ export default function ManageBookingRequestAccept() {
       });
   };
 
-  const handleSearch = (text: any)=>{
-    getAllBooking(2,'default',1,5,text)
-    .then((res) => {
-      setBookingData(res?.data?.booking);
-      setTotalPage(res?.data?.totalPage);
-      setActivePage(res?.data?.activePage);
-    })
-    .catch((err) => {
-      setBookingData([]);
-      setTotalPage(0);
-      setActivePage(0);
-    });
-  }
+  const handleSearch = (text: any) => {
+    getAllBooking(2, "default", 1, 5, text)
+      .then((res) => {
+        setBookingData(res?.data?.booking);
+        setTotalPage(res?.data?.totalPage);
+        setActivePage(res?.data?.activePage);
+      })
+      .catch((err) => {
+        setBookingData([]);
+        setTotalPage(0);
+        setActivePage(0);
+      });
+  };
 
   return (
     <div>
@@ -75,7 +80,7 @@ export default function ManageBookingRequestAccept() {
                 type="text"
                 className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                 placeholder="Điền kí tự để tìm kiếm ..."
-                onChange={(e)=>handleSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
           </div>
@@ -126,8 +131,8 @@ export default function ManageBookingRequestAccept() {
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
-                          <p>{b?.booker?.roleId?.roleName}</p>
-                        </td>
+                        <p>{b?.booker?.roleId?.roleName}</p>
+                      </td>
                       <td className="p-5 border text-center">
                         <p>Được duyệt</p>
                       </td>
@@ -150,15 +155,31 @@ export default function ManageBookingRequestAccept() {
               })}
             </tbody>
           </table>
-          {totalPage > 0 && (
-            <div className="flex items-center justify-center ">
-              <Pagination
-                defaultCurrent={activePage}
-                total={Number(`${totalPage}0`)}
-                onChange={onChangePage}
-                showSizeChanger={false}
-              />
-            </div>
+          {isSpinning === true ? (
+            <ProgressSpinner
+              className="w-52 h-52 my-10"
+              strokeWidth='3'
+              fill="var(--surface-ground)"
+              animationDuration=".5s"
+            />
+          ) : (
+            <>
+              {!Array.isArray(bookingData) || bookingData.length === 0 ? (
+                <div className="text-center">
+                  <h1 className="font-bold text-3xl my-10">No data</h1>
+                </div>
+              ) : null}
+              {totalPage > 0 && (
+                <div className="flex items-center justify-center">
+                  <Pagination
+                    defaultCurrent={activePage}
+                    total={Number(`${totalPage}0`)}
+                    onChange={onChangePage}
+                    showSizeChanger={false}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { editBooking, getAllBooking } from "../../../services/booking.api";
 import { Toast } from "primereact/toast";
 import { getAllRole } from "../../../services/user.api";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 export default function ManageBookingRequest() {
   const [bookingData, setBookingData] = useState<any[]>([]);
@@ -21,6 +22,7 @@ export default function ManageBookingRequest() {
   const [role, setRole] = useState<any[]>([]);
   const [roleValue, setRoleValue] = useState<string>("");
   const [text, setText] = useState<string>("");
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
   const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
@@ -53,6 +55,7 @@ export default function ManageBookingRequest() {
   };
 
   useEffect(() => {
+    setIsSpinning(true)
     getAllRole().then(
       (res: any) => {
         setRole(res.data);
@@ -68,8 +71,10 @@ export default function ManageBookingRequest() {
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
         setActivePage(res?.data?.activePage);
+        setIsSpinning(false)
       })
       .catch((err) => {
+        setIsSpinning(false)
         setBookingData([]);
         setTotalPage(0);
         setActivePage(0);
@@ -194,44 +199,43 @@ export default function ManageBookingRequest() {
               Các yêu cầu đang chờ xử lí
             </p>
           </div>
-          <div className="py-2 flex justify-between bg-blue-100">
-            <Tooltip title="Xuất dữ liệu bảng ra excel">
-              <p className="ml-5 cursor-pointer text-green-800 text-3xl hover:text-green-500">
-                <FontAwesomeIcon icon={faFileCsv} />
-              </p>
-            </Tooltip>
-
-            <div>
-              <input
-                type="text"
-                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
-                placeholder="Điền kí tự để tìm kiếm ..."
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-              <select
-                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
-                value={selectedValue}
-                onChange={(e) => handleChange(e.target.value)}
-              >
-                <option value="default">Ngày tạo</option>
-                <option value="createdDate:asc">Ngày đặt tăng dần</option>
-                <option value="createdDate:desc">Ngày đặt giảm dần</option>
-              </select>
-              <select
-                className="outline-none border border-gray-300 h-7 p-1 rounded-full"
-                value={roleValue}
-                onChange={(e) => handleRole(e.target.value)}
-              >
-                <option value="default">Cấp bậc</option>
-                {role &&
-                  role.map((role, index: number) => {
-                    return (
-                      <option value={`${role?._id}`} key={index}>
-                        {role?.roleName}
-                      </option>
-                    );
-                  })}
-              </select>
+          {/* <div className="py-2 flex justify-between bg-blue-100"> */}
+          <div className="py-1">
+            <div className="flex justify-between">
+              <div>
+                <input
+                  type="text"
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-full"
+                  placeholder="Điền kí tự để tìm kiếm ..."
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
+              <div>
+                <select
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-full"
+                  value={selectedValue}
+                  onChange={(e) => handleChange(e.target.value)}
+                >
+                  <option value="default">Ngày tạo</option>
+                  <option value="createdDate:asc">Ngày đặt tăng dần</option>
+                  <option value="createdDate:desc">Ngày đặt giảm dần</option>
+                </select>
+                <select
+                  className="outline-none border border-gray-300 h-7 p-1 rounded-full"
+                  value={roleValue}
+                  onChange={(e) => handleRole(e.target.value)}
+                >
+                  <option value="default">Cấp bậc</option>
+                  {role &&
+                    role.map((role, index: number) => {
+                      return (
+                        <option value={`${role?._id}`} key={index}>
+                          {role?.roleName}
+                        </option>
+                      );
+                    })}
+                </select>
+              </div>
             </div>
           </div>
           <table>
@@ -329,15 +333,28 @@ export default function ManageBookingRequest() {
                 })}
             </tbody>
           </table>
-          {totalPage > 0 && (
-            <div className="flex items-center justify-center ">
-              <Pagination
-                defaultCurrent={activePage}
-                total={Number(`${totalPage}0`)}
-                onChange={onChangePage}
-                showSizeChanger={false}
-              />
+          {isSpinning === true ? (
+            <ProgressSpinner
+              className="w-52 h-52 my-10"
+              strokeWidth={'3'} 
+              fill="var(--surface-ground)"
+              animationDuration=".5s"
+            />
+          ) : !Array.isArray(bookingData) || bookingData.length === 0 ? (
+            <div className="text-center">
+              <h1 className="font-bold text-3xl my-10">No data</h1>
             </div>
+          ) : (
+            totalPage > 0 && (
+              <div className="flex items-center justify-center">
+                <Pagination
+                  defaultCurrent={activePage}
+                  total={Number(`${totalPage}0`)}
+                  onChange={onChangePage}
+                  showSizeChanger={false}
+                />
+              </div>
+            )
           )}
         </div>
       </div>

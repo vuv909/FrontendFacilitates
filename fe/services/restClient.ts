@@ -22,11 +22,13 @@ export default function restClient({
     params,
     data,
     headers 
-  }).catch((err)=>{
-    if(err.response){
-      if(err.response.status === 403){
-        StorageService.signout()
-      }
-    }
-  });
+  })
 }
+
+// .catch((err)=>{
+//   if(err.response){
+//     if(err.response.status === 403){
+//       StorageService.signout()
+//     }
+//   }
+// });

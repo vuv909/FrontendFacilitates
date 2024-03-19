@@ -6,21 +6,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination, PaginationProps, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { getAllBooking } from "../../services/booking.api";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 export default function ManageBookingRequestReject() {
   const [bookingData, setBookingData] = useState<any[]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(0);
   const [text, setTextSearch] = useState<string>("");
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsSpinning(true);
     getAllBooking(3)
       .then((res) => {
+        setIsSpinning(false);
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
         setActivePage(res?.data?.activePage);
       })
       .catch((err) => {
+        setIsSpinning(false);
         setBookingData([]);
         setTotalPage(0);
         setActivePage(0);
@@ -156,15 +161,31 @@ export default function ManageBookingRequestReject() {
               })}
             </tbody>
           </table>
-          {totalPage > 0 && (
-            <div className="flex items-center justify-center ">
-              <Pagination
-                defaultCurrent={activePage}
-                total={Number(`${totalPage}0`)}
-                onChange={onChangePage}
-                showSizeChanger={false}
-              />
-            </div>
+          {isSpinning === true ? (
+            <ProgressSpinner
+              className="w-52 h-52 my-10"
+              strokeWidth="3"
+              fill="var(--surface-ground)"
+              animationDuration=".5s"
+            />
+          ) : (
+            <>
+              {!Array.isArray(bookingData) || bookingData.length === 0 ? (
+                <div className="text-center">
+                  <h1 className="font-bold text-3xl my-10">No data</h1>
+                </div>
+              ) : null}
+              {totalPage > 0 && (
+                <div className="flex items-center justify-center">
+                  <Pagination
+                    defaultCurrent={activePage}
+                    total={Number(`${totalPage}0`)}
+                    onChange={onChangePage}
+                    showSizeChanger={false}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
