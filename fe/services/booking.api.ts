@@ -1,4 +1,5 @@
 import restClient from "./restClient";
+import { StorageService } from "./storage";
 
 export function addBooking(data: any) {
   return restClient({
@@ -17,6 +18,7 @@ export function getBookingByUserId(id:number,page : number = 1 , size : number =
 }
 
 export function getAllBooking(status: any = null, sort: any = 'default', page: number | any = 1, size: number | any = 5, name ?: any , role ?: any) {
+  
   return restClient({
     url: "booking",
     method: "GET",
@@ -32,11 +34,14 @@ export function getAllBooking(status: any = null, sort: any = 'default', page: n
 }
 
 export function editBooking(data:any,id :string){
-  
+  const tokenWithQuotes = StorageService.getToken();
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, '') : '';
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
     url: "booking/"+id,
     method: "PUT",
-    data
+    data,
+    headers
   });
 }
 
