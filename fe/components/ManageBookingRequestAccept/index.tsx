@@ -93,7 +93,7 @@ export default function ManageBookingRequestAccept() {
                 <th className="p-5 border">Thời gian bắt đầu</th>
                 <th className="p-5 border">Thời gian kết thúc</th>
                 <th className="p-5 border">Người duyệt</th>
-                <th className="p-5 border">Trạng thái</th>
+         
                 <th className="p-5 border">Người đặt</th>
                 <th></th>
               </tr>
@@ -131,11 +131,9 @@ export default function ManageBookingRequestAccept() {
                         <p>{b && new Date(b?.endDate).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
-                        <p>{b?.booker?.roleId?.roleName}</p>
+                        <p>{b?.handler?.name}</p>
                       </td>
-                      <td className="p-5 border text-center">
-                        <p>Được duyệt</p>
-                      </td>
+                      
                       <td className="p-5 border text-center">
                         <p className="cursor-pointer hover:text-gray-400 flex items-center justify-center gap-1">
                           <span>{b?.booker?.name}</span>
