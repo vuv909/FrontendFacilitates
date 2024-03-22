@@ -39,10 +39,53 @@ const info = (data: any) => {
   });
 };
 
+const infoBooking = (data: any) => {
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
+
+  Modal.info({
+    title: "Thông tin đặt phòng",
+    content: (
+      <div className="my-1">
+        <h2 className="font-bold text-xl">{data?.facilityId?.name}</h2>
+        <p>Slot: {data?.slot}</p>
+        <p>Thời gian bắt đầu: {formatTimestamp(data?.startDate)}</p>
+        <p>Thời gian kết thúc: {formatTimestamp(data?.endDate)}</p>
+        <p>
+          Trạng thái:{" "}
+          {data?.status === 1
+            ? "Đang chờ xử lí"
+            : data?.status === 2
+            ? "Đã sử dụng"
+            : data?.status === 3
+            ? "Bị từ chối yêu cầu đặt phòng"
+            : data?.status === 4
+            ? "Qúa hạn xử lí"
+            : data?.status === 5
+            ? "Được duyệt nhưng chưa sử dụng"
+            : ""}
+        </p>
+      </div>
+    ),
+    footer: (
+      <div className="relative pb-8">
+        <Button
+          onClick={() => Modal.destroyAll()}
+          className="absolute right-0 bottom-2 bg-blue-500 text-white hover:bg-blue-300"
+        >
+          OK
+        </Button>
+      </div>
+    ),
+  });
+};
+
 export default function HistoryBookingPage() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-
+  const [openHistoryBooking, setOpenHistoryBooking] = useState(false);
   const [valueInput, setValueInput] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [date, setDate] = useState("");
@@ -76,6 +119,19 @@ export default function HistoryBookingPage() {
   const showModal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setOpen(true);
+  };
+
+  const showModalBooking = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setOpenHistoryBooking(true);
+  };
+
+  const handleOkBooking = () => {
+    setOpenHistoryBooking(false);
+  };
+
+  const handleCancelBooking = () => {
+    setOpenHistoryBooking(false);
   };
 
   const handleOk = () => {
@@ -127,6 +183,13 @@ export default function HistoryBookingPage() {
     info(data.reason);
   };
 
+  const showInfoBooking = (data: any) => {
+    console.log("====================================");
+    console.log("data booking ::", data);
+    console.log("====================================");
+    infoBooking(data);
+  };
+
   return (
     <>
       <div>
@@ -162,9 +225,9 @@ export default function HistoryBookingPage() {
           <div className="">
             {/* <div className="w-full relative">
             <div className="absolute right-28"> */}
-            <span className="flex items-center">
-              <FontAwesomeIcon icon={faHourglass} color="grey" spin />
-              <span>&nbsp;:&nbsp;Qúa hạn xử lí</span>
+            <span className="flex items-center text-gray-600">
+              <FontAwesomeIcon icon={faHourglass} spin />
+              <span>&nbsp;&nbsp;Qúa hạn xử lí</span>
             </span>
             {/* </div>
           </div> */}
@@ -172,9 +235,19 @@ export default function HistoryBookingPage() {
           <div className="">
             {/* <div className="w-full relative"> */}
             {/* <div className="absolute right-28"> */}
-            <span className="flex items-center">
+            <span className="flex items-center text-black">
               <FontAwesomeIcon icon={faSpinner} spin />
-              <span>&nbsp;:&nbsp;Đang chờ xử lí</span>
+              <span>&nbsp;&nbsp;Đang chờ xử lí</span>
+            </span>
+            {/* </div> */}
+            {/* </div> */}
+          </div>
+          <div className="">
+            {/* <div className="w-full relative"> */}
+            {/* <div className="absolute right-28"> */}
+            <span className="flex items-center text-green-600">
+              <FontAwesomeIcon icon={faSpinner} spin />
+              <span>&nbsp;&nbsp;Được duyệt nhưng chưa sử dụng</span>
             </span>
             {/* </div> */}
             {/* </div> */}
@@ -182,9 +255,9 @@ export default function HistoryBookingPage() {
           <div className="">
             {/* <div className="w-full relative">
             <div className="absolute right-28"> */}
-            <span className="flex items-center">
-              <FontAwesomeIcon className=" text-red-600" icon={faClose} />
-              <span>&nbsp;:&nbsp;Bị từ chối yêu cầu đặt phòng</span>
+            <span className="flex items-center text-red-600">
+              <FontAwesomeIcon className=" " icon={faClose} />
+              <span>&nbsp;&nbsp;Bị từ chối yêu cầu đặt phòng</span>
             </span>
             {/* </div>
           </div> */}
@@ -193,12 +266,9 @@ export default function HistoryBookingPage() {
           <div className="">
             {/* <div className="w-full relative">
             <div className="absolute right-28"> */}
-            <span className="flex items-center">
-              <FontAwesomeIcon
-                className="text-xl text-green-600"
-                icon={faCheck}
-              />
-              <span>&nbsp;:&nbsp;Thành công</span>
+            <span className="flex items-center text-green-600">
+              <FontAwesomeIcon className="text-xl " icon={faCheck} />
+              <span>&nbsp;&nbsp;Đã sử dụng</span>
             </span>
             {/* </div>
           </div> */}
@@ -217,19 +287,21 @@ export default function HistoryBookingPage() {
                 ? "bg-red-500"
                 : status === 4
                 ? "bg-gray-500"
+                : status === 5
+                ? "bg-green-600"
                 : undefined;
 
             return (
               <div
                 key={d?._id}
-                onClick={() => router.push(`/detail/${d?.facilityId?._id}`)}
+                onClick={() => showInfoBooking(d)}
                 className="relative bg-no-repeat bg-cover h-72 w-72 rounded-lg cursor-pointer shadow-lg border"
                 style={{
                   backgroundImage: `url("${d?.facilityId?.image}")`,
                 }}
               >
                 <p
-                  className={`absolute top-0 left-1/2 transform -translate-x-1/2 text-xl font-bold ${color} shadow-xl text-white pb-2 px-2 rounded-b-xl z-50`}
+                  className={`text-center absolute top-0 left-1/2 transform -translate-x-1/2 text-xl font-bold ${color} shadow-xl text-white pb-2 px-2 rounded-b-xl z-50`}
                 >
                   {d?.facilityId?.name}
                 </p>
@@ -242,6 +314,13 @@ export default function HistoryBookingPage() {
                   {status === 1 && (
                     <FontAwesomeIcon
                       className="text-4xl"
+                      icon={faSpinner}
+                      spin
+                    />
+                  )}
+                  {status === 5 && (
+                    <FontAwesomeIcon
+                      className="text-4xl text-green-600"
                       icon={faSpinner}
                       spin
                     />
@@ -303,6 +382,22 @@ export default function HistoryBookingPage() {
             Không
           </Button>,
           <Button className="bg-blue-500 text-white" onClick={handleOk}>
+            Có
+          </Button>,
+        ]}
+      ></Modal>
+
+      <Modal
+        className="w-fit"
+        open={openHistoryBooking}
+        title="Bạn có chắc chắn muốn hủy"
+        onOk={handleOkBooking}
+        closeIcon={<></>}
+        footer={[
+          <Button key="back" onClick={handleCancelBooking}>
+            Không
+          </Button>,
+          <Button className="bg-blue-500 text-white" onClick={handleOkBooking}>
             Có
           </Button>,
         ]}

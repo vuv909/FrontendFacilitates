@@ -9,51 +9,70 @@ export function addBooking(data: any) {
   });
 }
 
-export function getBookingByUserId(id:number,page : number = 1 , size : number = 9 , name ?:any) {
+export function getBookingByUserId(
+  id: number,
+  page: number = 1,
+  size: number = 1000000000,
+  name?: any
+) {
   return restClient({
-    url: "booking/user/"+id,
+    url: "booking/user/" + id,
     method: "GET",
-    params : {page,size,name}
+    params: { page, size, name },
   });
 }
 
-export function getAllBooking(status: any = null, sort: any = 'default', page: number | any = 1, size: number | any = 5, name ?: any , role ?: any) {
-  
+export function getAllBooking(
+  status: any = null,
+  sort: any = "default",
+  page: number | any = 1,
+  size: number | any = 5,
+  name?: any,
+  role?: any
+) {
   return restClient({
     url: "booking",
     method: "GET",
     params: {
       status,
-      sort: sort === 'default' ? null : sort,
+      sort: sort === "default" ? null : sort,
       page,
       size,
       name,
-      role
-    }
+      role: role === "default" ? null : role,
+    },
   });
 }
 
-export function editBooking(data:any,id :string){
+
+export function editBooking(data: any, id: string) {
   const tokenWithQuotes = StorageService.getToken();
-  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, '') : '';
+  const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
-    url: "booking/"+id,
+    url: "booking/" + id,
     method: "PUT",
     data,
-    headers
+    headers,
   });
 }
 
-export function calendarBooking(weeks ?:string,faciId ?: string){
-  
-  console.log('====================================');
-  console.log("faciId: ",faciId);
-  console.log('====================================');
+export function calendarBooking(weeks?: string, faciId?: string) {
+  console.log("====================================");
+  console.log("faciId: ", faciId);
+  console.log("====================================");
 
   return restClient({
-    url: "booking/status/"+faciId,
+    url: "booking/status/" + faciId,
     method: "GET",
-    params : {weeks}
+    params: { weeks },
+  });
+}
+
+export function getBookingUserByWeek(weeks?: string, userId?: string) {
+  return restClient({
+    url: "booking/user/" + userId,
+    method: "GET",
+    params: { weeks },
   });
 }

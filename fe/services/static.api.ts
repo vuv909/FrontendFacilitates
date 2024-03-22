@@ -22,8 +22,14 @@ export function faciStatic() {
 }
 
 export function statisticStaticByYear(year?: number, status?: number) {
+  if (status && status > 0) {
+    return restClient({
+      url: "booking/dashboard/month",
+      params: { status, year },
+    });
+  }
   return restClient({
     url: "booking/dashboard/month",
-    params: {status,year}
+    params: { year },
   });
 }
