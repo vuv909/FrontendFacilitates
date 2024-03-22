@@ -1,3 +1,7 @@
+interface SlotTimeType {
+  [key: string]: string;
+}
+
 export const weekOptions = [
   "01/01 To 07/01",
   "08/01 To 14/01",
@@ -93,7 +97,7 @@ export const getCurrentWeekTime = () => {
   return index;
 };
 
-export const statusFilter = [1,2,3,4]
+export const statusFilter = [1, 2, 3, 4];
 
 export const years = () => {
   const date = new Date();
@@ -105,7 +109,19 @@ export const years = () => {
     array.push(String(year));
   }
 
-
-  return array.sort((a, b) =>{return Number(b) - Number(a)});
+  return array.sort((a, b) => {
+    return Number(b) - Number(a);
+  });
 };
 
+export const SlotTime: SlotTimeType = {
+  Slot1: "7h30 to 9h00",
+  Slot2: "9h10 to 10h40",
+  Slot3: "10h50 to 12h10",
+  Slot4: "12h50 to 14h20",
+  Slot5: "14h30 to 16h",
+  Slot6: "16h10 to 17h40",
+  Slot7: "17h50 to 19h20",
+  Slot8: "19h30 to 21h",
+  Slot9: "21h10 to 22h40",
+};

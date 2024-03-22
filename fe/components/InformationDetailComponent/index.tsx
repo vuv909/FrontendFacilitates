@@ -6,15 +6,27 @@ import { useEffect, useRef, useState } from "react";
 import TableComponentBooked from "../TableComponentBooked";
 import { StorageService } from "../../services/storage";
 import { Toast } from "primereact/toast";
-import { addBooking, calendarBooking } from "../../services/booking.api";
+import {
+  addBooking,
+  calendarBooking,
+  getBookingByUserId,
+  getBookingUserByWeek,
+} from "../../services/booking.api";
 import {
   checkValidSlotFriday,
+  checkValidSlotFridayUser,
   checkValidSlotMonday,
+  checkValidSlotMondayUser,
   checkValidSlotSaturday,
+  checkValidSlotSaturdayUser,
   checkValidSlotSunday,
+  checkValidSlotSundayUser,
   checkValidSlotThursday,
+  checkValidSlotThursdayUser,
   checkValidSlotTuesday,
+  checkValidSlotTuesdayUser,
   checkValidSlotWednesday,
+  checkValidSlotWednesdayUser,
   getCurrentDate,
   getCurrentDay,
   getCurrentWeek,
@@ -29,6 +41,8 @@ import {
   TUESDAY,
   WEDNESDAY,
 } from "../../constant";
+
+import { SlotTime } from "../../data";
 
 const weeks = [
   "Monday",
@@ -104,6 +118,7 @@ export default function InfomationDetailComponent({
     useState<boolean>(false);
   const [listBooking, setListBooking] = useState<any>(null);
   const currentWeek: string = getCurrentWeek();
+  const [bookingUserByWeek, setBookingUserByWeek] = useState<any>(null);
 
   useEffect(() => {
     console.log("====================================");
@@ -222,6 +237,18 @@ export default function InfomationDetailComponent({
 
     setWeekValue(formattedWeekValue);
 
+    if (StorageService.getUser()) {
+      getBookingUserByWeek(currentWeek, StorageService.getUser().id).then(
+        (res: any) => {
+          console.log("====================================");
+          console.log("User Booking ::", res.data.booking);
+          console.log("====================================");
+          setBookingUserByWeek(res.data.booking);
+        },
+        (error) => {}
+      );
+    }
+
     calendarBooking(currentWeek, detailData?._id)
       .then((res: any) => {
         setListBooking(res.data);
@@ -246,6 +273,22 @@ export default function InfomationDetailComponent({
 
   const handleWeekChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedWeek = event.target.value;
+
+    if (StorageService.getUser()) {
+      getBookingUserByWeek(
+        event.target.value,
+        StorageService.getUser().id
+      ).then(
+        (res: any) => {
+          console.log("====================================");
+          console.log("User Booking ::", res.data.booking);
+          console.log("====================================");
+          setBookingUserByWeek(res.data.booking);
+        },
+        (error) => {}
+      );
+    }
+
     calendarBooking(event.target.value, detailData?._id)
       .then((res: any) => {
         setListBooking(res.data);
@@ -345,6 +388,18 @@ export default function InfomationDetailComponent({
               console.log("err::", err);
               console.log("====================================");
             });
+
+          if (StorageService.getUser()) {
+            getBookingUserByWeek(weekValue, StorageService.getUser().id).then(
+              (res: any) => {
+                console.log("====================================");
+                console.log("User Booking ::", res.data.booking);
+                console.log("====================================");
+                setBookingUserByWeek(res.data.booking);
+              },
+              (error) => {}
+            );
+          }
         }
       })
       .catch((err) => {
@@ -435,7 +490,7 @@ export default function InfomationDetailComponent({
                 {Array.from({ length: 9 }, (_, i) => (
                   <tr key={`slot_${i}_Slot1`}>
                     <td className="p-2 border">
-                      <Tooltip title="hello">
+                      <Tooltip title={`${SlotTime[`Slot${i + 1}`]}`}>
                         <div className="flex items-center gap-1">
                           {" "}
                           <p className="text-xl">Slot{i + 1}</p>
@@ -453,20 +508,31 @@ export default function InfomationDetailComponent({
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsMonday
-                            ? true
-                            : checkValidSlotMonday(`Slot${i + 1}`, listBooking)
+                          disableButtonsMonday ||
+                          checkValidSlotMonday(`Slot${i + 1}`, listBooking) ||
+                          checkValidSlotMondayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
                         }
                         onClick={() =>
                           handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
-                          checkValidSlotMonday(`Slot${i + 1}`, listBooking) ===
-                          true
+                          checkValidSlotMondayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotMonday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotMonday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsMonday
@@ -477,23 +543,35 @@ export default function InfomationDetailComponent({
                         Đặt
                       </button>
                     </td>
+
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsTuesday
-                            ? true
-                            : checkValidSlotTuesday(`Slot${i + 1}`, listBooking)
+                          disableButtonsTuesday ||
+                          checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ||
+                          checkValidSlotTuesdayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Tuesday# ${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
-                          checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
-                          true
+                          checkValidSlotTuesdayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotTuesday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsTuesday
@@ -504,28 +582,38 @@ export default function InfomationDetailComponent({
                         Đặt
                       </button>
                     </td>
+
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsWendsday
-                            ? true
-                            : checkValidSlotWednesday(
-                                `Slot${i + 1}`,
-                                listBooking
-                              )
-                        }
-                        onClick={() =>
-                          handleBooking(`Slot${i + 1}#Wednesday# ${weekValue}`)
-                        }
-                        className={`p-2 rounded-full text-white px-4 
-                        ${
+                          disableButtonsWendsday ||
                           checkValidSlotWednesday(
                             `Slot${i + 1}`,
                             listBooking
+                          ) ||
+                          checkValidSlotWednesdayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
+                        }
+                        onClick={() =>
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                        }
+                        className={`p-2 rounded-full text-white px-4 
+                        ${
+                          checkValidSlotWednesdayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
                           ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotWednesday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotWednesday(
                             `Slot${i + 1}`,
@@ -535,32 +623,38 @@ export default function InfomationDetailComponent({
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
-                        {" "}
                         Đặt
                       </button>
                     </td>
+
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsThurday
-                            ? true
-                            : checkValidSlotThursday(
-                                `Slot${i + 1}`,
-                                listBooking
-                              )
+                          disableButtonsThurday ||
+                          checkValidSlotThursday(`Slot${i + 1}`, listBooking) ||
+                          checkValidSlotThursdayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Thursday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
-                          checkValidSlotThursday(
+                          checkValidSlotThursdayUser(
                             `Slot${i + 1}`,
-                            listBooking
+                            bookingUserByWeek
                           ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotThursday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotThursday(
                             `Slot${i + 1}`,
@@ -570,27 +664,38 @@ export default function InfomationDetailComponent({
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
-                        {" "}
                         Đặt
                       </button>
                     </td>
+
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsFriday
-                            ? true
-                            : checkValidSlotFriday(`Slot${i + 1}`, listBooking)
+                          disableButtonsFriday ||
+                          checkValidSlotFriday(`Slot${i + 1}`, listBooking) ||
+                          checkValidSlotFridayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Friday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
-                          checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
-                          true
+                          checkValidSlotFridayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotFriday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsFriday
@@ -598,32 +703,38 @@ export default function InfomationDetailComponent({
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
-                        {" "}
                         Đặt
                       </button>
                     </td>
+
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsSaturday
-                            ? true
-                            : checkValidSlotSaturday(
-                                `Slot${i + 1}`,
-                                listBooking
-                              )
+                          disableButtonsSaturday ||
+                          checkValidSlotSaturday(`Slot${i + 1}`, listBooking) ||
+                          checkValidSlotSaturdayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Saturday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
-                          checkValidSlotSaturday(
+                          checkValidSlotSaturdayUser(
                             `Slot${i + 1}`,
-                            listBooking
+                            bookingUserByWeek
                           ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotSaturday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotSaturday(
                             `Slot${i + 1}`,
@@ -633,27 +744,38 @@ export default function InfomationDetailComponent({
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
-                        {" "}
                         Đặt
                       </button>
                     </td>
+
                     <td className="p-2 border">
                       <button
                         disabled={
-                          disableButtonsSunday
-                            ? true
-                            : checkValidSlotSunday(`Slot${i + 1}`, listBooking)
+                          disableButtonsSunday ||
+                          checkValidSlotSunday(`Slot${i + 1}`, listBooking) ||
+                          checkValidSlotSundayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Sunday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
-                          checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
-                          true
+                          checkValidSlotSundayUser(
+                            `Slot${i + 1}`,
+                            bookingUserByWeek
+                          ) === true
+                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            : checkValidSlotSunday(
+                                `Slot${i + 1}`,
+                                listBooking
+                              ) === true
                             ? "bg-red-500 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
+                
                         ${
                           checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsSunday
@@ -661,7 +783,6 @@ export default function InfomationDetailComponent({
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
-                        {" "}
                         Đặt
                       </button>
                     </td>
@@ -678,4 +799,195 @@ export default function InfomationDetailComponent({
       </Modal>
     </>
   );
+}
+
+{
+  /* <td className="p-2 border">
+<button
+  disabled={
+    disableButtonsTuesday
+      ? true
+      : checkValidSlotTuesday(`Slot${i + 1}`, listBooking)
+  }
+  onClick={() =>
+    handleBooking(`Slot${i + 1}#Tuesday# ${weekValue}`)
+  }
+  className={`p-2 rounded-full text-white px-4 
+  ${
+    checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
+    true
+      ? "bg-red-500 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }
+  ${
+    checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
+      false && disableButtonsTuesday
+      ? "bg-gray-400 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }`}
+>
+  Đặt
+</button>
+</td>
+<td className="p-2 border">
+<button
+  disabled={
+    disableButtonsWendsday
+      ? true
+      : checkValidSlotWednesday(
+          `Slot${i + 1}`,
+          listBooking
+        )
+  }
+  onClick={() =>
+    handleBooking(`Slot${i + 1}#Wednesday# ${weekValue}`)
+  }
+  className={`p-2 rounded-full text-white px-4 
+  ${
+    checkValidSlotWednesday(
+      `Slot${i + 1}`,
+      listBooking
+    ) === true
+      ? "bg-red-500 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }
+  ${
+    checkValidSlotWednesday(
+      `Slot${i + 1}`,
+      listBooking
+    ) === false && disableButtonsWendsday
+      ? "bg-gray-400 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }`}
+>
+  {" "}
+  Đặt
+</button>
+</td>
+<td className="p-2 border">
+<button
+  disabled={
+    disableButtonsThurday
+      ? true
+      : checkValidSlotThursday(
+          `Slot${i + 1}`,
+          listBooking
+        )
+  }
+  onClick={() =>
+    handleBooking(`Slot${i + 1}#Thursday#${weekValue}`)
+  }
+  className={`p-2 rounded-full text-white px-4 
+  ${
+    checkValidSlotThursday(
+      `Slot${i + 1}`,
+      listBooking
+    ) === true
+      ? "bg-red-500 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }
+  ${
+    checkValidSlotThursday(
+      `Slot${i + 1}`,
+      listBooking
+    ) === false && disableButtonsThurday
+      ? "bg-gray-400 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }`}
+>
+  {" "}
+  Đặt
+</button>
+</td>
+<td className="p-2 border">
+<button
+  disabled={
+    disableButtonsFriday
+      ? true
+      : checkValidSlotFriday(`Slot${i + 1}`, listBooking)
+  }
+  onClick={() =>
+    handleBooking(`Slot${i + 1}#Friday#${weekValue}`)
+  }
+  className={`p-2 rounded-full text-white px-4 
+  ${
+    checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
+    true
+      ? "bg-red-500 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }
+  ${
+    checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
+      false && disableButtonsFriday
+      ? "bg-gray-400 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }`}
+>
+  {" "}
+  Đặt
+</button>
+</td>
+<td className="p-2 border">
+<button
+  disabled={
+    disableButtonsSaturday
+      ? true
+      : checkValidSlotSaturday(
+          `Slot${i + 1}`,
+          listBooking
+        )
+  }
+  onClick={() =>
+    handleBooking(`Slot${i + 1}#Saturday#${weekValue}`)
+  }
+  className={`p-2 rounded-full text-white px-4 
+  ${
+    checkValidSlotSaturday(
+      `Slot${i + 1}`,
+      listBooking
+    ) === true
+      ? "bg-red-500 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }
+  ${
+    checkValidSlotSaturday(
+      `Slot${i + 1}`,
+      listBooking
+    ) === false && disableButtonsSaturday
+      ? "bg-gray-400 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }`}
+>
+  {" "}
+  Đặt
+</button>
+</td>
+<td className="p-2 border">
+<button
+  disabled={
+    disableButtonsSunday
+      ? true
+      : checkValidSlotSunday(`Slot${i + 1}`, listBooking)
+  }
+  onClick={() =>
+    handleBooking(`Slot${i + 1}#Sunday#${weekValue}`)
+  }
+  className={`p-2 rounded-full text-white px-4 
+  ${
+    checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
+    true
+      ? "bg-red-500 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }
+  ${
+    checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
+      false && disableButtonsSunday
+      ? "bg-gray-400 cursor-not-allowed opacity-50"
+      : "bg-blue-500 hover:bg-blue-300"
+  }`}
+>
+  {" "}
+  Đặt
+</button>
+</td> */
 }

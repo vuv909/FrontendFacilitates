@@ -15,6 +15,7 @@ import Image from "next/image";
 import { Toast } from "primereact/toast";
 import { getCurrentWeek } from "../../../../../utils";
 import { useRouter } from "next/navigation";
+import { SlotTime } from "../../../../../data";
 
 export default function DetailPage({ params }: { params: { id: string } }) {
   const [isGettingData, setIsGettingData] = useState(false);

@@ -108,6 +108,68 @@ export const getCurrentDay = () => {
   return currentDay;
 };
 
+//user
+export const checkValidSlotMondayUser = (
+  slot: string,
+  data: any,
+  setDisableButtonsMonday?: any
+): boolean => {
+  try {
+    return !!data?.Monday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+export const checkValidSlotTuesdayUser = (slot: string, data: any): boolean => {
+  try {
+    return !!data?.Tuesday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+export const checkValidSlotWednesdayUser = (slot: string, data: any): boolean => {
+  try {
+    return !!data?.Wednesday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+export const checkValidSlotThursdayUser = (slot: string, data: any): boolean => {
+  try {
+    return !!data?.Thursday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+export const checkValidSlotFridayUser = (slot: string, data: any): boolean => {
+  try {
+    return !!data?.Friday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+export const checkValidSlotSaturdayUser = (slot: string, data: any): boolean => {
+  try {
+    return !!data?.Saturday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+export const checkValidSlotSundayUser = (slot: string, data: any): boolean => {
+  try {
+    return !!data?.Sunday?.find((res: any) => res.slot === slot && res.status > 0);
+  } catch (err) {
+    return false;
+  }
+};
+
+//faci
 export const checkValidSlotMonday = (
   slot: string,
   data: any,
