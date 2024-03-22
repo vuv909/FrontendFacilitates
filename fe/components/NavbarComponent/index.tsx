@@ -159,13 +159,15 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
           {isLogin && (
             <div className="flex gap-14 items-center justify-center">
               <div className="cursor-pointer flex items-center">
-                <i
-                  className="pi pi-comment p-over lay-badge"
-                  style={{ fontSize: "1.5rem", marginRight: "3rem"  }}
-                  onClick={() => router.push("/chat")}
-                >
-                  
-                </i>
+                {role ==="Admin" &&(
+                    <i
+                    className="pi pi-comment p-over lay-badge"
+                    style={{ fontSize: "1.5rem", marginRight: "3rem"  }}
+                    onClick={() => router.push("/chat")}
+                  >
+                    
+                  </i>
+                )}
                 <i
                   className="pi pi-bell p-overlay-badge"
                   style={{ fontSize: "1.5rem" }}
@@ -175,7 +177,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                 </i>
               </div>
               {showNotification && (
-                <div className="fixed top-16 right-28 bg-white border border-gray-500 p-2 shadow-md w-90px">
+                <div className="fixed top-16 right-28 bg-white border border-gray-300 p-2 shadow-md w-90px">
                   {/* Nội dung thông báo ở đây */}
 
                   <button
@@ -198,10 +200,10 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                       data.map((item: any, index: any) => (
                         <div
                           key={index}
-                          className="border border-gray-600 rounded-sm border-around mb-3 p-2"
+                          className="p-3 hover:bg-blue-200"
                           onClick={() => router.push(item?.path)}
                         >
-                          <h4 className="text-lg font-bold">{item?.name}</h4>
+                          <h5 className="text-lg font-bold">{item?.name}</h5>
                           <p className="text-sm ">{item?.content}</p>
                           <p className="text-xs text-end">
                             {new Date(item?.createdAt).toLocaleString("vi-VN", {

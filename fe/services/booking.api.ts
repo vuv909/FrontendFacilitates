@@ -44,6 +44,7 @@ export function getAllBooking(
   });
 }
 
+
 export function editBooking(data: any, id: string) {
   const tokenWithQuotes = StorageService.getToken();
   const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";

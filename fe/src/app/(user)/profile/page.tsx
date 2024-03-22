@@ -9,15 +9,17 @@ export default function Profile({
 }: {
   children: React.ReactNode;
 }) {
-  const colorNavbarOne: string = "bg-gray-300";
+  const colorNavbarOne: string = "bg-transparent";
   const colorNavbarTwo: string = "bg-gray-300";
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden mt-8">
       <NavbarComponent
         colorNavbarOne={colorNavbarOne}
         colorNavbarTwo={colorNavbarTwo}
       />
+      <div className="h-screen">
      <ProfileUserComponent/>
+      </div>
 </div>
   );
 }
