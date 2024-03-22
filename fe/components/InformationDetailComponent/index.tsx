@@ -238,7 +238,11 @@ export default function InfomationDetailComponent({
     setWeekValue(formattedWeekValue);
 
     if (StorageService.getUser()) {
-      getBookingUserByWeek(currentWeek, StorageService.getUser().id).then(
+      getBookingUserByWeek(
+        currentWeek,
+        StorageService.getUser().id,
+        detailData?.id
+      ).then(
         (res: any) => {
           console.log("====================================");
           console.log("User Booking ::", res.data.booking);
@@ -277,7 +281,8 @@ export default function InfomationDetailComponent({
     if (StorageService.getUser()) {
       getBookingUserByWeek(
         event.target.value,
-        StorageService.getUser().id
+        StorageService.getUser().id,
+        detailData?.id
       ).then(
         (res: any) => {
           console.log("====================================");
@@ -352,9 +357,15 @@ export default function InfomationDetailComponent({
   };
 
   const handleBooking = (data: string) => {
+    console.log('====================================');
+    console.log("dataTime::",data);
+    console.log('====================================');
     const arrayBooking = data.split("#");
     const userId = StorageService.getUser()?.id ?? null;
     const day = getCurrentDate(arrayBooking[1], arrayBooking[2]);
+    console.log('====================================');
+    console.log("dayTime::",day);
+    console.log('====================================');
     const bookingBody = {
       slot: arrayBooking[0],
       weekdays: arrayBooking[1],
@@ -390,7 +401,11 @@ export default function InfomationDetailComponent({
             });
 
           if (StorageService.getUser()) {
-            getBookingUserByWeek(weekValue, StorageService.getUser().id).then(
+            getBookingUserByWeek(
+              weekValue,
+              StorageService.getUser().id,
+              detailData?.id
+            ).then(
               (res: any) => {
                 console.log("====================================");
                 console.log("User Booking ::", res.data.booking);
@@ -555,7 +570,7 @@ export default function InfomationDetailComponent({
                           )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Tuesday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
@@ -597,7 +612,7 @@ export default function InfomationDetailComponent({
                           )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Wednesday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
@@ -638,7 +653,7 @@ export default function InfomationDetailComponent({
                           )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Thursday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
@@ -679,7 +694,7 @@ export default function InfomationDetailComponent({
                           )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Friday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
@@ -718,7 +733,7 @@ export default function InfomationDetailComponent({
                           )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Saturday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
@@ -759,7 +774,7 @@ export default function InfomationDetailComponent({
                           )
                         }
                         onClick={() =>
-                          handleBooking(`Slot${i + 1}#Monday#${weekValue}`)
+                          handleBooking(`Slot${i + 1}#Sunday#${weekValue}`)
                         }
                         className={`p-2 rounded-full text-white px-4 
                         ${
