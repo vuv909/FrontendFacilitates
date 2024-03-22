@@ -1,12 +1,12 @@
 "use client";
 import { Button } from "antd";
 import { url } from "inspector";
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useRef } from "react";
 import data  from "../../services/profile.service";
 import { useState } from "react";
 import { getProfile, updateProfile } from "../../services/user.api";
-import { log } from "console";
-import { set } from "react-hook-form";
+import { Toast } from "primereact/toast";
+
 
 const ProfileUserComponent = () => {
   const [image,setImage] = useState("")
@@ -17,16 +17,17 @@ const ProfileUserComponent = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   let item = null;
   let userId: string = ''; // Khai báo biến userId ở ngoài phạm vi của block
+  const toast = useRef<any>(null);
 
 
 
 const validation = () =>{
   if(!name || ! address){
-    alert('Vui lòng không để trống;');
+  toast.current.show({severity:'error', summary: 'Error', detail:'Vui lòng không để trống', life: 1500});
     return false;
   }
   if (!/^\d{10}$/.test(phoneNumber) || !phoneNumber.startsWith('0')) {
-    alert("Số điện thoại không hợp lệ.");
+    toast.current.show({severity:'error', summary: 'Error', detail:'Vui lòng nhập đúng số điện thoại ', life: 1500});
     return false;
 }
 
@@ -73,7 +74,8 @@ const fetchData = async () => {
     }
     updateProfile(userId, {name, address,phoneNumber});
       console.log("success");
-      alert("Thay đổi thông tin thành công");
+      toast.current.show({severity:'success', summary: 'Success', detail:'Thay đổi thông tin thành công', life: 1500});
+
       
     } catch (error) {
       console.log("error", error);
@@ -81,13 +83,18 @@ const fetchData = async () => {
     }   
   };
 }
-  const handleReject = () => {
-   fetchData();
-
+  const handleReject = async() => {
+    item = localStorage.getItem('user');
+    
+    if (item !== null) {
+      const user: { _id: string } = JSON.parse(item);
+      userId = user._id; // Gán giá trị user._id vào biến userId
+  }
+  fetchData();
   };
   return (
     <div className="flex items-center justify-center h-screen w-screen mt-10 bg-gray-100 overflow-x-hidden">
-      <div className="bg-white rounded-md p-10 pl-20 pr-20 border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-md p-11 border border-gray-200 overflow-hidden">
         <h1 className=" text-2xl font-bold">Thông tin cá nhân</h1>
         <div className="flex justify-center m-2">
           <div className="w-32 h-32 overflow-hidden ">
@@ -138,6 +145,7 @@ const fetchData = async () => {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Nhập địa chỉ..."
+              maxLength={20}
             />
           </div>
 
@@ -151,6 +159,7 @@ const fetchData = async () => {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="Nhập số điện thoại..."
+              maxLength={10}
             />
           </div>
 
@@ -164,7 +173,7 @@ const fetchData = async () => {
           </div>
         </div>
       </div>
-     
+      <Toast ref={toast} />
     </div>
   );
 };
