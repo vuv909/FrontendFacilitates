@@ -68,10 +68,10 @@ export function calendarBooking(weeks?: string, faciId?: string) {
   });
 }
 
-export function getBookingUserByWeek(weeks?: string, userId?: string) {
+export function getBookingUserByWeek(weeks?: string, userId?: string , facilityId?: string) {
   return restClient({
     url: "booking/user/" + userId,
     method: "GET",
-    params: { weeks },
+    params: { weeks , facilityId },
   });
 }
