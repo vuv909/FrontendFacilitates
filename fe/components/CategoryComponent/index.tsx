@@ -488,12 +488,6 @@ export default function CategoryComponent() {
                           >
                             Cập nhật
                           </button>
-                          <button
-                            className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24"
-                            onClick={() => handleDelete(c._id)}
-                          >
-                            Xóa
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -546,7 +540,7 @@ export default function CategoryComponent() {
           </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-2">
-              <label htmlFor="name">Tên phòng,sân bóng</label>
+              <label htmlFor="name">Tên dịch vụ</label>
               <input
                 id="name"
                 className={`w-full shadow-none p-3 border ${
@@ -608,7 +602,7 @@ export default function CategoryComponent() {
           </div>
           <form onSubmit={submitUpdate(onSubmitUpdate)}>
             <div className="mb-2">
-              <label htmlFor="name">Tên phòng,sân bóng</label>
+              <label htmlFor="name">Tên dịch vụ</label>
               <input
                 id="name"
                 defaultValue={dataUpdate?.categoryName || ""}
@@ -761,7 +755,7 @@ export default function CategoryComponent() {
                         })}
                       </td>
                       <td className="justify-center text-center ">
-                       <p>{d?.actionUser?.name}</p>
+                        <p>{d?.actionUser?.name}</p>
                       </td>
                     </tr>
                   ))

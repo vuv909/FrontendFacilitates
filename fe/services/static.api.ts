@@ -33,3 +33,20 @@ export function statisticStaticByYear(year?: number, status?: number) {
     params: { year },
   });
 }
+
+export function statisticStaticByWeek(
+  startDate?: string,
+  endDate?: string,
+  status?: number
+) {
+  if (status && status > 0) {
+    return restClient({
+      url: "booking/dashboard/week",
+      params: { status, startDate, endDate },
+    });
+  }
+  return restClient({
+    url: "booking/dashboard/week",
+    params: { startDate, endDate },
+  });
+}

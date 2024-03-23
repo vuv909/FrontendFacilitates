@@ -12,7 +12,7 @@ export function addBooking(data: any) {
 export function getBookingByUserId(
   id: number,
   page: number = 1,
-  size: number = 1000000000,
+  size: number = 12,
   name?: any
 ) {
   return restClient({

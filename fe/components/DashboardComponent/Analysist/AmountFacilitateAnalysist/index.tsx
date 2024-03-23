@@ -9,28 +9,73 @@ export default function AmountFacilitateAnlalysist() {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
+  // useEffect(() => {
+  //   faciStatic()
+  //     .then((res : any) => {
+  //       const documentStyle = getComputedStyle(document.documentElement);
+  //       const data = {
+  //         labels: Object.keys(res.data.data),
+  //         datasets: [
+  //           {
+  //             data: Object.values(res.data.data),
+  //             backgroundColor: [
+  //               documentStyle.getPropertyValue("--blue-500"),
+  //               documentStyle.getPropertyValue("--yellow-500"),
+  //               documentStyle.getPropertyValue("--green-500"),
+  //             ],
+  //             hoverBackgroundColor: [
+  //               documentStyle.getPropertyValue("--blue-400"),
+  //               documentStyle.getPropertyValue("--yellow-400"),
+  //               documentStyle.getPropertyValue("--green-400"),
+  //             ],
+  //           },
+  //         ],
+  //       };
+  //       const options = {
+  //         plugins: {
+  //           legend: {
+  //             labels: {
+  //               usePointStyle: true,
+  //             },
+  //           },
+  //         },
+  //       };
+
+  //       setChartData(data);
+  //       setChartOptions(options);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Error fetching data:", err);
+  //     });
+  // }, []);
+
+  function getRandomColor() {
+    // Generate random hex color
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+  }
+
   useEffect(() => {
     faciStatic()
-      .then((res : any) => {
+      .then((res: any) => {
+        const dataKeys = Object.keys(res.data.data);
         const documentStyle = getComputedStyle(document.documentElement);
+        const backgroundColor = [];
+
+        // Generate random colors based on the number of labels
+        for (let i = 0; i < dataKeys.length; i++) {
+          backgroundColor.push(getRandomColor());
+        }
+
         const data = {
-          labels: Object.keys(res.data.data),
+          labels: dataKeys,
           datasets: [
             {
               data: Object.values(res.data.data),
-              backgroundColor: [
-                documentStyle.getPropertyValue("--blue-500"),
-                documentStyle.getPropertyValue("--yellow-500"),
-                documentStyle.getPropertyValue("--green-500"),
-              ],
-              hoverBackgroundColor: [
-                documentStyle.getPropertyValue("--blue-400"),
-                documentStyle.getPropertyValue("--yellow-400"),
-                documentStyle.getPropertyValue("--green-400"),
-              ],
+              backgroundColor: backgroundColor,
             },
           ],
         };
+
         const options = {
           plugins: {
             legend: {
@@ -58,9 +103,7 @@ export default function AmountFacilitateAnlalysist() {
           </p>
         </Tooltip>
       </div>
-      <p className="font-bold text-center mb-5">
-        Thống kê số lượng từng loại
-      </p>
+      <p className="font-bold text-center mb-5">Thống kê số lượng từng loại</p>
       <div className="flex justify-center">
         <Chart
           type="pie"

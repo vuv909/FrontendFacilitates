@@ -470,6 +470,7 @@ export default function ManageFacilities() {
                   <th className="p-5 border">Ảnh</th>
                   <th className="p-5 border">Địa chỉ</th>
                   <th className="p-5 border">Thời gian tạo</th>
+                  <th className="p-5 border">Trạng thái</th>
                   <th className="p-5 border">Lịch sử cập nhật</th>
                   <th></th>
                 </tr>
@@ -507,6 +508,16 @@ export default function ManageFacilities() {
                         <p>{c && new Date(c.createdAt).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
+                        <select name="" id="" className="outline-none">
+                          <option value="" className="text-green-500">
+                            Active
+                          </option>
+                          <option value="" className="text-red-500">
+                            Inactive
+                          </option>
+                        </select>
+                      </td>
+                      <td className="p-5 border text-center">
                         <button
                           className="bg-green-400 hover:bg-green-300 p-2 text-white rounded-full w-24"
                           onClick={() => showModalView(c._id)}
@@ -521,12 +532,6 @@ export default function ManageFacilities() {
                             className="bg-blue-400 hover:bg-blue-300 p-2 text-white rounded-full w-24"
                           >
                             Cập nhật
-                          </button>
-                          <button
-                            className="bg-red-400 hover:bg-red-300 p-2 text-white rounded-full w-24"
-                            onClick={() => handleDelete(c._id)}
-                          >
-                            Xóa
                           </button>
                         </div>
                       </td>
@@ -859,7 +864,7 @@ export default function ManageFacilities() {
                   >
                     Ảnh cũ
                   </th>
-                  <th 
+                  <th
                     scope="col"
                     className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                   >
@@ -870,7 +875,7 @@ export default function ManageFacilities() {
                     className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                   >
                     Người sửa
-                  </th>          
+                  </th>
                 </tr>
               </thead>
               <tbody
@@ -881,9 +886,7 @@ export default function ManageFacilities() {
                   viewData.map((d: any, index: any) => (
                     <tr key={index}>
                       <td className="text-center">{index + 1}</td>
-                      <td className="text-center">
-                        {d?.objectAfter?.name}
-                      </td>
+                      <td className="text-center">{d?.objectAfter?.name}</td>
                       <td className="justify-center">
                         <img
                           className="w-32 h-32"
@@ -891,9 +894,7 @@ export default function ManageFacilities() {
                           alt=""
                         />
                       </td>
-                      <td className="text-center">
-                        {d?.objectBefore?.name}
-                      </td>
+                      <td className="text-center">{d?.objectBefore?.name}</td>
                       <td className="justify-center">
                         <img
                           className="w-32 h-32"
@@ -910,9 +911,8 @@ export default function ManageFacilities() {
                         })}
                       </td>
                       <td className="justify-center text-center ">
-                       <p className="font-medium">{d?.actionUser?.name}</p>
+                        <p className="font-medium">{d?.actionUser?.name}</p>
                       </td>
-                      
                     </tr>
                   ))
                 ) : (
@@ -927,8 +927,6 @@ export default function ManageFacilities() {
           </div>
         </div>
       </Modal>
-
-    
     </>
   );
 }
