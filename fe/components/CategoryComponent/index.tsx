@@ -750,8 +750,7 @@ export default function CategoryComponent() {
                         {new Date(d?.createdAt).toLocaleString("vi-VN", {
                           month: "numeric",
                           day: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
+                          year: "numeric"
                         })}
                       </td>
                       <td className="justify-center text-center ">
@@ -761,8 +760,8 @@ export default function CategoryComponent() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="text-center">
-                      Chưa được cập nhật
+                    <td colSpan={7} className="text-center ">
+                      <h1 className="font-bold"> Chưa được cập nhật</h1>
                     </td>
                   </tr>
                 )}
