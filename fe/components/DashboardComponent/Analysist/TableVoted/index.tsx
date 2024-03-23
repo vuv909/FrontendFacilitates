@@ -31,7 +31,12 @@ import { getListDashboard } from "../../../../services/dashboard.api";
 import { getCommentByFacilityId } from "../../../../services/voting.api";
 import { Rating, RatingChangeEvent } from "primereact/rating";
 
-const info = (data: any) => {
+const info = (
+  data: any,
+  totalPage: number,
+  activePage: number,
+  onChangePageComment: any
+) => {
   Modal.info({
     title: "Thông tin chi tiết",
     width: 800,
@@ -80,6 +85,16 @@ const info = (data: any) => {
             </div>
           ))}
         {data.length === 0 && <Empty />}
+        {data.length > 0 && (
+          <div className="flex items-center justify-center mt-2">
+            <Pagination
+              defaultCurrent={activePage}
+              total={Number(totalPage + "0")}
+              onChange={onChangePageComment}
+              showSizeChanger={false}
+            />
+          </div>
+        )}
       </div>
     ),
     footer: (
@@ -99,12 +114,14 @@ export default function TableVoted() {
   const [totalPage, setTotalPage] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(0);
   const [listData, setListData] = useState<any[]>([]);
+  const [listComment, setListComment] = useState<any[]>([]);
   const [textSearch, setTextSearch] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState("default");
+  const [idFaci, setIdFaci] = useState<any>();
 
   useEffect(() => {
     getListDashboard().then(
-      (res : any) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");
@@ -123,6 +140,27 @@ export default function TableVoted() {
     );
   }, []);
 
+  const onChangePageComment: PaginationProps["onChange"] = (pageNumber) => {
+    getCommentByFacilityId(idFaci, pageNumber, 5).then(
+      (res: any) => {
+        console.log("====================================");
+        console.log("resComment::", res.data);
+        console.log("====================================");
+        info(
+          res.data.items,
+          res.data.totalPage,
+          res.data.activePage,
+          onChangePageComment
+        );
+      },
+      (err) => {
+        console.log("====================================");
+        console.log("err::", err);
+        console.log("====================================");
+      }
+    );
+  };
+
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
     console.log("Page: ", pageNumber);
     getListDashboard(
@@ -130,7 +168,7 @@ export default function TableVoted() {
       textSearch.trim(),
       selectedValue === "default" ? null : selectedValue
     ).then(
-      (res : any) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");
@@ -153,13 +191,19 @@ export default function TableVoted() {
     console.log("====================================");
     console.log("id::", id);
     console.log("====================================");
+    setIdFaci(id);
 
-    getCommentByFacilityId(id, null, 100000000000000).then(
-      (res : any) => {
+    getCommentByFacilityId(id, null, 5).then(
+      (res: any) => {
         console.log("====================================");
-        console.log("res::", res);
+        console.log("resComment::", res.data);
         console.log("====================================");
-        info(res.data.items);
+        info(
+          res.data.items,
+          res.data.totalPage,
+          res.data.activePage,
+          onChangePageComment
+        );
       },
       (err) => {
         console.log("====================================");
@@ -176,7 +220,7 @@ export default function TableVoted() {
       text.trim(),
       selectedValue === "default" ? null : selectedValue
     ).then(
-      (res : any) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");
@@ -196,16 +240,16 @@ export default function TableVoted() {
   };
 
   const handleChange = (data: any) => {
-    console.log('====================================');
+    console.log("====================================");
     console.log("data::", data);
-    console.log('====================================');
+    console.log("====================================");
     setSelectedValue(data);
     getListDashboard(
       1,
       textSearch.trim(),
       data === "default" ? null : data
     ).then(
-      (res : any) => {
+      (res: any) => {
         console.log("====================================");
         console.log("res::", res.data.items);
         console.log("====================================");

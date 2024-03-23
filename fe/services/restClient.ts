@@ -22,13 +22,9 @@ export default function restClient({
     params,
     data,
     headers 
+  }).catch((err)=>{
+    if(StorageService.isExpired() === true){
+      StorageService.signout()
+    }
   })
 }
-
-// .catch((err)=>{
-//   if(err.response){
-//     if(err.response.status === 403){
-//       StorageService.signout()
-//     }
-//   }
-// });

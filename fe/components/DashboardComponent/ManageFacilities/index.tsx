@@ -447,7 +447,7 @@ export default function ManageFacilities() {
           getFacilities(activePage, null, "").then(
             (res: any) => {
               setListFacility(res.data.items);
-              setActivePage(1);
+              // setActivePage(1);
               setTotalPage(res.data.totalPage);
               setIsSpinning(false);
             },
