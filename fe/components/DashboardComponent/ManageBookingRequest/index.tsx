@@ -23,6 +23,7 @@ export default function ManageBookingRequest() {
   const [roleValue, setRoleValue] = useState<string>("");
   const [text, setText] = useState<string>("");
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
+  const [rejectData, setRejectData] = useState<any>();
 
   const showErrorCategory = (msg: string) => {
     toastAddCategory.current.show({
@@ -55,7 +56,7 @@ export default function ManageBookingRequest() {
   };
 
   useEffect(() => {
-    setIsSpinning(true)
+    setIsSpinning(true);
     getAllRole().then(
       (res: any) => {
         setRole(res.data);
@@ -71,10 +72,10 @@ export default function ManageBookingRequest() {
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
         setActivePage(res?.data?.activePage);
-        setIsSpinning(false)
+        setIsSpinning(false);
       })
       .catch((err) => {
-        setIsSpinning(false)
+        setIsSpinning(false);
         setBookingData([]);
         setTotalPage(0);
         setActivePage(0);
@@ -97,7 +98,13 @@ export default function ManageBookingRequest() {
 
   const handleAccept = (data: any) => {
     const status = 2;
-    editBooking({ status }, data?._id)
+    console.log("====================================");
+    console.log("data::", data);
+    console.log("====================================");
+    editBooking(
+      { facilityId: data.facilityId._id, status, slot: data.slot },
+      data?._id
+    )
       .then((res) => {
         getAllBooking(1, selectedValue, 1)
           .then((res) => {
@@ -116,6 +123,7 @@ export default function ManageBookingRequest() {
 
   const handleReject = (data: any) => {
     setIdReject(data?._id);
+    setRejectData(data);
     showModal();
   };
 
@@ -127,7 +135,15 @@ export default function ManageBookingRequest() {
       return;
     }
 
-    editBooking({ status, reason: because }, idReject)
+    editBooking(
+      {
+        status,
+        reason: because,
+        facilityId: rejectData.facilityId._id,
+        slot: rejectData.slot,
+      },
+      idReject
+    )
       .then((res) => {
         handleCancel();
         getAllBooking(1, selectedValue, 1)
@@ -217,8 +233,8 @@ export default function ManageBookingRequest() {
                   onChange={(e) => handleChange(e.target.value)}
                 >
                   <option value="default">Ngày tạo</option>
-                  <option value="createdDate:asc">Ngày đặt tăng dần</option>
-                  <option value="createdDate:desc">Ngày đặt giảm dần</option>
+                  <option value="createdAt:asc">Ngày đặt tăng dần</option>
+                  <option value="createdAt:desc">Ngày đặt giảm dần</option>
                 </select>
                 <select
                   className="outline-none border border-gray-300 h-7 p-1 rounded-full"
@@ -336,7 +352,7 @@ export default function ManageBookingRequest() {
           {isSpinning === true ? (
             <ProgressSpinner
               className="w-52 h-52 my-10"
-              strokeWidth={'3'} 
+              strokeWidth={"3"}
               fill="var(--surface-ground)"
               animationDuration=".5s"
             />
