@@ -40,6 +40,23 @@ export class StorageService {
     return true;
   }
 
+  static isExpired(): boolean {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          // Token is expired
+          return true;
+        }
+        return false;
+      } catch (e) {
+        return true; // If there's an error decoding the token, consider it expired
+      }
+    }
+    return true; // If no token is found, consider it expired
+  }
+
   static signout() {
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(TOKEN);

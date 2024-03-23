@@ -20,7 +20,11 @@ import { InputText } from "primereact/inputtext";
 import { useEffect, useState } from "react";
 import { getBookingByUserId } from "../../../../services/booking.api";
 import { StorageService } from "../../../../services/storage";
-import { convertWeekDateToDate, formatDate, formatDateVN } from "../../../../utils";
+import {
+  convertWeekDateToDate,
+  formatDate,
+  formatDateVN,
+} from "../../../../utils";
 
 const info = (data: any) => {
   Modal.info({
@@ -51,7 +55,7 @@ const infoBooking = (data: any) => {
   Modal.info({
     title: "Thông tin đặt phòng",
     content: (
-      <div className="my-1">
+      <div className="my-2">
         <h2 className="font-bold text-xl">{data?.facilityId?.name}</h2>
         <p>Slot: {data?.slot}</p>
         <p>Thời gian bắt đầu: {formatDateExactly(data?.startDate)}</p>
@@ -70,7 +74,20 @@ const infoBooking = (data: any) => {
             ? "Được duyệt nhưng chưa sử dụng"
             : ""}
         </p>
-        {/* <p>Thời gian đặt: {new Date(data?.booker.createdAt).toLocaleString()}</p> */}
+        <p>
+          Thời gian đặt:{" "}
+          {data?.booker.createdAt &&
+            new Date(data.booker.createdAt).toLocaleString("vi-VN", {
+              timeZone: "UTC",
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
+            })}
+        </p>
       </div>
     ),
     footer: (
