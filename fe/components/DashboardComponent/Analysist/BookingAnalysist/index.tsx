@@ -128,49 +128,6 @@ export default function BookingAnalysist() {
 
   console.log("getCurrentWeekTime::", getCurrentWeekTime());
 
-  // useEffect(() => {
-  //   if (searchByYear === true) {
-  //     setWeekTime(null);
-  //   }
-  // }, [searchByYear]);
-
-  // useEffect(() => {
-  //   if (searchByYear === true) {
-  //     statisticStaticByYear(Number(year), filterStatus).then(
-  //       (res: any) => {
-  //         console.log("====================================");
-  //         console.log("static::", res.data);
-  //         console.log("====================================");
-  //         setYearStatic(res.data);
-  //       },
-  //       (error) => {}
-  //     );
-  //   } else if (searchByYear === false) {
-  //     if(typeof weekOptions[weekTime] === 'string'){
-  //       const valueWeek = weekOptions[weekTime];
-  //       console.log("====================================");
-  //       console.log("valueWeek::", valueWeek);
-  //       console.log("====================================");
-
-  //       const [startDay, endDay] = valueWeek.split(" To ");
-  //       const start = `${year}-${startDay.split("/")[1]}-${
-  //         startDay.split("/")[0]
-  //       }`;
-  //       const end = `${year}-${endDay.split("/")[1]}-${endDay.split("/")[0]}`;
-
-  //       statisticStaticByWeek(start, end).then(
-  //         (res: any) => {
-  //           console.log("====================================");
-  //           console.log("static::", res.data);
-  //           console.log("====================================");
-  //           setWeekTime(res.data);
-  //         },
-  //         (error) => {}
-  //       );
-  //     }
-  //   }
-  // }, [searchByYear]);
-
   useEffect(() => {
     if (searchByYear === true) {
       statisticStaticByYear(Number(year), filterStatus).then(
@@ -197,7 +154,7 @@ export default function BookingAnalysist() {
         }`;
         const end = `${year}-${endDay.split("/")[1]}-${endDay.split("/")[0]}`;
 
-        statisticStaticByWeek(start, end).then(
+        statisticStaticByWeek(start, end, filterStatus).then(
           (res: any) => {
             console.log("====================================");
             console.log("static::", res.data);
@@ -276,32 +233,13 @@ export default function BookingAnalysist() {
     }
   }, [searchByYear]);
 
-  // useEffect(() => {
-  //   const data = {
-  //     // labels: searchByYear ? [...labelByYear] : [...labelByWeak],
-  //     labels: labelByYear,
-
-  //     // datasets: searchByYear ? [...dataByYear] : [...dataByWeek],
-  //     datasets: dataByYear,
-  //   };
-  //   const options = {
-  //     scales: {
-  //       y: {
-  //         beginAtZero: true,
-  //       },
-  //     },
-  //   };
-
-  //   setChartData(data);
-  //   setChartOptions(options);
-  // }, [searchByYear]);
   useEffect(() => {
     const data = {
       // labels: labelByYear,
       labels: searchByYear ? [...labelByYear] : [...labelByWeak],
       datasets: [
         {
-          label: "Thống kê số lượng đặt phòng sân thể dục theo năm",
+          label: searchByYear ? "Thống kê số lượng đặt phòng sân thể dục theo năm" : "Thống kê số lượng đặt phòng sân thể dục theo tuần",
           data: searchByYear ? yearStatic : weekStatic, // Use the data for the selected year
           backgroundColor: "rgba(255, 159, 64, 0.2)",
           borderColor: "rgb(255, 159, 64)",
@@ -325,40 +263,6 @@ export default function BookingAnalysist() {
     setChartOptions(options);
   }, [searchByYear, yearStatic, weekStatic]);
 
-  // const handleSearchByYear = (year: any) => {
-  //   setYear(year);
-  //   if (searchByYear === true) {
-  //     statisticStaticByYear(Number(year), filterStatus).then(
-  //       (res: any) => {
-  //         console.log("====================================");
-  //         console.log("static::", res.data);
-  //         console.log("====================================");
-  //         setYearStatic(res.data);
-  //       },
-  //       (error) => {}
-  //     );
-  //   } else if (searchByYear === false) {
-  //     if(weekTime){
-  //       const [startDay, endDay] = weekTime.split(" To ");
-
-  //       const start = `${year}-${startDay.split("/")[1]}-${
-  //         startDay.split("/")[0]
-  //       }`;
-  //       const end = `${year}-${endDay.split("/")[1]}-${endDay.split("/")[0]}`;
-  
-  //       statisticStaticByWeek(start, end).then(
-  //         (res: any) => {
-  //           console.log("====================================");
-  //           console.log("static::", res.data);
-  //           console.log("====================================");
-  //           setWeekStatic(res.data);
-  //         },
-  //         (error) => {}
-  //       );
-  //     }
-  //   }
-  // };
-
   const handleSearchByYear = (year: any) => {
     setYear(year);
     if (searchByYear === true) {
@@ -372,12 +276,15 @@ export default function BookingAnalysist() {
         (error) => {}
       );
     } else if (searchByYear === false) {
-      if (typeof weekTime === 'string') { // Check if weekTime is a string
+      if (typeof weekTime === "string") {
+        // Check if weekTime is a string
         const [startDay, endDay] = weekTime.split(" To ");
-  
-        const start = `${year}-${startDay.split("/")[1]}-${startDay.split("/")[0]}`;
+
+        const start = `${year}-${startDay.split("/")[1]}-${
+          startDay.split("/")[0]
+        }`;
         const end = `${year}-${endDay.split("/")[1]}-${endDay.split("/")[0]}`;
-  
+
         statisticStaticByWeek(start, end).then(
           (res: any) => {
             console.log("====================================");
@@ -390,14 +297,12 @@ export default function BookingAnalysist() {
       }
     }
   };
-  
 
-  const handleSetWeekTime = (week: string) => {
+  const handleSetWeekTime = (week: string, index: number) => {
     if (!week) {
-      console.log("Invalid week value");
       return;
     }
-    setWeekTime(week);
+    setWeekTime(index);
     const [startDay, endDay] = week.split(" To ");
 
     const start = `${year}-${startDay.split("/")[1]}-${startDay.split("/")[0]}`;
@@ -416,15 +321,41 @@ export default function BookingAnalysist() {
 
   const handleSetStatus = (status: any) => {
     setFilterStatus(status);
-    statisticStaticByYear(Number(year), status).then(
-      (res: any) => {
-        console.log("====================================");
-        console.log("static::", res.data);
-        console.log("====================================");
-        setYearStatic(res.data);
-      },
-      (error) => {}
-    );
+    if (searchByYear === true) {
+      statisticStaticByYear(Number(year), status).then(
+        (res: any) => {
+          console.log("====================================");
+          console.log("static::", res.data);
+          console.log("====================================");
+          setYearStatic(res.data);
+        },
+        (error) => {}
+      );
+    } else if (searchByYear === false) {
+      const valueWeek = weekOptions[weekTime];
+      console.log("====================================");
+      console.log("valueWeek::", valueWeek);
+      console.log("====================================");
+
+      // Check if valueWeek is defined before splitting
+      if (valueWeek) {
+        const [startDay, endDay] = valueWeek.split(" To ");
+        const start = `${year}-${startDay.split("/")[1]}-${
+          startDay.split("/")[0]
+        }`;
+        const end = `${year}-${endDay.split("/")[1]}-${endDay.split("/")[0]}`;
+
+        statisticStaticByWeek(start, end, status).then(
+          (res: any) => {
+            console.log("====================================");
+            console.log("static::", res.data);
+            console.log("====================================");
+            setWeekStatic(res.data);
+          },
+          (error) => {}
+        );
+      }
+    }
   };
 
   return (
@@ -463,7 +394,9 @@ export default function BookingAnalysist() {
             <div className="flex-1">
               <Tooltip title="Chọn thời gian tuần bạn muốn lọc">
                 <select
-                  onChange={(e) => handleSetWeekTime(e.target.value)}
+                  onChange={(e) =>
+                    handleSetWeekTime(e.target.value, e.target.selectedIndex)
+                  }
                   className="border border-gray-300 p-1 outline-none rounded-md"
                   value={weekOptions[weekTime]} // Set the value attribute of the select tag to the value of the option at index 11
                 >

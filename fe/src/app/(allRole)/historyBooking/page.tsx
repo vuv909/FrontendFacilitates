@@ -20,7 +20,7 @@ import { InputText } from "primereact/inputtext";
 import { useEffect, useState } from "react";
 import { getBookingByUserId } from "../../../../services/booking.api";
 import { StorageService } from "../../../../services/storage";
-import { convertWeekDateToDate, formatDate } from "../../../../utils";
+import { convertWeekDateToDate, formatDate, formatDateVN } from "../../../../utils";
 
 const info = (data: any) => {
   Modal.info({
@@ -40,10 +40,13 @@ const info = (data: any) => {
 };
 
 const infoBooking = (data: any) => {
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-  };
+  function formatDateExactly(dateString: any) {
+    const dateTimeParts = dateString.split("T");
+    const datePart = dateTimeParts[0];
+    const timePart = dateTimeParts[1].substring(0, 8); // Lấy chỉ thời gian, bỏ qua phần mili giây và múi giờ
+
+    return `${timePart} ${datePart}`;
+  }
 
   Modal.info({
     title: "Thông tin đặt phòng",
@@ -51,8 +54,8 @@ const infoBooking = (data: any) => {
       <div className="my-1">
         <h2 className="font-bold text-xl">{data?.facilityId?.name}</h2>
         <p>Slot: {data?.slot}</p>
-        <p>Thời gian bắt đầu: {formatTimestamp(data?.startDate)}</p>
-        <p>Thời gian kết thúc: {formatTimestamp(data?.endDate)}</p>
+        <p>Thời gian bắt đầu: {formatDateExactly(data?.startDate)}</p>
+        <p>Thời gian kết thúc: {formatDateExactly(data?.endDate)}</p>
         <p>
           Trạng thái:{" "}
           {data?.status === 1
@@ -67,6 +70,7 @@ const infoBooking = (data: any) => {
             ? "Được duyệt nhưng chưa sử dụng"
             : ""}
         </p>
+        {/* <p>Thời gian đặt: {new Date(data?.booker.createdAt).toLocaleString()}</p> */}
       </div>
     ),
     footer: (

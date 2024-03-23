@@ -273,3 +273,24 @@ export const formatDate = (dateString: string) => {
   // Return the formatted date
   return `${day}/${month}/${year}`;
 };
+
+export const formatDateVN = (dateString: string) => {
+  // Parse the dateString into a Date object
+  const date = new Date(dateString);
+
+  // Adjust for Vietnamese timezone (UTC+7)
+  const vietnameseDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+  // Get the day, month, and year
+  const day = vietnameseDate.getDate().toString().padStart(2, "0");
+  const month = (vietnameseDate.getMonth() + 1).toString().padStart(2, "0");
+  const year = vietnameseDate.getFullYear();
+
+  // Get the hours, minutes, and seconds
+  const hours = vietnameseDate.getHours().toString().padStart(2, "0");
+  const minutes = vietnameseDate.getMinutes().toString().padStart(2, "0");
+  const seconds = vietnameseDate.getSeconds().toString().padStart(2, "0");
+
+  // Return the formatted date and time
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+};

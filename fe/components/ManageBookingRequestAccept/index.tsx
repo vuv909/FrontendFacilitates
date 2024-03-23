@@ -59,6 +59,14 @@ export default function ManageBookingRequestAccept() {
       });
   };
 
+  function formatDate(dateString: any) {
+    const dateTimeParts = dateString.split("T");
+    const datePart = dateTimeParts[0];
+    const timePart = dateTimeParts[1].substring(0, 8); // Lấy chỉ thời gian, bỏ qua phần mili giây và múi giờ
+
+    return `${timePart} ${datePart}`;
+  }
+
   return (
     <div>
       <div>
@@ -125,11 +133,11 @@ export default function ManageBookingRequestAccept() {
                         <p>{b?.slot}</p>
                       </td>
                       <td className="p-5 border text-center">
-                        <p>{b && new Date(b?.startDate).toLocaleString()}</p>
-                      </td>
-                      <td className="p-5 border text-center">
-                        <p>{b && new Date(b?.endDate).toLocaleString()}</p>
-                      </td>
+                          <p>{b && formatDate(b?.startDate)}</p>
+                        </td>
+                        <td className="p-5 border text-center">
+                          <p>{b && formatDate(b?.endDate)}</p>
+                        </td>
                       <td className="p-5 border text-center">
                         <p>{b?.handler?.name}</p>
                       </td>

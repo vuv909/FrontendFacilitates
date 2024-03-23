@@ -6,7 +6,7 @@ export const getListDashboard = (page?: number, name?: any, sort?: any) => {
   const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return restClient({
-    url: "facility/list-dashboard?size=2",
+    url: "facility/list-dashboard?size=5",
     method: "GET",
     params: { page, name, sort },
     headers,

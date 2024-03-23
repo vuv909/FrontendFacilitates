@@ -36,6 +36,7 @@ import {
   deleteFacility,
   getFacilities,
   updateFacility,
+  updateStatusFaci,
 } from "../../../services/facilities.api";
 import { getCategory, viewUpdate } from "../../../services/category.api";
 import { Toast } from "primereact/toast";
@@ -207,7 +208,7 @@ export default function ManageFacilities() {
     deleteFacility(id).then(
       () => {
         showSuccessCategory("Delete facility successfully !!!");
-        getFacilities().then(
+        getFacilities(1, null, "").then(
           (res: any) => {
             setListFacility(res.data.items);
             setActivePage(1);
@@ -228,7 +229,7 @@ export default function ManageFacilities() {
 
   const handleSearch = (text: any) => {
     setText(text.trim());
-    getFacilities(1, text.trim()).then(
+    getFacilities(1, text.trim(), "").then(
       (res: any) => {
         setListFacility(res.data.items);
         setActivePage(1);
@@ -267,7 +268,7 @@ export default function ManageFacilities() {
   const onChangePage: PaginationProps["onChange"] = (pageNumber: number) => {
     setActivePage(pageNumber);
     console.log("Page: ", pageNumber);
-    getFacilities(pageNumber, text).then(
+    getFacilities(pageNumber, text, "").then(
       (res: any) => {
         setListFacility(res.data.items);
         setTotalPage(res.data.totalPage);
@@ -329,7 +330,7 @@ export default function ManageFacilities() {
           reset();
           showSuccessCategory("Add facility successfully !!!");
           setIsLoadingAddFormCategory(false);
-          getFacilities(activePage).then(
+          getFacilities(activePage, null, "").then(
             (res: any) => {
               setListFacility(res.data.items);
               setTotalPage(res.data.totalPage);
@@ -377,7 +378,7 @@ export default function ManageFacilities() {
           showSuccessCategory("Update facility successfully !!!");
           setisLoadingUpdateFormCategory(false);
           setImgUpdate(null);
-          getFacilities(activePage).then(
+          getFacilities(activePage, null, "").then(
             (res: any) => {
               setListFacility(res.data.items);
               setTotalPage(res.data.totalPage);
@@ -416,7 +417,7 @@ export default function ManageFacilities() {
       .catch((error) => {
         console.log(error);
       });
-    getFacilities().then(
+    getFacilities(1, null, "").then(
       (res: any) => {
         setListFacility(res.data.items);
         setActivePage(1);
@@ -431,6 +432,40 @@ export default function ManageFacilities() {
       }
     );
   }, []);
+
+  const handleChangeStatus = (
+    statusCurrent: number,
+    changeStatus: number,
+    data: any
+  ) => {
+    setIsSpinning(true);
+
+    if (statusCurrent !== changeStatus) {
+      updateStatusFaci(data._id)
+        .then(() => {
+          showSuccessCategory("Change status successfully !!!");
+          getFacilities(activePage, null, "").then(
+            (res: any) => {
+              setListFacility(res.data.items);
+              setActivePage(1);
+              setTotalPage(res.data.totalPage);
+              setIsSpinning(false);
+            },
+            (err) => {
+              setActivePage(1);
+              setTotalPage(0);
+              console.log(err);
+              setIsSpinning(false);
+            }
+          );
+        })
+        .catch((err) => {
+          setIsSpinning(false);
+          showErrorCategory("Change status failed !!!");
+        });
+    }
+    setIsSpinning(false);
+  };
 
   return (
     <>
@@ -508,11 +543,25 @@ export default function ManageFacilities() {
                         <p>{c && new Date(c.createdAt).toLocaleString()}</p>
                       </td>
                       <td className="p-5 border text-center">
-                        <select name="" id="" className="outline-none">
-                          <option value="" className="text-green-500">
+                        <select
+                          name=""
+                          id=""
+                          className={`outline-none ${
+                            c?.status === 1 && "text-green-500"
+                          } ${c?.status === 0 && "text-red-500"}`}
+                          value={c?.status === 1 ? "active" : "inactive"}
+                          onChange={(e) =>
+                            handleChangeStatus(
+                              c?.status,
+                              e.target.value === "active" ? 1 : 0,
+                              c
+                            )
+                          }
+                        >
+                          <option value="active" className="text-green-500">
                             Active
                           </option>
-                          <option value="" className="text-red-500">
+                          <option value="inactive" className="text-red-500">
                             Inactive
                           </option>
                         </select>
