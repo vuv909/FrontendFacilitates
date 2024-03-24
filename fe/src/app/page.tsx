@@ -217,9 +217,9 @@ export default function Home() {
 
       <div className="mt-10 text-center">
         <h1 className="ml-7 font-bold text-lg">
-          Top các phòng , sân thể dục được sử dụng nhiều
+          Top 8 phòng , sân thể dục được sử dụng nhiều
         </h1>
-        {topData.filter((data: any) => data.totalBooked > 0).length > 3 ? (
+        {topData.filter((data: any) => data.totalBooked > 0).length > 4 ? (
           <CarouselTopComponent data={topData} />
         ) : (
           <div className="flex justify-center">
