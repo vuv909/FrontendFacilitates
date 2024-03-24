@@ -241,7 +241,7 @@ export default function InfomationDetailComponent({
       getBookingUserByWeek(
         currentWeek,
         StorageService.getUser().id,
-        detailData?.id
+        detailData?._id
       ).then(
         (res: any) => {
           console.log("====================================");
@@ -282,7 +282,7 @@ export default function InfomationDetailComponent({
       getBookingUserByWeek(
         event.target.value,
         StorageService.getUser().id,
-        detailData?.id
+        detailData?._id
       ).then(
         (res: any) => {
           console.log("====================================");
@@ -357,15 +357,15 @@ export default function InfomationDetailComponent({
   };
 
   const handleBooking = (data: string) => {
-    console.log('====================================');
-    console.log("dataTime::",data);
-    console.log('====================================');
+    console.log("====================================");
+    console.log("dataTime::", data);
+    console.log("====================================");
     const arrayBooking = data.split("#");
     const userId = StorageService.getUser()?.id ?? null;
     const day = getCurrentDate(arrayBooking[1], arrayBooking[2]);
-    console.log('====================================');
-    console.log("dayTime::",day);
-    console.log('====================================');
+    console.log("====================================");
+    console.log("dayTime::", day);
+    console.log("====================================");
     const bookingBody = {
       slot: arrayBooking[0],
       weekdays: arrayBooking[1],
@@ -404,7 +404,7 @@ export default function InfomationDetailComponent({
             getBookingUserByWeek(
               weekValue,
               StorageService.getUser().id,
-              detailData?.id
+              detailData?._id
             ).then(
               (res: any) => {
                 console.log("====================================");
@@ -542,19 +542,19 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotMonday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
                 
                         ${
                           checkValidSlotMonday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsMonday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
@@ -581,19 +581,19 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotTuesday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
                 
                         ${
                           checkValidSlotTuesday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsTuesday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
@@ -623,13 +623,13 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotWednesday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
-                            : "bg-blue-500 hover:bg-blue-300"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
+                            : "bg-blue-500  hover:bg-blue-300"
                         }
                 
                         ${
@@ -637,7 +637,7 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             listBooking
                           ) === false && disableButtonsWendsday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
@@ -664,12 +664,12 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotThursday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
                 
@@ -678,7 +678,7 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             listBooking
                           ) === false && disableButtonsThurday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
@@ -705,19 +705,19 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotFriday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
                 
                         ${
                           checkValidSlotFriday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsFriday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
@@ -744,12 +744,12 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotSaturday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
                 
@@ -758,7 +758,7 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             listBooking
                           ) === false && disableButtonsSaturday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
@@ -785,19 +785,19 @@ export default function InfomationDetailComponent({
                             `Slot${i + 1}`,
                             bookingUserByWeek
                           ) === true
-                            ? "bg-green-800 cursor-not-allowed opacity-50"
+                            ? "bg-green-800 hover:bg-green-300 cursor-not-allowed opacity-50"
                             : checkValidSlotSunday(
                                 `Slot${i + 1}`,
                                 listBooking
                               ) === true
-                            ? "bg-red-500 cursor-not-allowed opacity-50"
+                            ? "bg-red-500 hover:bg-red-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }
                 
                         ${
                           checkValidSlotSunday(`Slot${i + 1}`, listBooking) ===
                             false && disableButtonsSunday
-                            ? "bg-gray-400 cursor-not-allowed opacity-50"
+                            ? "bg-gray-400 hover:bg-gray-300 cursor-not-allowed opacity-50"
                             : "bg-blue-500 hover:bg-blue-300"
                         }`}
                       >
