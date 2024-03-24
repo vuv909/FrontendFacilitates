@@ -38,9 +38,11 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (StorageService.isExpired()) {
-        StorageService.signout();
-        router.replace("/login");
+      if (StorageService.getToken()) {
+        if (StorageService.isExpired()) {
+          StorageService.signout();
+          router.replace("/login");
+        }
       }
     }, 1000);
 

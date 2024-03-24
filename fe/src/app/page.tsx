@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CarouselComponent from "../../components/CarouselComponent";
 import NavbarComponent from "../../components/NavbarComponent";
 import FooterComponent from "../../components/FooterComponent";
@@ -29,7 +29,7 @@ interface User {
   email: string;
   _id: string;
 }
-const host = "http://192.168.43.189:5152";
+const host = "http://localhost:5152";
 
 export default function Home() {
   const router = useRouter();
@@ -48,6 +48,14 @@ export default function Home() {
   const [user, setUser] = useState<User>();
   const [loginChat, setLoginChat] = useState(false);
   const [topData, setTopData] = useState<any[]>([]);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // Scroll xuống dưới cùng sau khi tin nhắn được cập nhật
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (StorageService.getUser() && StorageService.getUser().role.roleName) {
@@ -260,14 +268,14 @@ export default function Home() {
       </div>
       {role === "Student" && (
         <i
-          className="pi pi-inbox font-bold text-green-500 back text-3xl cursor-pointer fixed top-3/4 right-10  "
+          className="pi pi-inbox font-bold text-white bg-green-400 p-3 rounded-full back text-3xl cursor-pointer fixed top-3/4 right-10 z-50   "
           onClick={() => setLoginChat(!loginChat)}
         ></i>
       )}
 
       {loginChat && (
         <div
-          className="fixed bottom-5 right-20 bg-white p-4 border border-gray-300 overflow-y-auto"
+          className="fixed bottom-5 right-28 bg-white p-4 border border-gray-300 overflow-y-auto z-50"
           style={{ maxHeight: "400px" }}
         >
           {role === "Student" && (
@@ -286,6 +294,7 @@ export default function Home() {
                     {message.text}
                   </div>
                 ))}
+                <div ref={messagesEndRef}></div>
               </div>
 
               <div className="flex space-x-2 mt-4">
