@@ -98,11 +98,14 @@ export default function ManageBookingRequest() {
 
   const handleAccept = (data: any) => {
     const status = 2;
+    console.log('====================================');
+    console.log("dataAccept::",data);
+    console.log('====================================');
     console.log("====================================");
     console.log("data::", data);
     console.log("====================================");
     editBooking(
-      { facilityId: data.facilityId._id, status, slot: data.slot },
+      { facilityId: data.facilityId._id, status, slot: data.slot , startDate : data.startDate },
       data?._id
     )
       .then((res) => {

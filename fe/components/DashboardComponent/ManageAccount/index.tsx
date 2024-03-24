@@ -76,7 +76,7 @@ export default function ManageAccount() {
                 <input
                   type="text"
                   className="outline-none border border-gray-300 h-7 p-1 rounded-l-full"
-                  placeholder="Tìm Kiếm..."
+                  placeholder="Tìm Kiếm theo email..."
                   onChange={handleFilter}
                 />
                 <button className="bg-blue-500 px-2 h-7 hover:bg-blue-300 cursor-pointer rounded-r-full">

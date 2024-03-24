@@ -75,8 +75,8 @@ export function getBookingUserByWeek(
   facilityId?: string
 ) {
   return restClient({
-    url: "booking/user/" + userId,
+    url: "booking/user/" + userId+"?facilityId="+facilityId,
     method: "GET",
-    params: { weeks, facilityId },
+    params: { weeks },
   });
 }
