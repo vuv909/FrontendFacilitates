@@ -486,6 +486,9 @@ export default function InfomationDetailComponent({
             <Tooltip title="Không thể đặt slot này">
               <div className="w-1 h-4 bg-gray-400"></div>
             </Tooltip>
+            <Tooltip title="Các slot bạn đã đặt">
+              <div className="w-1 h-4 bg-green-800"></div>
+            </Tooltip>
           </div>
           <div className="flex justify-center">
             <table className="border">

@@ -35,11 +35,12 @@ export function getAllBooking(
     method: "GET",
     params: {
       status,
-      sort: sort === "default" ? null : sort,
+      // sort: sort === "default" ? null : sort,
       page,
       size,
       name,
       role: role === "default" ? null : role,
+      sortBeside : true
     },
   });
 }

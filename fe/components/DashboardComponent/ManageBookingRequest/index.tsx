@@ -161,20 +161,20 @@ export default function ManageBookingRequest() {
       .catch((err) => {});
   };
 
-  const handleChange = (data: any) => {
-    setSelectedValue(data);
-    getAllBooking(1, data, 1)
-      .then((res) => {
-        setBookingData(res?.data?.booking);
-        setTotalPage(res?.data?.totalPage);
-        setActivePage(1);
-      })
-      .catch((err) => {
-        setBookingData([]);
-        setTotalPage(0);
-        setActivePage(0);
-      });
-  };
+  // const handleChange = (data: any) => {
+  //   setSelectedValue(data);
+  //   getAllBooking(1, data, 1)
+  //     .then((res) => {
+  //       setBookingData(res?.data?.booking);
+  //       setTotalPage(res?.data?.totalPage);
+  //       setActivePage(1);
+  //     })
+  //     .catch((err) => {
+  //       setBookingData([]);
+  //       setTotalPage(0);
+  //       setActivePage(0);
+  //     });
+  // };
 
   const handleRole = (data: any) => {
     setRoleValue(data);
@@ -235,7 +235,7 @@ export default function ManageBookingRequest() {
                 />
               </div>
               <div>
-                <select
+                {/* <select
                   className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                   value={selectedValue}
                   onChange={(e) => handleChange(e.target.value)}
@@ -243,7 +243,7 @@ export default function ManageBookingRequest() {
                   <option value="default">Ngày tạo</option>
                   <option value="createdAt:asc">Ngày đặt tăng dần</option>
                   <option value="createdAt:desc">Ngày đặt giảm dần</option>
-                </select>
+                </select> */}
                 <select
                   className="outline-none border border-gray-300 h-7 p-1 rounded-full"
                   value={roleValue}

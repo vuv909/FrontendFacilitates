@@ -143,6 +143,50 @@ export default function ManageFacilities() {
   const [modalVisibles, setModalVisibles] = useState(false);
   const [viewData, setViewData] = useState<any>([null]);
 
+  const [idFaci, setIdFaci] = useState<string | null>(null);
+
+  const [isModalOpenChangeInactive, setIsModalOpenChangeInactive] =
+    useState(false);
+
+  const showModalInactive = () => {
+    setIsModalOpenChangeInactive(true);
+  };
+
+  const handleOkInactive = () => {
+    if (typeof idFaci === "string") {
+      updateStatusFaci(idFaci)
+        .then(() => {
+          showSuccessCategory("Change status successfully !!!");
+          getFacilities(activePage, null, "").then(
+            (res: any) => {
+              setListFacility(res.data.items);
+              // setActivePage(1);
+              setTotalPage(res.data.totalPage);
+              setIsSpinning(false);
+            },
+            (err) => {
+              setActivePage(1);
+              setTotalPage(0);
+              console.log(err);
+              setIsSpinning(false);
+            }
+          );
+        })
+        .catch((err) => {
+          setIsSpinning(false);
+          showErrorCategory("Change status failed !!!");
+        });
+    } else {
+      showErrorCategory("Change status failed !!!");
+    }
+
+    setIsModalOpenChangeInactive(false);
+  };
+
+  const handleCancelInactive = () => {
+    setIsModalOpenChangeInactive(false);
+  };
+
   const showModalView = (id: any) => {
     viewUpdate(id, "Facility", 1, 1000)
       .then((res) => {
@@ -439,8 +483,14 @@ export default function ManageFacilities() {
     data: any
   ) => {
     setIsSpinning(true);
+    setIdFaci(data._id);
 
     if (statusCurrent !== changeStatus) {
+      if (statusCurrent === 1) {
+        showModalInactive();
+        return;
+      }
+
       updateStatusFaci(data._id)
         .then(() => {
           showSuccessCategory("Change status successfully !!!");
@@ -955,7 +1005,7 @@ export default function ManageFacilities() {
                         {new Date(d?.createdAt).toLocaleString("vi-VN", {
                           month: "numeric",
                           day: "numeric",
-                          year: "numeric"
+                          year: "numeric",
                         })}
                       </td>
                       <td className="justify-center text-center ">
@@ -966,13 +1016,40 @@ export default function ManageFacilities() {
                 ) : (
                   <tr>
                     <td colSpan={7} className="text-center ">
-                     <h1 className="font-bold "> Chưa được cập nhật</h1>
+                      <h1 className="font-bold "> Chưa được cập nhật</h1>
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+        </div>
+      </Modal>
+
+      <Modal
+        title={
+          <span style={{ color: "red", fontSize: "20px" }}>
+            Ngưng hoạt động
+          </span>
+        }
+        open={isModalOpenChangeInactive}
+        onOk={handleOkInactive}
+        onCancel={handleCancelInactive}
+        footer={[]}
+      >
+        <p>Bạn có chắc chắn muốn ngưng hoạt động phòng này không ?</p>
+        <p>
+          <span className="font-bold text-red-500">Lưu ý:</span>Tất cả những yêu
+          cầu sử dụng phòng này sẽ bị hủy khi phòng này ngưng hoạt động và người
+          dùng sẽ không thể đặt phòng này nữa
+        </p>
+        <div className="flex justify-end">
+          <Button key="back" onClick={handleCancelInactive}>
+            Cancle
+          </Button>
+          <Button className="bg-blue-500 text-white" onClick={handleOkInactive}>
+            OK
+          </Button>
         </div>
       </Modal>
     </>
