@@ -15,8 +15,8 @@ export const getListDashboard = (page?: number, name?: any, sort?: any) => {
 
 export const getTopNumber = () => {
   return restClient({
-    url: "facility/list-dashboard?size=8",
+    url: "facility/list-dashboard",
     method: "GET",
-    params: { sort : 'TOTAL_BOOKED_DESC' },
+    params: { sort : 'TOTAL_BOOKED_DESC' , size : 8 , page : 1 },
   });
 };
