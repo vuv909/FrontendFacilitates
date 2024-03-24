@@ -162,18 +162,18 @@ export default function ManageFacilities() {
               setListFacility(res.data.items);
               // setActivePage(1);
               setTotalPage(res.data.totalPage);
-              setIsSpinning(false);
+              // setIsSpinning(false);
             },
             (err) => {
               setActivePage(1);
               setTotalPage(0);
               console.log(err);
-              setIsSpinning(false);
+              // setIsSpinning(false);
             }
           );
         })
         .catch((err) => {
-          setIsSpinning(false);
+          // setIsSpinning(false);
           showErrorCategory("Change status failed !!!");
         });
     } else {
@@ -482,7 +482,7 @@ export default function ManageFacilities() {
     changeStatus: number,
     data: any
   ) => {
-    setIsSpinning(true);
+    // setIsSpinning(true);
     setIdFaci(data._id);
 
     if (statusCurrent !== changeStatus) {
@@ -497,24 +497,24 @@ export default function ManageFacilities() {
           getFacilities(activePage, null, "").then(
             (res: any) => {
               setListFacility(res.data.items);
-              // setActivePage(1);
+              setActivePage(activePage);
               setTotalPage(res.data.totalPage);
-              setIsSpinning(false);
+              // setIsSpinning(false);
             },
             (err) => {
               setActivePage(1);
               setTotalPage(0);
-              console.log(err);
-              setIsSpinning(false);
+              // console.log(err);
+              // setIsSpinning(false);
             }
           );
         })
         .catch((err) => {
-          setIsSpinning(false);
+          // setIsSpinning(false);
           showErrorCategory("Change status failed !!!");
         });
     }
-    setIsSpinning(false);
+    // setIsSpinning(false);
   };
 
   return (
