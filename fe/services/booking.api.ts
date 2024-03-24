@@ -44,7 +44,6 @@ export function getAllBooking(
   });
 }
 
-
 export function editBooking(data: any, id: string) {
   const tokenWithQuotes = StorageService.getToken();
   const token = tokenWithQuotes ? tokenWithQuotes.replace(/['"]+/g, "") : "";
@@ -69,10 +68,14 @@ export function calendarBooking(weeks?: string, faciId?: string) {
   });
 }
 
-export function getBookingUserByWeek(weeks?: string, userId?: string , facilityId?: string) {
+export function getBookingUserByWeek(
+  weeks?: string,
+  userId?: string,
+  facilityId?: string
+) {
   return restClient({
     url: "booking/user/" + userId,
     method: "GET",
-    params: { weeks , facilityId },
+    params: { weeks, facilityId },
   });
 }

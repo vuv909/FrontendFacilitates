@@ -43,13 +43,6 @@ export default function AmountRoleAnalysist() {
 
   return (
     <div className="relative basis-1/2 h-96 border">
-      <div className="absolute">
-        <Tooltip title="Export data to Excel">
-          <p className="my-2 cursor-pointer text-green-800 text-3xl hover:text-green-500">
-            <FontAwesomeIcon icon={faFileCsv} />
-          </p>
-        </Tooltip>
-      </div>
       <p className="font-bold text-center mb-5">Statistics of website users</p>
       <div className="flex justify-center">
         <Chart

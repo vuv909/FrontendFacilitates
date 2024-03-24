@@ -52,6 +52,14 @@ const infoBooking = (data: any) => {
     return `${timePart} ${datePart}`;
   }
 
+  function formatDateBooking(dateString: any) {
+    const dateTimeParts = dateString.split("T");
+    const datePart = dateTimeParts[0];
+    const timePart = dateTimeParts[1].substring(0, 8); // Lấy chỉ thời gian, bỏ qua phần mili giây và múi giờ
+
+    return `${timePart} ${datePart}`;
+  }
+
   Modal.info({
     title: "Thông tin đặt phòng",
     content: (
@@ -76,7 +84,7 @@ const infoBooking = (data: any) => {
         </p>
         <p>
           Thời gian đặt:{" "}
-          {data?.booker.createdAt &&
+          {/* {data?.booker.createdAt &&
             new Date(data.booker.createdAt).toLocaleString("vi-VN", {
               timeZone: "UTC",
               weekday: "long",
@@ -86,7 +94,9 @@ const infoBooking = (data: any) => {
               hour: "numeric",
               minute: "numeric",
               second: "numeric",
-            })}
+            })} */}
+            {/* {formatDateBooking(data?.booker.createdAt)} */}
+            {data?.createdAt && new Date(data?.createdAt).toLocaleString()}
         </p>
       </div>
     ),

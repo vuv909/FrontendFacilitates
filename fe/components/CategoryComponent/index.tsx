@@ -512,7 +512,7 @@ export default function CategoryComponent() {
               activePage != null && (
                 <div className="flex items-center justify-center">
                   <Pagination
-                    defaultCurrent={activePage}
+                    current={activePage}
                     total={Number(totalPage + "0")}
                     onChange={onChangePage}
                     showSizeChanger={false}

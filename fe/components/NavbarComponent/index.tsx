@@ -37,6 +37,17 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   const [read, setRead] = useState<any>([]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      if (StorageService.isExpired()) {
+        StorageService.signout();
+        router.replace("/login");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     if (
       StorageService.getUser() === "" ||
       StorageService.isLoggedIn() === false
@@ -99,13 +110,13 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
   const handleNotification = async () => {
     setShowNotification(!showNotification);
     await readNotification();
-    await getNotification(1,1000).then((res) => {
+    await getNotification(1, 1000).then((res) => {
       setRead(res?.data);
     });
   };
 
   useEffect(() => {
-    getNotification(1,1000)
+    getNotification(1, 1000)
       .then((res) => {
         console.log(res);
         setData(res?.data?.content);
@@ -159,14 +170,12 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
           {isLogin && (
             <div className="flex gap-14 items-center justify-center">
               <div className="cursor-pointer flex items-center">
-                {role ==="Admin" &&(
-                    <i
+                {role === "Admin" && (
+                  <i
                     className="pi pi-comment p-over lay-badge"
-                    style={{ fontSize: "1.5rem", marginRight: "3rem"  }}
+                    style={{ fontSize: "1.5rem", marginRight: "3rem" }}
                     onClick={() => router.push("/chat")}
-                  >
-                    
-                  </i>
+                  ></i>
                 )}
                 <i
                   className="pi pi-bell p-overlay-badge"
