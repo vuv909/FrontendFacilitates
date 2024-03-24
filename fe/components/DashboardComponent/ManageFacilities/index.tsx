@@ -231,7 +231,7 @@ export default function ManageFacilities() {
     setText(text.trim());
     getFacilities(1, text.trim(), "").then(
       (res: any) => {
-        setListFacility(res.data.items);
+        setListFacility(res.data.items || []);
         setActivePage(1);
         setTotalPage(res.data.totalPage);
       },
@@ -606,7 +606,7 @@ export default function ManageFacilities() {
                 {totalPage > 0 && (
                   <div className="flex items-center justify-center">
                     <Pagination
-                      defaultCurrent={activePage}
+                      current={activePage}
                       total={Number(totalPage + "0")}
                       onChange={onChangePage}
                       showSizeChanger={false}

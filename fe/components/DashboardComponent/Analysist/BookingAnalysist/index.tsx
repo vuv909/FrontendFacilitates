@@ -239,7 +239,9 @@ export default function BookingAnalysist() {
       labels: searchByYear ? [...labelByYear] : [...labelByWeak],
       datasets: [
         {
-          label: searchByYear ? "Thống kê số lượng đặt phòng sân thể dục theo năm" : "Thống kê số lượng đặt phòng sân thể dục theo tuần",
+          label: searchByYear
+            ? "Thống kê số lượng đặt phòng sân thể dục theo năm"
+            : "Thống kê số lượng đặt phòng sân thể dục theo tuần",
           data: searchByYear ? yearStatic : weekStatic, // Use the data for the selected year
           backgroundColor: "rgba(255, 159, 64, 0.2)",
           borderColor: "rgb(255, 159, 64)",
@@ -379,13 +381,6 @@ export default function BookingAnalysist() {
               checked={searchByYear === false}
             />
             <p>Lọc theo tuần</p>
-          </div>
-          <div className="flex justify-start">
-            <Tooltip title="Xuất dữ liệu bảng ra excel">
-              <p className="my-2 cursor-pointer text-green-800 text-3xl hover:text-green-500">
-                <FontAwesomeIcon icon={faFileCsv} />
-              </p>
-            </Tooltip>
           </div>
         </div>
 

@@ -78,11 +78,6 @@ export default function ManageBookingRequestReject() {
             </p>
           </div>
           <div className="py-2 flex justify-between bg-blue-100">
-            <Tooltip title="Xuất dữ liệu bảng ra excel">
-              <p className="ml-5 cursor-pointer text-green-800 text-3xl hover:text-green-500">
-                <FontAwesomeIcon icon={faFileCsv} />
-              </p>
-            </Tooltip>
 
             <div>
               <input
@@ -186,7 +181,7 @@ export default function ManageBookingRequestReject() {
               {totalPage > 0 && (
                 <div className="flex items-center justify-center">
                   <Pagination
-                    defaultCurrent={activePage}
+                    current={activePage}
                     total={Number(`${totalPage}0`)}
                     onChange={onChangePage}
                     showSizeChanger={false}

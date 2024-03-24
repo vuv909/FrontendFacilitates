@@ -167,7 +167,7 @@ export default function ManageBookingRequest() {
       .then((res) => {
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
-        setActivePage(res?.data?.activePage);
+        setActivePage(1);
       })
       .catch((err) => {
         setBookingData([]);
@@ -384,7 +384,7 @@ export default function ManageBookingRequest() {
             totalPage > 0 && (
               <div className="flex items-center justify-center">
                 <Pagination
-                  defaultCurrent={activePage}
+                  current={activePage}
                   total={Number(`${totalPage}0`)}
                   onChange={onChangePage}
                   showSizeChanger={false}

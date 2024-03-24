@@ -178,7 +178,7 @@ export default function ManageAccount() {
             {totalPage > 0 && (
               <div className="flex items-center justify-center ">
                 <Pagination
-                  defaultCurrent={activePage}
+                  current={activePage}
                   total={Number(totalPage + "0")}
                   onChange={onChangePage}
                   showSizeChanger={false}

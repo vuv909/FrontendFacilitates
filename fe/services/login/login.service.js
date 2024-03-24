@@ -18,7 +18,9 @@ const login = (url) => {
                     localStorage.setItem("user", JSON.stringify(data?.user));
 
                     if (response.data.user.roleId.roleName === 'Admin') {
-                        router.push('/dashboard')
+                        setTimeout(
+                            router.push('/dashboard')
+                            , 1000)
                     } else {
                         router.push('/')
                     }
