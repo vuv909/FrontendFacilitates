@@ -43,7 +43,7 @@ const info = (data: any) => {
   });
 };
 
-const infoBooking = (data: any) => {
+const infoBooking = (data: any,router : any) => {
   function formatDateExactly(dateString: any) {
     const dateTimeParts = dateString.split("T");
     const datePart = dateTimeParts[0];
@@ -64,7 +64,23 @@ const infoBooking = (data: any) => {
     title: "Thông tin đặt phòng",
     content: (
       <div className="my-2">
-        <h2 className="font-bold text-xl">{data?.facilityId?.name}</h2>
+        <h2
+          className="font-bold text-xl flex items-center hover:opacity-45 cursor-pointer"
+          onClick={() => {
+            router.push(`/detail/${data?.facilityId?._id}`);
+            Modal.destroyAll()
+          }}
+        >
+          {data?.facilityId?.name}{" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height={20}
+            width={20}
+            viewBox="0 0 512 512"
+          >
+            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+          </svg>
+        </h2>
         <p>Slot: {data?.slot}</p>
         <p>Thời gian bắt đầu: {formatDateExactly(data?.startDate)}</p>
         <p>Thời gian kết thúc: {formatDateExactly(data?.endDate)}</p>
@@ -95,8 +111,8 @@ const infoBooking = (data: any) => {
               minute: "numeric",
               second: "numeric",
             })} */}
-            {/* {formatDateBooking(data?.booker.createdAt)} */}
-            {data?.createdAt && new Date(data?.createdAt).toLocaleString()}
+          {/* {formatDateBooking(data?.booker.createdAt)} */}
+          {data?.createdAt && new Date(data?.createdAt).toLocaleString()}
         </p>
       </div>
     ),
@@ -214,11 +230,11 @@ export default function HistoryBookingPage() {
     info(data.reason);
   };
 
-  const showInfoBooking = (data: any) => {
+  const showInfoBooking = (data: any, router: any) => {
     console.log("====================================");
     console.log("data booking ::", data);
     console.log("====================================");
-    infoBooking(data);
+    infoBooking(data,router);
   };
 
   return (
@@ -325,7 +341,7 @@ export default function HistoryBookingPage() {
             return (
               <div
                 key={d?._id}
-                onClick={() => showInfoBooking(d)}
+                onClick={() => showInfoBooking(d, router)}
                 className="relative bg-no-repeat bg-cover h-72 w-72 rounded-lg cursor-pointer shadow-lg border"
                 style={{
                   backgroundImage: `url("${d?.facilityId?.image}")`,

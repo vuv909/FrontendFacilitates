@@ -43,7 +43,7 @@ export default function AmountRoleAnalysist() {
 
   return (
     <div className="relative basis-1/2 h-96 border">
-      <p className="font-bold text-center mb-5">Statistics of website users</p>
+      <p className="font-bold text-center mb-5">Thống kê người dùng website</p>
       <div className="flex justify-center">
         <Chart
           type="pie"

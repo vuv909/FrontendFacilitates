@@ -114,7 +114,7 @@ export default function ManageBookingRequestExpired() {
               {bookingData?.map((b, index) => {
                 const status = b?.status;
 
-                if (status === 4) {
+                // if (status === 4) {
                   return (
                     <tr className="border">
                       <td className="p-5 border text-center">
@@ -163,7 +163,7 @@ export default function ManageBookingRequestExpired() {
                       </td>
                     </tr>
                   );
-                }
+                // }
               })}
             </tbody>
           </table>

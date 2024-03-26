@@ -114,7 +114,7 @@ export default function ManageBookingRequestReject() {
               {bookingData?.map((b, index) => {
                 const status = b?.status;
 
-                if (status === 3) {
+                // if (status === 3) {
                   return (
                     <tr className="border">
                       <td className="p-5 border text-center">
@@ -160,7 +160,7 @@ export default function ManageBookingRequestReject() {
                       </td>
                     </tr>
                   );
-                }
+                // }
               })}
             </tbody>
           </table>

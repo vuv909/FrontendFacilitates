@@ -176,7 +176,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({
                   <i
                     className="pi pi-comment p-over lay-badge"
                     style={{ fontSize: "1.5rem", marginRight: "3rem" }}
-                    onClick={() => router.push("/chat")}
+                    onClick={() => { window.location.href = "/chat"; }}
                   ></i>
                 )}
                 <i
