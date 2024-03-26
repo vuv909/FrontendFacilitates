@@ -826,7 +826,7 @@ export default function ManageFacilities() {
             <div className="mb-2">
               <label htmlFor="category">Phân loại</label>
               <select
-                defaultValue={dataUpdaate?.category?._id}
+                value={dataUpdaate?.category?._id}
                 id="category"
                 className={`w-full shadow-none p-3 border ${
                   errorsUpdate.category ? "outline-red-300" : "outline-blue-300"

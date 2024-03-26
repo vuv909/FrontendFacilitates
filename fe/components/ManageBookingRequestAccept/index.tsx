@@ -19,6 +19,9 @@ export default function ManageBookingRequestAccept() {
     getAllBooking(2)
       .then((res) => {
         setIsSpinning(false)
+        console.log('====================================');
+        console.log("dataBooking::",res?.data?.booking);
+        console.log('====================================');
         setBookingData(res?.data?.booking);
         setTotalPage(res?.data?.totalPage);
         setActivePage(res?.data?.activePage);
@@ -106,7 +109,7 @@ export default function ManageBookingRequestAccept() {
               {bookingData?.map((b, index) => {
                 const status = b?.status;
 
-                if (status === 2) {
+                // if (status === 2) {
                   return (
                     <tr className="border">
                       <td className="p-5 border text-center">
@@ -154,7 +157,8 @@ export default function ManageBookingRequestAccept() {
                     </tr>
                   );
                 }
-              })}
+              // }
+              )}
             </tbody>
           </table>
           {isSpinning === true ? (
